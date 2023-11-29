@@ -23,4 +23,9 @@
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\WirelessCom.Application\WirelessCom.Application.csproj" />
+      <ProjectReference Include="..\WirelessCom.Infrastructure.Persistence\WirelessCom.Infrastructure.Persistence.csproj" />
+    </ItemGroup>
+
 </Project>

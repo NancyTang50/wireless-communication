@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using WirelessCom.UI.Extensions;
 
 namespace WirelessCom.UI;
 
@@ -12,6 +13,7 @@ public static class MauiProgram
             .ConfigureFonts(fonts => { fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"); });
 
         builder.Services.AddMauiBlazorWebView();
+        builder.Services.RegisterDependencies();
 
         #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
