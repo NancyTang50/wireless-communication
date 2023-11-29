@@ -12,15 +12,15 @@ public:
      * @param[in] level
      *               8bit batterly level. Usually used to represent percentage of batterly charge remaining.
      */
-    ClimateService(BLE &_ble, uint8_t level = 100) :
+    ClimateService(BLE &_ble, uint8_t temperature = 0, uint8_t humidity = 0) :
         ble(_ble),
-        batteryLevel(level),
-        batteryLevelCharacteristic(GattCharacteristic::UUID_BATTERY_LEVEL_CHAR, &batteryLevel, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY) {
+        humidityCharacteristic(GattCharacteristic::UUID_BATTERY_LEVEL_CHAR, &temperature, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
+        temperatureCharacteristic(GattCharacteristic::UUID_BATTERY_LEVEL_CHAR, &temperature, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY) {
 
-        GattCharacteristic *charTable[] = {&batteryLevelCharacteristic};
-        GattService         batteryService(CLIMATE_SERVICE_UUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
+        GattCharacteristic *charTable[] = {&temperatureCharacteristic, &humidityCharacteristic};
+        GattService         climateService(CLIMATE_SERVICE_UUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
-        ble.addService(batteryService);
+        ble.gattServer().addService(climateService);
     }
 
     /**
@@ -30,9 +30,14 @@ public:
      * @param newLevel
      *              Update to battery level.
      */
-    void updateBatteryLevel(uint8_t newLevel) {
-        batteryLevel = newLevel;
-        ble.gattServer().write(batteryLevelCharacteristic.getValueHandle(), &batteryLevel, 1);
+    void UpdateTemperature(uint8_t newTemperatureValue) {
+        temperature = newTemperatureValue;
+        ble.gattServer().write(temperatureCharacteristic.getValueHandle(), &temperature, 1);
+    }
+
+    void UpdateHumidity(uint8_t newHumidityValue) {
+        humidity = newHumidityValue;
+        ble.gattServer().write(humidityCharacteristic.getValueHandle(), &humidity, 1);
     }
 
 protected:
@@ -45,10 +50,12 @@ protected:
     /**
      * The current battery level represented as an integer from 0% to 100%.
      */
-    uint8_t    batteryLevel;
+    uint8_t    temperature;
+    uint8_t    humidity;
     /**
      * A ReadOnlyGattCharacteristic that allows access to the peer device to the
      * batteryLevel value through BLE.
      */
-    ReadOnlyGattCharacteristic<uint8_t> batteryLevelCharacteristic;
+    ReadOnlyGattCharacteristic<uint8_t> temperatureCharacteristic;
+    ReadOnlyGattCharacteristic<uint8_t> humidityCharacteristic;
 };

@@ -1,18 +1,14 @@
 #include "mbed.h"
 #include "ble/BLE.h"
+#include "Services/climateService.h"
 
 // main() runs in its own thread in the OS
 int main()
 {
-    while (true) {
     BLE &ble = BLE::Instance();
     ble.init();
 
-    // service hub
-    
-    //
-    ble.gattServer().addService(myService)
-
-    }
+    // ClimateService
+    ClimateService climateService(ble);
 }
 
