@@ -1,0 +1,15 @@
+﻿<!-- Nav item -->
+<a class="py-5 px-3 text-gray-700 hover:text-green-500" href="@Url" target="@(NewWindow ? "_blank" : "_self")">@Text</a>
+
+@code {
+
+    [Parameter]
+    public string Text { get; set; } = "default";
+
+    [Parameter]
+    public string Url { get; set; } = "#";
+
+    [Parameter]
+    public bool NewWindow { get; set; }
+
+}
