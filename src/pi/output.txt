@@ -1,0 +1,1099 @@
+pi v0.1.0 (/workspaces/wireless-communication/src/pi)
+├── bluster v0.1.3
+│   ├── dbus v0.8.4
+│   │   ├── futures v0.3.29
+│   │   │   ├── futures-channel v0.3.29
+│   │   │   │   ├── futures-core v0.3.29
+│   │   │   │   └── futures-sink v0.3.29
+│   │   │   ├── futures-core v0.3.29
+│   │   │   ├── futures-executor v0.3.29
+│   │   │   │   ├── futures-core v0.3.29
+│   │   │   │   ├── futures-task v0.3.29
+│   │   │   │   └── futures-util v0.3.29
+│   │   │   │       ├── futures-channel v0.3.29 (*)
+│   │   │   │       ├── futures-core v0.3.29
+│   │   │   │       ├── futures-io v0.3.29
+│   │   │   │       ├── futures-macro v0.3.29 (proc-macro)
+│   │   │   │       │   ├── proc-macro2 v1.0.70
+│   │   │   │       │   │   └── unicode-ident v1.0.12
+│   │   │   │       │   ├── quote v1.0.33
+│   │   │   │       │   │   └── proc-macro2 v1.0.70 (*)
+│   │   │   │       │   └── syn v2.0.39
+│   │   │   │       │       ├── proc-macro2 v1.0.70 (*)
+│   │   │   │       │       ├── quote v1.0.33 (*)
+│   │   │   │       │       └── unicode-ident v1.0.12
+│   │   │   │       ├── futures-sink v0.3.29
+│   │   │   │       ├── futures-task v0.3.29
+│   │   │   │       ├── memchr v2.6.4
+│   │   │   │       ├── pin-project-lite v0.2.13
+│   │   │   │       ├── pin-utils v0.1.0
+│   │   │   │       └── slab v0.4.9
+│   │   │   │           [build-dependencies]
+│   │   │   │           └── autocfg v1.1.0
+│   │   │   ├── futures-io v0.3.29
+│   │   │   ├── futures-sink v0.3.29
+│   │   │   ├── futures-task v0.3.29
+│   │   │   └── futures-util v0.3.29 (*)
+│   │   ├── libc v0.2.150
+│   │   └── libdbus-sys v0.2.5
+│   │       [build-dependencies]
+│   │       ├── cc v1.0.83
+│   │       │   └── libc v0.2.150
+│   │       └── pkg-config v0.3.27
+│   ├── dbus-crossroads v0.2.2
+│   │   └── dbus v0.8.4 (*)
+│   ├── dbus-tokio v0.5.2
+│   │   ├── dbus v0.8.4 (*)
+│   │   ├── libc v0.2.150
+│   │   ├── mio v0.6.23
+│   │   │   ├── cfg-if v0.1.10
+│   │   │   ├── iovec v0.1.4
+│   │   │   │   └── libc v0.2.150
+│   │   │   ├── libc v0.2.150
+│   │   │   ├── log v0.4.20
+│   │   │   ├── net2 v0.2.39
+│   │   │   │   ├── cfg-if v0.1.10
+│   │   │   │   └── libc v0.2.150
+│   │   │   └── slab v0.4.9 (*)
+│   │   └── tokio v0.2.25
+│   │       ├── bytes v0.5.6
+│   │       ├── futures-core v0.3.29
+│   │       ├── lazy_static v1.4.0
+│   │       ├── mio v0.6.23 (*)
+│   │       ├── num_cpus v1.16.0
+│   │       │   └── libc v0.2.150
+│   │       ├── pin-project-lite v0.1.12
+│   │       ├── slab v0.4.9 (*)
+│   │       └── tokio-macros v0.2.6 (proc-macro)
+│   │           ├── proc-macro2 v1.0.70 (*)
+│   │           ├── quote v1.0.33 (*)
+│   │           └── syn v1.0.109
+│   │               ├── proc-macro2 v1.0.70 (*)
+│   │               ├── quote v1.0.33 (*)
+│   │               └── unicode-ident v1.0.12
+│   ├── futures v0.3.29 (*)
+│   ├── log v0.4.20
+│   ├── tokio v0.2.25 (*)
+│   └── uuid v0.8.2
+├── crossbeam v0.6.0
+│   ├── cfg-if v0.1.10
+│   ├── crossbeam-channel v0.3.9
+│   │   └── crossbeam-utils v0.6.6
+│   │       ├── cfg-if v0.1.10
+│   │       └── lazy_static v1.4.0
+│   ├── crossbeam-deque v0.6.3
+│   │   ├── crossbeam-epoch v0.7.2
+│   │   │   ├── arrayvec v0.4.12
+│   │   │   │   └── nodrop v0.1.14
+│   │   │   ├── cfg-if v0.1.10
+│   │   │   ├── crossbeam-utils v0.6.6 (*)
+│   │   │   ├── lazy_static v1.4.0
+│   │   │   ├── memoffset v0.5.6
+│   │   │   │   [build-dependencies]
+│   │   │   │   └── autocfg v1.1.0
+│   │   │   └── scopeguard v1.2.0
+│   │   └── crossbeam-utils v0.6.6 (*)
+│   ├── crossbeam-epoch v0.7.2 (*)
+│   ├── crossbeam-utils v0.6.6 (*)
+│   ├── lazy_static v1.4.0
+│   ├── num_cpus v1.16.0 (*)
+│   └── parking_lot v0.7.1
+│       ├── lock_api v0.1.5
+│       │   ├── owning_ref v0.4.1
+│       │   │   └── stable_deref_trait v1.2.0
+│       │   └── scopeguard v0.3.3
+│       └── parking_lot_core v0.4.0
+│           ├── libc v0.2.150
+│           ├── rand v0.6.5
+│           │   ├── libc v0.2.150
+│           │   ├── rand_chacha v0.1.1
+│           │   │   └── rand_core v0.3.1
+│           │   │       └── rand_core v0.4.2
+│           │   │   [build-dependencies]
+│           │   │   └── autocfg v0.1.8
+│           │   │       └── autocfg v1.1.0
+│           │   ├── rand_core v0.4.2
+│           │   ├── rand_hc v0.1.0
+│           │   │   └── rand_core v0.3.1 (*)
+│           │   ├── rand_isaac v0.1.1
+│           │   │   └── rand_core v0.3.1 (*)
+│           │   ├── rand_jitter v0.1.4
+│           │   │   └── rand_core v0.4.2
+│           │   ├── rand_os v0.1.3
+│           │   │   ├── libc v0.2.150
+│           │   │   └── rand_core v0.4.2
+│           │   ├── rand_pcg v0.1.2
+│           │   │   └── rand_core v0.4.2
+│           │   │   [build-dependencies]
+│           │   │   └── autocfg v0.1.8 (*)
+│           │   └── rand_xorshift v0.1.1
+│           │       └── rand_core v0.3.1 (*)
+│           │   [build-dependencies]
+│           │   └── autocfg v0.1.8 (*)
+│           └── smallvec v0.6.14
+│               └── maybe-uninit v2.0.0
+│           [build-dependencies]
+│           └── rustc_version v0.2.3
+│               └── semver v0.9.0
+│                   └── semver-parser v0.7.0
+├── futures v0.1.31
+├── input v0.4.1
+│   ├── bitflags v1.3.2
+│   ├── input-sys v1.17.0
+│   │   └── libc v0.2.150
+│   ├── libc v0.2.150
+│   └── udev v0.2.0
+│       ├── libc v0.2.150
+│       └── libudev-sys v0.1.4
+│           └── libc v0.2.150
+│           [build-dependencies]
+│           └── pkg-config v0.3.27
+├── libdbus-sys v0.2.5 (*)
+├── nix v0.13.1
+│   ├── bitflags v1.3.2
+│   ├── cfg-if v0.1.10
+│   ├── libc v0.2.150
+│   └── void v1.0.2
+├── systemstat v0.1.12
+│   ├── bytesize v1.3.0
+│   ├── chrono v0.4.31
+│   │   ├── iana-time-zone v0.1.58
+│   │   └── num-traits v0.2.17
+│   │       [build-dependencies]
+│   │       └── autocfg v1.1.0
+│   ├── lazy_static v1.4.0
+│   ├── libc v0.2.150
+│   └── nom v7.1.3
+│       ├── memchr v2.6.4
+│       └── minimal-lexical v0.2.1
+├── tokio v0.1.22
+│   ├── bytes v0.4.12
+│   │   ├── byteorder v1.5.0
+│   │   └── iovec v0.1.4 (*)
+│   ├── futures v0.1.31
+│   ├── mio v0.6.23 (*)
+│   ├── num_cpus v1.16.0 (*)
+│   ├── tokio-codec v0.1.2
+│   │   ├── bytes v0.4.12 (*)
+│   │   ├── futures v0.1.31
+│   │   └── tokio-io v0.1.13
+│   │       ├── bytes v0.4.12 (*)
+│   │       ├── futures v0.1.31
+│   │       └── log v0.4.20
+│   ├── tokio-current-thread v0.1.7
+│   │   ├── futures v0.1.31
+│   │   └── tokio-executor v0.1.10
+│   │       ├── crossbeam-utils v0.7.2
+│   │       │   ├── cfg-if v0.1.10
+│   │       │   └── lazy_static v1.4.0
+│   │       │   [build-dependencies]
+│   │       │   └── autocfg v1.1.0
+│   │       └── futures v0.1.31
+│   ├── tokio-executor v0.1.10 (*)
+│   ├── tokio-fs v0.1.7
+│   │   ├── futures v0.1.31
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-threadpool v0.1.18
+│   │       ├── crossbeam-deque v0.7.4
+│   │       │   ├── crossbeam-epoch v0.8.2
+│   │       │   │   ├── cfg-if v0.1.10
+│   │       │   │   ├── crossbeam-utils v0.7.2 (*)
+│   │       │   │   ├── lazy_static v1.4.0
+│   │       │   │   ├── maybe-uninit v2.0.0
+│   │       │   │   ├── memoffset v0.5.6 (*)
+│   │       │   │   └── scopeguard v1.2.0
+│   │       │   │   [build-dependencies]
+│   │       │   │   └── autocfg v1.1.0
+│   │       │   ├── crossbeam-utils v0.7.2 (*)
+│   │       │   └── maybe-uninit v2.0.0
+│   │       ├── crossbeam-queue v0.2.3
+│   │       │   ├── cfg-if v0.1.10
+│   │       │   ├── crossbeam-utils v0.7.2 (*)
+│   │       │   └── maybe-uninit v2.0.0
+│   │       ├── crossbeam-utils v0.7.2 (*)
+│   │       ├── futures v0.1.31
+│   │       ├── lazy_static v1.4.0
+│   │       ├── log v0.4.20
+│   │       ├── num_cpus v1.16.0 (*)
+│   │       ├── slab v0.4.9 (*)
+│   │       └── tokio-executor v0.1.10 (*)
+│   ├── tokio-io v0.1.13 (*)
+│   ├── tokio-reactor v0.1.12
+│   │   ├── crossbeam-utils v0.7.2 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── lazy_static v1.4.0
+│   │   ├── log v0.4.20
+│   │   ├── mio v0.6.23 (*)
+│   │   ├── num_cpus v1.16.0 (*)
+│   │   ├── parking_lot v0.9.0
+│   │   │   ├── lock_api v0.3.4
+│   │   │   │   └── scopeguard v1.2.0
+│   │   │   └── parking_lot_core v0.6.3
+│   │   │       ├── cfg-if v0.1.10
+│   │   │       ├── libc v0.2.150
+│   │   │       └── smallvec v0.6.14 (*)
+│   │   │       [build-dependencies]
+│   │   │       └── rustc_version v0.2.3 (*)
+│   │   │   [build-dependencies]
+│   │   │   └── rustc_version v0.2.3 (*)
+│   │   ├── slab v0.4.9 (*)
+│   │   ├── tokio-executor v0.1.10 (*)
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-sync v0.1.8
+│   │       ├── fnv v1.0.7
+│   │       └── futures v0.1.31
+│   ├── tokio-sync v0.1.8 (*)
+│   ├── tokio-tcp v0.1.4
+│   │   ├── bytes v0.4.12 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── iovec v0.1.4 (*)
+│   │   ├── mio v0.6.23 (*)
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-reactor v0.1.12 (*)
+│   ├── tokio-threadpool v0.1.18 (*)
+│   ├── tokio-timer v0.2.13
+│   │   ├── crossbeam-utils v0.7.2 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── slab v0.4.9 (*)
+│   │   └── tokio-executor v0.1.10 (*)
+│   ├── tokio-udp v0.1.6
+│   │   ├── bytes v0.4.12 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── log v0.4.20
+│   │   ├── mio v0.6.23 (*)
+│   │   ├── tokio-codec v0.1.2 (*)
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-reactor v0.1.12 (*)
+│   └── tokio-uds v0.2.7
+│       ├── bytes v0.4.12 (*)
+│       ├── futures v0.1.31
+│       ├── iovec v0.1.4 (*)
+│       ├── libc v0.2.150
+│       ├── log v0.4.20
+│       ├── mio v0.6.23 (*)
+│       ├── mio-uds v0.6.8
+│       │   ├── iovec v0.1.4 (*)
+│       │   ├── libc v0.2.150
+│       │   └── mio v0.6.23 (*)
+│       ├── tokio-codec v0.1.2 (*)
+│       ├── tokio-io v0.1.13 (*)
+│       └── tokio-reactor v0.1.12 (*)
+├── udev v0.2.0 (*)
+└── uuid v0.7.4
+pi v0.1.0 (/workspaces/wireless-communication/src/pi)
+├── bluster v0.1.3
+│   ├── dbus v0.8.4
+│   │   ├── futures v0.3.29
+│   │   │   ├── futures-channel v0.3.29
+│   │   │   │   ├── futures-core v0.3.29
+│   │   │   │   └── futures-sink v0.3.29
+│   │   │   ├── futures-core v0.3.29
+│   │   │   ├── futures-executor v0.3.29
+│   │   │   │   ├── futures-core v0.3.29
+│   │   │   │   ├── futures-task v0.3.29
+│   │   │   │   └── futures-util v0.3.29
+│   │   │   │       ├── futures-channel v0.3.29 (*)
+│   │   │   │       ├── futures-core v0.3.29
+│   │   │   │       ├── futures-io v0.3.29
+│   │   │   │       ├── futures-macro v0.3.29 (proc-macro)
+│   │   │   │       │   ├── proc-macro2 v1.0.70
+│   │   │   │       │   │   └── unicode-ident v1.0.12
+│   │   │   │       │   ├── quote v1.0.33
+│   │   │   │       │   │   └── proc-macro2 v1.0.70 (*)
+│   │   │   │       │   └── syn v2.0.39
+│   │   │   │       │       ├── proc-macro2 v1.0.70 (*)
+│   │   │   │       │       ├── quote v1.0.33 (*)
+│   │   │   │       │       └── unicode-ident v1.0.12
+│   │   │   │       ├── futures-sink v0.3.29
+│   │   │   │       ├── futures-task v0.3.29
+│   │   │   │       ├── memchr v2.6.4
+│   │   │   │       ├── pin-project-lite v0.2.13
+│   │   │   │       ├── pin-utils v0.1.0
+│   │   │   │       └── slab v0.4.9
+│   │   │   │           [build-dependencies]
+│   │   │   │           └── autocfg v1.1.0
+│   │   │   ├── futures-io v0.3.29
+│   │   │   ├── futures-sink v0.3.29
+│   │   │   ├── futures-task v0.3.29
+│   │   │   └── futures-util v0.3.29 (*)
+│   │   ├── libc v0.2.150
+│   │   └── libdbus-sys v0.2.5
+│   │       [build-dependencies]
+│   │       ├── cc v1.0.83
+│   │       │   └── libc v0.2.150
+│   │       └── pkg-config v0.3.27
+│   ├── dbus-crossroads v0.2.2
+│   │   └── dbus v0.8.4 (*)
+│   ├── dbus-tokio v0.5.2
+│   │   ├── dbus v0.8.4 (*)
+│   │   ├── libc v0.2.150
+│   │   ├── mio v0.6.23
+│   │   │   ├── cfg-if v0.1.10
+│   │   │   ├── iovec v0.1.4
+│   │   │   │   └── libc v0.2.150
+│   │   │   ├── libc v0.2.150
+│   │   │   ├── log v0.4.20
+│   │   │   ├── net2 v0.2.39
+│   │   │   │   ├── cfg-if v0.1.10
+│   │   │   │   └── libc v0.2.150
+│   │   │   └── slab v0.4.9 (*)
+│   │   └── tokio v0.2.25
+│   │       ├── bytes v0.5.6
+│   │       ├── futures-core v0.3.29
+│   │       ├── lazy_static v1.4.0
+│   │       ├── mio v0.6.23 (*)
+│   │       ├── num_cpus v1.16.0
+│   │       │   └── libc v0.2.150
+│   │       ├── pin-project-lite v0.1.12
+│   │       ├── slab v0.4.9 (*)
+│   │       └── tokio-macros v0.2.6 (proc-macro)
+│   │           ├── proc-macro2 v1.0.70 (*)
+│   │           ├── quote v1.0.33 (*)
+│   │           └── syn v1.0.109
+│   │               ├── proc-macro2 v1.0.70 (*)
+│   │               ├── quote v1.0.33 (*)
+│   │               └── unicode-ident v1.0.12
+│   ├── futures v0.3.29 (*)
+│   ├── log v0.4.20
+│   ├── tokio v0.2.25 (*)
+│   └── uuid v0.8.2
+├── crossbeam v0.6.0
+│   ├── cfg-if v0.1.10
+│   ├── crossbeam-channel v0.3.9
+│   │   └── crossbeam-utils v0.6.6
+│   │       ├── cfg-if v0.1.10
+│   │       └── lazy_static v1.4.0
+│   ├── crossbeam-deque v0.6.3
+│   │   ├── crossbeam-epoch v0.7.2
+│   │   │   ├── arrayvec v0.4.12
+│   │   │   │   └── nodrop v0.1.14
+│   │   │   ├── cfg-if v0.1.10
+│   │   │   ├── crossbeam-utils v0.6.6 (*)
+│   │   │   ├── lazy_static v1.4.0
+│   │   │   ├── memoffset v0.5.6
+│   │   │   │   [build-dependencies]
+│   │   │   │   └── autocfg v1.1.0
+│   │   │   └── scopeguard v1.2.0
+│   │   └── crossbeam-utils v0.6.6 (*)
+│   ├── crossbeam-epoch v0.7.2 (*)
+│   ├── crossbeam-utils v0.6.6 (*)
+│   ├── lazy_static v1.4.0
+│   ├── num_cpus v1.16.0 (*)
+│   └── parking_lot v0.7.1
+│       ├── lock_api v0.1.5
+│       │   ├── owning_ref v0.4.1
+│       │   │   └── stable_deref_trait v1.2.0
+│       │   └── scopeguard v0.3.3
+│       └── parking_lot_core v0.4.0
+│           ├── libc v0.2.150
+│           ├── rand v0.6.5
+│           │   ├── libc v0.2.150
+│           │   ├── rand_chacha v0.1.1
+│           │   │   └── rand_core v0.3.1
+│           │   │       └── rand_core v0.4.2
+│           │   │   [build-dependencies]
+│           │   │   └── autocfg v0.1.8
+│           │   │       └── autocfg v1.1.0
+│           │   ├── rand_core v0.4.2
+│           │   ├── rand_hc v0.1.0
+│           │   │   └── rand_core v0.3.1 (*)
+│           │   ├── rand_isaac v0.1.1
+│           │   │   └── rand_core v0.3.1 (*)
+│           │   ├── rand_jitter v0.1.4
+│           │   │   └── rand_core v0.4.2
+│           │   ├── rand_os v0.1.3
+│           │   │   ├── libc v0.2.150
+│           │   │   └── rand_core v0.4.2
+│           │   ├── rand_pcg v0.1.2
+│           │   │   └── rand_core v0.4.2
+│           │   │   [build-dependencies]
+│           │   │   └── autocfg v0.1.8 (*)
+│           │   └── rand_xorshift v0.1.1
+│           │       └── rand_core v0.3.1 (*)
+│           │   [build-dependencies]
+│           │   └── autocfg v0.1.8 (*)
+│           └── smallvec v0.6.14
+│               └── maybe-uninit v2.0.0
+│           [build-dependencies]
+│           └── rustc_version v0.2.3
+│               └── semver v0.9.0
+│                   └── semver-parser v0.7.0
+├── futures v0.1.31
+├── keycode v0.1.2
+│   └── bitflags v1.3.2
+│   [build-dependencies]
+│   ├── quote v0.6.13
+│   │   └── proc-macro2 v0.4.30
+│   │       └── unicode-xid v0.1.0
+│   └── regex v1.10.2
+│       ├── aho-corasick v1.1.2
+│       │   └── memchr v2.6.4
+│       ├── memchr v2.6.4
+│       ├── regex-automata v0.4.3
+│       │   ├── aho-corasick v1.1.2 (*)
+│       │   ├── memchr v2.6.4
+│       │   └── regex-syntax v0.8.2
+│       └── regex-syntax v0.8.2
+├── libdbus-sys v0.2.5 (*)
+├── nix v0.13.1
+│   ├── bitflags v1.3.2
+│   ├── cfg-if v0.1.10
+│   ├── libc v0.2.150
+│   └── void v1.0.2
+├── systemstat v0.1.12
+│   ├── bytesize v1.3.0
+│   ├── chrono v0.4.31
+│   │   ├── iana-time-zone v0.1.58
+│   │   └── num-traits v0.2.17
+│   │       [build-dependencies]
+│   │       └── autocfg v1.1.0
+│   ├── lazy_static v1.4.0
+│   ├── libc v0.2.150
+│   └── nom v7.1.3
+│       ├── memchr v2.6.4
+│       └── minimal-lexical v0.2.1
+├── tokio v0.1.22
+│   ├── bytes v0.4.12
+│   │   ├── byteorder v1.5.0
+│   │   └── iovec v0.1.4 (*)
+│   ├── futures v0.1.31
+│   ├── mio v0.6.23 (*)
+│   ├── num_cpus v1.16.0 (*)
+│   ├── tokio-codec v0.1.2
+│   │   ├── bytes v0.4.12 (*)
+│   │   ├── futures v0.1.31
+│   │   └── tokio-io v0.1.13
+│   │       ├── bytes v0.4.12 (*)
+│   │       ├── futures v0.1.31
+│   │       └── log v0.4.20
+│   ├── tokio-current-thread v0.1.7
+│   │   ├── futures v0.1.31
+│   │   └── tokio-executor v0.1.10
+│   │       ├── crossbeam-utils v0.7.2
+│   │       │   ├── cfg-if v0.1.10
+│   │       │   └── lazy_static v1.4.0
+│   │       │   [build-dependencies]
+│   │       │   └── autocfg v1.1.0
+│   │       └── futures v0.1.31
+│   ├── tokio-executor v0.1.10 (*)
+│   ├── tokio-fs v0.1.7
+│   │   ├── futures v0.1.31
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-threadpool v0.1.18
+│   │       ├── crossbeam-deque v0.7.4
+│   │       │   ├── crossbeam-epoch v0.8.2
+│   │       │   │   ├── cfg-if v0.1.10
+│   │       │   │   ├── crossbeam-utils v0.7.2 (*)
+│   │       │   │   ├── lazy_static v1.4.0
+│   │       │   │   ├── maybe-uninit v2.0.0
+│   │       │   │   ├── memoffset v0.5.6 (*)
+│   │       │   │   └── scopeguard v1.2.0
+│   │       │   │   [build-dependencies]
+│   │       │   │   └── autocfg v1.1.0
+│   │       │   ├── crossbeam-utils v0.7.2 (*)
+│   │       │   └── maybe-uninit v2.0.0
+│   │       ├── crossbeam-queue v0.2.3
+│   │       │   ├── cfg-if v0.1.10
+│   │       │   ├── crossbeam-utils v0.7.2 (*)
+│   │       │   └── maybe-uninit v2.0.0
+│   │       ├── crossbeam-utils v0.7.2 (*)
+│   │       ├── futures v0.1.31
+│   │       ├── lazy_static v1.4.0
+│   │       ├── log v0.4.20
+│   │       ├── num_cpus v1.16.0 (*)
+│   │       ├── slab v0.4.9 (*)
+│   │       └── tokio-executor v0.1.10 (*)
+│   ├── tokio-io v0.1.13 (*)
+│   ├── tokio-reactor v0.1.12
+│   │   ├── crossbeam-utils v0.7.2 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── lazy_static v1.4.0
+│   │   ├── log v0.4.20
+│   │   ├── mio v0.6.23 (*)
+│   │   ├── num_cpus v1.16.0 (*)
+│   │   ├── parking_lot v0.9.0
+│   │   │   ├── lock_api v0.3.4
+│   │   │   │   └── scopeguard v1.2.0
+│   │   │   └── parking_lot_core v0.6.3
+│   │   │       ├── cfg-if v0.1.10
+│   │   │       ├── libc v0.2.150
+│   │   │       └── smallvec v0.6.14 (*)
+│   │   │       [build-dependencies]
+│   │   │       └── rustc_version v0.2.3 (*)
+│   │   │   [build-dependencies]
+│   │   │   └── rustc_version v0.2.3 (*)
+│   │   ├── slab v0.4.9 (*)
+│   │   ├── tokio-executor v0.1.10 (*)
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-sync v0.1.8
+│   │       ├── fnv v1.0.7
+│   │       └── futures v0.1.31
+│   ├── tokio-sync v0.1.8 (*)
+│   ├── tokio-tcp v0.1.4
+│   │   ├── bytes v0.4.12 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── iovec v0.1.4 (*)
+│   │   ├── mio v0.6.23 (*)
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-reactor v0.1.12 (*)
+│   ├── tokio-threadpool v0.1.18 (*)
+│   ├── tokio-timer v0.2.13
+│   │   ├── crossbeam-utils v0.7.2 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── slab v0.4.9 (*)
+│   │   └── tokio-executor v0.1.10 (*)
+│   ├── tokio-udp v0.1.6
+│   │   ├── bytes v0.4.12 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── log v0.4.20
+│   │   ├── mio v0.6.23 (*)
+│   │   ├── tokio-codec v0.1.2 (*)
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-reactor v0.1.12 (*)
+│   └── tokio-uds v0.2.7
+│       ├── bytes v0.4.12 (*)
+│       ├── futures v0.1.31
+│       ├── iovec v0.1.4 (*)
+│       ├── libc v0.2.150
+│       ├── log v0.4.20
+│       ├── mio v0.6.23 (*)
+│       ├── mio-uds v0.6.8
+│       │   ├── iovec v0.1.4 (*)
+│       │   ├── libc v0.2.150
+│       │   └── mio v0.6.23 (*)
+│       ├── tokio-codec v0.1.2 (*)
+│       ├── tokio-io v0.1.13 (*)
+│       └── tokio-reactor v0.1.12 (*)
+├── udev v0.2.0
+│   ├── libc v0.2.150
+│   └── libudev-sys v0.1.4
+│       └── libc v0.2.150
+│       [build-dependencies]
+│       └── pkg-config v0.3.27
+└── uuid v0.7.4
+pi v0.1.0 (/workspaces/wireless-communication/src/pi)
+├── bluster v0.1.3
+│   ├── dbus v0.8.4
+│   │   ├── futures v0.3.29
+│   │   │   ├── futures-channel v0.3.29
+│   │   │   │   ├── futures-core v0.3.29
+│   │   │   │   └── futures-sink v0.3.29
+│   │   │   ├── futures-core v0.3.29
+│   │   │   ├── futures-executor v0.3.29
+│   │   │   │   ├── futures-core v0.3.29
+│   │   │   │   ├── futures-task v0.3.29
+│   │   │   │   └── futures-util v0.3.29
+│   │   │   │       ├── futures-channel v0.3.29 (*)
+│   │   │   │       ├── futures-core v0.3.29
+│   │   │   │       ├── futures-io v0.3.29
+│   │   │   │       ├── futures-macro v0.3.29 (proc-macro)
+│   │   │   │       │   ├── proc-macro2 v1.0.70
+│   │   │   │       │   │   └── unicode-ident v1.0.12
+│   │   │   │       │   ├── quote v1.0.33
+│   │   │   │       │   │   └── proc-macro2 v1.0.70 (*)
+│   │   │   │       │   └── syn v2.0.39
+│   │   │   │       │       ├── proc-macro2 v1.0.70 (*)
+│   │   │   │       │       ├── quote v1.0.33 (*)
+│   │   │   │       │       └── unicode-ident v1.0.12
+│   │   │   │       ├── futures-sink v0.3.29
+│   │   │   │       ├── futures-task v0.3.29
+│   │   │   │       ├── memchr v2.6.4
+│   │   │   │       ├── pin-project-lite v0.2.13
+│   │   │   │       ├── pin-utils v0.1.0
+│   │   │   │       └── slab v0.4.9
+│   │   │   │           [build-dependencies]
+│   │   │   │           └── autocfg v1.1.0
+│   │   │   ├── futures-io v0.3.29
+│   │   │   ├── futures-sink v0.3.29
+│   │   │   ├── futures-task v0.3.29
+│   │   │   └── futures-util v0.3.29 (*)
+│   │   ├── libc v0.2.150
+│   │   └── libdbus-sys v0.2.5
+│   │       [build-dependencies]
+│   │       ├── cc v1.0.83
+│   │       │   └── libc v0.2.150
+│   │       └── pkg-config v0.3.27
+│   ├── dbus-crossroads v0.2.2
+│   │   └── dbus v0.8.4 (*)
+│   ├── dbus-tokio v0.5.2
+│   │   ├── dbus v0.8.4 (*)
+│   │   ├── libc v0.2.150
+│   │   ├── mio v0.6.23
+│   │   │   ├── cfg-if v0.1.10
+│   │   │   ├── iovec v0.1.4
+│   │   │   │   └── libc v0.2.150
+│   │   │   ├── libc v0.2.150
+│   │   │   ├── log v0.4.20
+│   │   │   ├── net2 v0.2.39
+│   │   │   │   ├── cfg-if v0.1.10
+│   │   │   │   └── libc v0.2.150
+│   │   │   └── slab v0.4.9 (*)
+│   │   └── tokio v0.2.25
+│   │       ├── bytes v0.5.6
+│   │       ├── futures-core v0.3.29
+│   │       ├── lazy_static v1.4.0
+│   │       ├── mio v0.6.23 (*)
+│   │       ├── num_cpus v1.16.0
+│   │       │   └── libc v0.2.150
+│   │       ├── pin-project-lite v0.1.12
+│   │       ├── slab v0.4.9 (*)
+│   │       └── tokio-macros v0.2.6 (proc-macro)
+│   │           ├── proc-macro2 v1.0.70 (*)
+│   │           ├── quote v1.0.33 (*)
+│   │           └── syn v1.0.109
+│   │               ├── proc-macro2 v1.0.70 (*)
+│   │               ├── quote v1.0.33 (*)
+│   │               └── unicode-ident v1.0.12
+│   ├── futures v0.3.29 (*)
+│   ├── log v0.4.20
+│   ├── tokio v0.2.25 (*)
+│   └── uuid v0.8.2
+├── crossbeam v0.6.0
+│   ├── cfg-if v0.1.10
+│   ├── crossbeam-channel v0.3.9
+│   │   └── crossbeam-utils v0.6.6
+│   │       ├── cfg-if v0.1.10
+│   │       └── lazy_static v1.4.0
+│   ├── crossbeam-deque v0.6.3
+│   │   ├── crossbeam-epoch v0.7.2
+│   │   │   ├── arrayvec v0.4.12
+│   │   │   │   └── nodrop v0.1.14
+│   │   │   ├── cfg-if v0.1.10
+│   │   │   ├── crossbeam-utils v0.6.6 (*)
+│   │   │   ├── lazy_static v1.4.0
+│   │   │   ├── memoffset v0.5.6
+│   │   │   │   [build-dependencies]
+│   │   │   │   └── autocfg v1.1.0
+│   │   │   └── scopeguard v1.2.0
+│   │   └── crossbeam-utils v0.6.6 (*)
+│   ├── crossbeam-epoch v0.7.2 (*)
+│   ├── crossbeam-utils v0.6.6 (*)
+│   ├── lazy_static v1.4.0
+│   ├── num_cpus v1.16.0 (*)
+│   └── parking_lot v0.7.1
+│       ├── lock_api v0.1.5
+│       │   ├── owning_ref v0.4.1
+│       │   │   └── stable_deref_trait v1.2.0
+│       │   └── scopeguard v0.3.3
+│       └── parking_lot_core v0.4.0
+│           ├── libc v0.2.150
+│           ├── rand v0.6.5
+│           │   ├── libc v0.2.150
+│           │   ├── rand_chacha v0.1.1
+│           │   │   └── rand_core v0.3.1
+│           │   │       └── rand_core v0.4.2
+│           │   │   [build-dependencies]
+│           │   │   └── autocfg v0.1.8
+│           │   │       └── autocfg v1.1.0
+│           │   ├── rand_core v0.4.2
+│           │   ├── rand_hc v0.1.0
+│           │   │   └── rand_core v0.3.1 (*)
+│           │   ├── rand_isaac v0.1.1
+│           │   │   └── rand_core v0.3.1 (*)
+│           │   ├── rand_jitter v0.1.4
+│           │   │   └── rand_core v0.4.2
+│           │   ├── rand_os v0.1.3
+│           │   │   ├── libc v0.2.150
+│           │   │   └── rand_core v0.4.2
+│           │   ├── rand_pcg v0.1.2
+│           │   │   └── rand_core v0.4.2
+│           │   │   [build-dependencies]
+│           │   │   └── autocfg v0.1.8 (*)
+│           │   └── rand_xorshift v0.1.1
+│           │       └── rand_core v0.3.1 (*)
+│           │   [build-dependencies]
+│           │   └── autocfg v0.1.8 (*)
+│           └── smallvec v0.6.14
+│               └── maybe-uninit v2.0.0
+│           [build-dependencies]
+│           └── rustc_version v0.2.3
+│               └── semver v0.9.0
+│                   └── semver-parser v0.7.0
+├── futures v0.1.31
+├── keycode v0.1.2
+│   └── bitflags v1.3.2
+│   [build-dependencies]
+│   ├── quote v0.6.13
+│   │   └── proc-macro2 v0.4.30
+│   │       └── unicode-xid v0.1.0
+│   └── regex v1.10.2
+│       ├── aho-corasick v1.1.2
+│       │   └── memchr v2.6.4
+│       ├── memchr v2.6.4
+│       ├── regex-automata v0.4.3
+│       │   ├── aho-corasick v1.1.2 (*)
+│       │   ├── memchr v2.6.4
+│       │   └── regex-syntax v0.8.2
+│       └── regex-syntax v0.8.2
+├── libdbus-sys v0.2.5 (*)
+├── nix v0.13.1
+│   ├── bitflags v1.3.2
+│   ├── cfg-if v0.1.10
+│   ├── libc v0.2.150
+│   └── void v1.0.2
+├── systemstat v0.1.12
+│   ├── bytesize v1.3.0
+│   ├── chrono v0.4.31
+│   │   ├── iana-time-zone v0.1.58
+│   │   └── num-traits v0.2.17
+│   │       [build-dependencies]
+│   │       └── autocfg v1.1.0
+│   ├── lazy_static v1.4.0
+│   ├── libc v0.2.150
+│   └── nom v7.1.3
+│       ├── memchr v2.6.4
+│       └── minimal-lexical v0.2.1
+├── tokio v0.1.22
+│   ├── bytes v0.4.12
+│   │   ├── byteorder v1.5.0
+│   │   └── iovec v0.1.4 (*)
+│   ├── futures v0.1.31
+│   ├── mio v0.6.23 (*)
+│   ├── num_cpus v1.16.0 (*)
+│   ├── tokio-codec v0.1.2
+│   │   ├── bytes v0.4.12 (*)
+│   │   ├── futures v0.1.31
+│   │   └── tokio-io v0.1.13
+│   │       ├── bytes v0.4.12 (*)
+│   │       ├── futures v0.1.31
+│   │       └── log v0.4.20
+│   ├── tokio-current-thread v0.1.7
+│   │   ├── futures v0.1.31
+│   │   └── tokio-executor v0.1.10
+│   │       ├── crossbeam-utils v0.7.2
+│   │       │   ├── cfg-if v0.1.10
+│   │       │   └── lazy_static v1.4.0
+│   │       │   [build-dependencies]
+│   │       │   └── autocfg v1.1.0
+│   │       └── futures v0.1.31
+│   ├── tokio-executor v0.1.10 (*)
+│   ├── tokio-fs v0.1.7
+│   │   ├── futures v0.1.31
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-threadpool v0.1.18
+│   │       ├── crossbeam-deque v0.7.4
+│   │       │   ├── crossbeam-epoch v0.8.2
+│   │       │   │   ├── cfg-if v0.1.10
+│   │       │   │   ├── crossbeam-utils v0.7.2 (*)
+│   │       │   │   ├── lazy_static v1.4.0
+│   │       │   │   ├── maybe-uninit v2.0.0
+│   │       │   │   ├── memoffset v0.5.6 (*)
+│   │       │   │   └── scopeguard v1.2.0
+│   │       │   │   [build-dependencies]
+│   │       │   │   └── autocfg v1.1.0
+│   │       │   ├── crossbeam-utils v0.7.2 (*)
+│   │       │   └── maybe-uninit v2.0.0
+│   │       ├── crossbeam-queue v0.2.3
+│   │       │   ├── cfg-if v0.1.10
+│   │       │   ├── crossbeam-utils v0.7.2 (*)
+│   │       │   └── maybe-uninit v2.0.0
+│   │       ├── crossbeam-utils v0.7.2 (*)
+│   │       ├── futures v0.1.31
+│   │       ├── lazy_static v1.4.0
+│   │       ├── log v0.4.20
+│   │       ├── num_cpus v1.16.0 (*)
+│   │       ├── slab v0.4.9 (*)
+│   │       └── tokio-executor v0.1.10 (*)
+│   ├── tokio-io v0.1.13 (*)
+│   ├── tokio-reactor v0.1.12
+│   │   ├── crossbeam-utils v0.7.2 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── lazy_static v1.4.0
+│   │   ├── log v0.4.20
+│   │   ├── mio v0.6.23 (*)
+│   │   ├── num_cpus v1.16.0 (*)
+│   │   ├── parking_lot v0.9.0
+│   │   │   ├── lock_api v0.3.4
+│   │   │   │   └── scopeguard v1.2.0
+│   │   │   └── parking_lot_core v0.6.3
+│   │   │       ├── cfg-if v0.1.10
+│   │   │       ├── libc v0.2.150
+│   │   │       └── smallvec v0.6.14 (*)
+│   │   │       [build-dependencies]
+│   │   │       └── rustc_version v0.2.3 (*)
+│   │   │   [build-dependencies]
+│   │   │   └── rustc_version v0.2.3 (*)
+│   │   ├── slab v0.4.9 (*)
+│   │   ├── tokio-executor v0.1.10 (*)
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-sync v0.1.8
+│   │       ├── fnv v1.0.7
+│   │       └── futures v0.1.31
+│   ├── tokio-sync v0.1.8 (*)
+│   ├── tokio-tcp v0.1.4
+│   │   ├── bytes v0.4.12 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── iovec v0.1.4 (*)
+│   │   ├── mio v0.6.23 (*)
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-reactor v0.1.12 (*)
+│   ├── tokio-threadpool v0.1.18 (*)
+│   ├── tokio-timer v0.2.13
+│   │   ├── crossbeam-utils v0.7.2 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── slab v0.4.9 (*)
+│   │   └── tokio-executor v0.1.10 (*)
+│   ├── tokio-udp v0.1.6
+│   │   ├── bytes v0.4.12 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── log v0.4.20
+│   │   ├── mio v0.6.23 (*)
+│   │   ├── tokio-codec v0.1.2 (*)
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-reactor v0.1.12 (*)
+│   └── tokio-uds v0.2.7
+│       ├── bytes v0.4.12 (*)
+│       ├── futures v0.1.31
+│       ├── iovec v0.1.4 (*)
+│       ├── libc v0.2.150
+│       ├── log v0.4.20
+│       ├── mio v0.6.23 (*)
+│       ├── mio-uds v0.6.8
+│       │   ├── iovec v0.1.4 (*)
+│       │   ├── libc v0.2.150
+│       │   └── mio v0.6.23 (*)
+│       ├── tokio-codec v0.1.2 (*)
+│       ├── tokio-io v0.1.13 (*)
+│       └── tokio-reactor v0.1.12 (*)
+├── udev v0.2.0
+│   ├── libc v0.2.150
+│   └── libudev-sys v0.1.4
+│       └── libc v0.2.150
+│       [build-dependencies]
+│       └── pkg-config v0.3.27
+└── uuid v0.7.4
+pi v0.1.0 (/workspaces/wireless-communication/src/pi)
+├── bluster v0.1.3
+│   ├── dbus v0.8.4
+│   │   ├── futures v0.3.29
+│   │   │   ├── futures-channel v0.3.29
+│   │   │   │   ├── futures-core v0.3.29
+│   │   │   │   └── futures-sink v0.3.29
+│   │   │   ├── futures-core v0.3.29
+│   │   │   ├── futures-executor v0.3.29
+│   │   │   │   ├── futures-core v0.3.29
+│   │   │   │   ├── futures-task v0.3.29
+│   │   │   │   └── futures-util v0.3.29
+│   │   │   │       ├── futures-channel v0.3.29 (*)
+│   │   │   │       ├── futures-core v0.3.29
+│   │   │   │       ├── futures-io v0.3.29
+│   │   │   │       ├── futures-macro v0.3.29 (proc-macro)
+│   │   │   │       │   ├── proc-macro2 v1.0.70
+│   │   │   │       │   │   └── unicode-ident v1.0.12
+│   │   │   │       │   ├── quote v1.0.33
+│   │   │   │       │   │   └── proc-macro2 v1.0.70 (*)
+│   │   │   │       │   └── syn v2.0.39
+│   │   │   │       │       ├── proc-macro2 v1.0.70 (*)
+│   │   │   │       │       ├── quote v1.0.33 (*)
+│   │   │   │       │       └── unicode-ident v1.0.12
+│   │   │   │       ├── futures-sink v0.3.29
+│   │   │   │       ├── futures-task v0.3.29
+│   │   │   │       ├── memchr v2.6.4
+│   │   │   │       ├── pin-project-lite v0.2.13
+│   │   │   │       ├── pin-utils v0.1.0
+│   │   │   │       └── slab v0.4.9
+│   │   │   │           [build-dependencies]
+│   │   │   │           └── autocfg v1.1.0
+│   │   │   ├── futures-io v0.3.29
+│   │   │   ├── futures-sink v0.3.29
+│   │   │   ├── futures-task v0.3.29
+│   │   │   └── futures-util v0.3.29 (*)
+│   │   ├── libc v0.2.150
+│   │   └── libdbus-sys v0.2.5
+│   │       [build-dependencies]
+│   │       ├── cc v1.0.83
+│   │       │   └── libc v0.2.150
+│   │       └── pkg-config v0.3.27
+│   ├── dbus-crossroads v0.2.2
+│   │   └── dbus v0.8.4 (*)
+│   ├── dbus-tokio v0.5.2
+│   │   ├── dbus v0.8.4 (*)
+│   │   ├── libc v0.2.150
+│   │   ├── mio v0.6.23
+│   │   │   ├── cfg-if v0.1.10
+│   │   │   ├── iovec v0.1.4
+│   │   │   │   └── libc v0.2.150
+│   │   │   ├── libc v0.2.150
+│   │   │   ├── log v0.4.20
+│   │   │   ├── net2 v0.2.39
+│   │   │   │   ├── cfg-if v0.1.10
+│   │   │   │   └── libc v0.2.150
+│   │   │   └── slab v0.4.9 (*)
+│   │   └── tokio v0.2.25
+│   │       ├── bytes v0.5.6
+│   │       ├── futures-core v0.3.29
+│   │       ├── lazy_static v1.4.0
+│   │       ├── mio v0.6.23 (*)
+│   │       ├── num_cpus v1.16.0
+│   │       │   └── libc v0.2.150
+│   │       ├── pin-project-lite v0.1.12
+│   │       ├── slab v0.4.9 (*)
+│   │       └── tokio-macros v0.2.6 (proc-macro)
+│   │           ├── proc-macro2 v1.0.70 (*)
+│   │           ├── quote v1.0.33 (*)
+│   │           └── syn v1.0.109
+│   │               ├── proc-macro2 v1.0.70 (*)
+│   │               ├── quote v1.0.33 (*)
+│   │               └── unicode-ident v1.0.12
+│   ├── futures v0.3.29 (*)
+│   ├── log v0.4.20
+│   ├── tokio v0.2.25 (*)
+│   └── uuid v0.8.2
+├── futures v0.1.31
+├── keycode v0.1.2
+│   └── bitflags v1.3.2
+│   [build-dependencies]
+│   ├── quote v0.6.13
+│   │   └── proc-macro2 v0.4.30
+│   │       └── unicode-xid v0.1.0
+│   └── regex v1.10.2
+│       ├── aho-corasick v1.1.2
+│       │   └── memchr v2.6.4
+│       ├── memchr v2.6.4
+│       ├── regex-automata v0.4.3
+│       │   ├── aho-corasick v1.1.2 (*)
+│       │   ├── memchr v2.6.4
+│       │   └── regex-syntax v0.8.2
+│       └── regex-syntax v0.8.2
+├── libdbus-sys v0.2.5 (*)
+├── nix v0.13.1
+│   ├── bitflags v1.3.2
+│   ├── cfg-if v0.1.10
+│   ├── libc v0.2.150
+│   └── void v1.0.2
+├── systemstat v0.1.12
+│   ├── bytesize v1.3.0
+│   ├── chrono v0.4.31
+│   │   ├── iana-time-zone v0.1.58
+│   │   └── num-traits v0.2.17
+│   │       [build-dependencies]
+│   │       └── autocfg v1.1.0
+│   ├── lazy_static v1.4.0
+│   ├── libc v0.2.150
+│   └── nom v7.1.3
+│       ├── memchr v2.6.4
+│       └── minimal-lexical v0.2.1
+├── tokio v0.1.22
+│   ├── bytes v0.4.12
+│   │   ├── byteorder v1.5.0
+│   │   └── iovec v0.1.4 (*)
+│   ├── futures v0.1.31
+│   ├── mio v0.6.23 (*)
+│   ├── num_cpus v1.16.0 (*)
+│   ├── tokio-codec v0.1.2
+│   │   ├── bytes v0.4.12 (*)
+│   │   ├── futures v0.1.31
+│   │   └── tokio-io v0.1.13
+│   │       ├── bytes v0.4.12 (*)
+│   │       ├── futures v0.1.31
+│   │       └── log v0.4.20
+│   ├── tokio-current-thread v0.1.7
+│   │   ├── futures v0.1.31
+│   │   └── tokio-executor v0.1.10
+│   │       ├── crossbeam-utils v0.7.2
+│   │       │   ├── cfg-if v0.1.10
+│   │       │   └── lazy_static v1.4.0
+│   │       │   [build-dependencies]
+│   │       │   └── autocfg v1.1.0
+│   │       └── futures v0.1.31
+│   ├── tokio-executor v0.1.10 (*)
+│   ├── tokio-fs v0.1.7
+│   │   ├── futures v0.1.31
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-threadpool v0.1.18
+│   │       ├── crossbeam-deque v0.7.4
+│   │       │   ├── crossbeam-epoch v0.8.2
+│   │       │   │   ├── cfg-if v0.1.10
+│   │       │   │   ├── crossbeam-utils v0.7.2 (*)
+│   │       │   │   ├── lazy_static v1.4.0
+│   │       │   │   ├── maybe-uninit v2.0.0
+│   │       │   │   ├── memoffset v0.5.6
+│   │       │   │   │   [build-dependencies]
+│   │       │   │   │   └── autocfg v1.1.0
+│   │       │   │   └── scopeguard v1.2.0
+│   │       │   │   [build-dependencies]
+│   │       │   │   └── autocfg v1.1.0
+│   │       │   ├── crossbeam-utils v0.7.2 (*)
+│   │       │   └── maybe-uninit v2.0.0
+│   │       ├── crossbeam-queue v0.2.3
+│   │       │   ├── cfg-if v0.1.10
+│   │       │   ├── crossbeam-utils v0.7.2 (*)
+│   │       │   └── maybe-uninit v2.0.0
+│   │       ├── crossbeam-utils v0.7.2 (*)
+│   │       ├── futures v0.1.31
+│   │       ├── lazy_static v1.4.0
+│   │       ├── log v0.4.20
+│   │       ├── num_cpus v1.16.0 (*)
+│   │       ├── slab v0.4.9 (*)
+│   │       └── tokio-executor v0.1.10 (*)
+│   ├── tokio-io v0.1.13 (*)
+│   ├── tokio-reactor v0.1.12
+│   │   ├── crossbeam-utils v0.7.2 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── lazy_static v1.4.0
+│   │   ├── log v0.4.20
+│   │   ├── mio v0.6.23 (*)
+│   │   ├── num_cpus v1.16.0 (*)
+│   │   ├── parking_lot v0.9.0
+│   │   │   ├── lock_api v0.3.4
+│   │   │   │   └── scopeguard v1.2.0
+│   │   │   └── parking_lot_core v0.6.3
+│   │   │       ├── cfg-if v0.1.10
+│   │   │       ├── libc v0.2.150
+│   │   │       └── smallvec v0.6.14
+│   │   │           └── maybe-uninit v2.0.0
+│   │   │       [build-dependencies]
+│   │   │       └── rustc_version v0.2.3
+│   │   │           └── semver v0.9.0
+│   │   │               └── semver-parser v0.7.0
+│   │   │   [build-dependencies]
+│   │   │   └── rustc_version v0.2.3 (*)
+│   │   ├── slab v0.4.9 (*)
+│   │   ├── tokio-executor v0.1.10 (*)
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-sync v0.1.8
+│   │       ├── fnv v1.0.7
+│   │       └── futures v0.1.31
+│   ├── tokio-sync v0.1.8 (*)
+│   ├── tokio-tcp v0.1.4
+│   │   ├── bytes v0.4.12 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── iovec v0.1.4 (*)
+│   │   ├── mio v0.6.23 (*)
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-reactor v0.1.12 (*)
+│   ├── tokio-threadpool v0.1.18 (*)
+│   ├── tokio-timer v0.2.13
+│   │   ├── crossbeam-utils v0.7.2 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── slab v0.4.9 (*)
+│   │   └── tokio-executor v0.1.10 (*)
+│   ├── tokio-udp v0.1.6
+│   │   ├── bytes v0.4.12 (*)
+│   │   ├── futures v0.1.31
+│   │   ├── log v0.4.20
+│   │   ├── mio v0.6.23 (*)
+│   │   ├── tokio-codec v0.1.2 (*)
+│   │   ├── tokio-io v0.1.13 (*)
+│   │   └── tokio-reactor v0.1.12 (*)
+│   └── tokio-uds v0.2.7
+│       ├── bytes v0.4.12 (*)
+│       ├── futures v0.1.31
+│       ├── iovec v0.1.4 (*)
+│       ├── libc v0.2.150
+│       ├── log v0.4.20
+│       ├── mio v0.6.23 (*)
+│       ├── mio-uds v0.6.8
+│       │   ├── iovec v0.1.4 (*)
+│       │   ├── libc v0.2.150
+│       │   └── mio v0.6.23 (*)
+│       ├── tokio-codec v0.1.2 (*)
+│       ├── tokio-io v0.1.13 (*)
+│       └── tokio-reactor v0.1.12 (*)
+├── udev v0.2.0
+│   ├── libc v0.2.150
+│   └── libudev-sys v0.1.4
+│       └── libc v0.2.150
+│       [build-dependencies]
+│       └── pkg-config v0.3.27
+└── uuid v0.7.4
