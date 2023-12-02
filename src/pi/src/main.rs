@@ -1,57 +1,74 @@
-use btleplug::{api::{bleuuid::uuid_from_u16, Manager as _, Central, ScanFilter, CentralEvent}, platform::{Manager, Adapter}};
+use std::{collections::HashSet, sync::Arc, time::Duration};
+
+use tokio::{sync::Mutex, runtime::Runtime};
 use uuid::Uuid;
-use futures::stream::StreamExt;
 use anyhow::{Result, Context};
-use tracing::debug;
+use tracing::{debug, info};
+use bluster::{SdpShortUuid, Peripheral, gatt::service::Service};
+use lazy_static::lazy_static;
 
-const TEMPERATURE_CHARACTERISTIC_UUID : Uuid = uuid_from_u16(0xFFE9);
-const HUMIDITY_CHARACTERISTIC_UUID : Uuid = uuid_from_u16(0xFFE9);
+use crate::gatt::create_service;
 
-async fn get_central(manager: &Manager) -> Result<Option<Adapter>> {
-    let adapters = manager.adapters().await?;
-    Ok(adapters.into_iter().next())
+mod gatt;
+
+pub const TEMPERATURE_CHARACTERISTIC_UUID: u16 = 0x2A3D;
+pub const SERVICE_UUID: u16 = 0x2A3D;
+const ADVERTISE_NAME: &str = "SOME_NAME";
+
+lazy_static! {
+    pub static ref RUNTIME: Arc<Mutex<Runtime>> = Arc::new(Mutex::new(Runtime::new().context("Failed creating a tokio runtime").unwrap()));
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    tracing_subscriber::fmt::init();
+    tracing_subscriber::fmt().with_max_level(tracing::Level::DEBUG).init();
 
-    debug!("Temperature uuid {}", TEMPERATURE_CHARACTERISTIC_UUID);
-    debug!("Humidity uuid {}", HUMIDITY_CHARACTERISTIC_UUID);
+    let peripheral = make_peripheral().await.unwrap();
 
-    let manager = Manager::new().await.context("The BLE Manager could not create a new instance")?;
+    let runtime = RUNTIME.clone();
+    let runtime = runtime.lock().await;
 
-    let central = get_central(&manager).await?.expect("Some adapter from the manager");
+    runtime.spawn(async move {
+        info!("Powering on peripheral");
 
-    let mut events = central.events().await?;
+        while !peripheral.is_powered().await.unwrap() {};
 
-    central.start_scan(ScanFilter::default()).await?;
+        peripheral.start_advertising(ADVERTISE_NAME, &[]).await.context("Failed to advertise").unwrap();
+        info!("Start advertising {}", ADVERTISE_NAME);
 
-    while let Some(event) = events.next().await {
-        match event {
-            CentralEvent::DeviceDiscovered(id) => {
-                debug!("DeviceDiscoverd: {:?}", id);
-            }
-            CentralEvent::DeviceUpdated(id) => {
-                debug!("DeviceUpdated: {:?}", id);
-            }
-            CentralEvent::DeviceConnected(id) => {
-                debug!("DeviceConnected: {:?}", id);
-            }
-            CentralEvent::DeviceDisconnected(id) => {
-                debug!("DeviceDisconnected: {:?}", id);
-            }
-            CentralEvent::ManufacturerDataAdvertisement { id, manufacturer_data } => {
-                debug!("ManufacturerDataAdvertisement: {:?} {:?}", id, manufacturer_data);
-            }
-            CentralEvent::ServiceDataAdvertisement { id, service_data } => {
-                debug!("ServiceDataAdvertisement: {:?} {:?}", id, service_data);
-            }
-            CentralEvent::ServicesAdvertisement { id, services } => {
-                debug!("ServicesAdvertisement: {:?} {:?}", id, services);
-            }
+        // Wait while peripheral is advertising
+        while peripheral.is_advertising().await.unwrap() {
+        
         }
-    }
+        info!("Peripheral stopped advertising");
+    });
 
-    Ok(())
+    loop {
+        // TODO: make ctrl-c work
+        std::thread::sleep(Duration::from_millis(250));
+    }
+}
+
+async fn make_peripheral() -> Result<Peripheral> {
+    debug!("Starting to make peripheral");
+    let peripheral = Peripheral::new().await.context("Could not make peripheral")?;
+
+    debug!("Adding service");
+    peripheral.add_service(&create_service().await).context("Could not add service to peripheral")?;
+
+    debug!("Powering the peripheral");
+    while !peripheral.is_powered().await? { }
+
+    debug!("Registering gatt");
+    peripheral.register_gatt().await.context("Failed to register gatt service")?;
+
+    Ok(peripheral)
+}
+
+fn make_service() -> (Uuid, Service) {
+    let mut characteristics = HashSet::new();
+    // characteristics.insert(make_temperature_characteristic());
+    let uuid = Uuid::from_sdp_short_uuid(SERVICE_UUID);
+
+    (uuid, Service::new(uuid, true, characteristics))
 }
