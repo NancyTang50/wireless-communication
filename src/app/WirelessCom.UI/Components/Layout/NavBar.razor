@@ -16,6 +16,7 @@
                     <!-- primary nav -->
                     <div class="hidden items-center space-x-1 md:flex">
                         <NavItem Text="Home" Url="/"></NavItem>
+                        <NavItem Text="Connectivity" Url="/connectivity"></NavItem>
                     </div>
                 </div>
             </div>
@@ -24,6 +25,7 @@
         <!-- mobile menu -->
         <div hidden="@IsNavHidden" class="mobile-menu shadow-2xl md:hidden">
             <MobileNavItem OnClickCallback="@HideNav" Text="Home" Url="/"></MobileNavItem>
+            <MobileNavItem OnClickCallback="@HideNav" Text="Connectivity" Url="/connectivity"></MobileNavItem>
         </div>
     </nav>
 </div>

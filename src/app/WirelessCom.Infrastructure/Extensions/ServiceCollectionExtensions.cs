@@ -1,5 +1,8 @@
-﻿using WirelessCom.Application.Extensions;
+﻿using Plugin.BLE;
+using WirelessCom.Application.Extensions;
+using WirelessCom.Application.Services;
 using WirelessCom.Infrastructure.Persistence.Extensions;
+using WirelessCom.Infrastructure.Services;
 
 namespace WirelessCom.Infrastructure.Extensions;
 
@@ -10,6 +13,11 @@ public static class ServiceCollectionExtensions
         serviceCollection.RegisterApplicationLayer();
         serviceCollection.RegisterPersistenceLayer();
 
+        serviceCollection.AddScoped(_ => CrossBluetoothLE.Current);
+        serviceCollection.AddScoped(_ => CrossBluetoothLE.Current.Adapter);
+
+        serviceCollection.AddScoped<IBleService, BleService>();
+        
         return serviceCollection;
     }
 }
