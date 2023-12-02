@@ -30,6 +30,11 @@ public class BleService : IBleService
         return false;
     }
 
+    public BluetoothState GetBluetoothState()
+    {
+        return (BluetoothState)_bluetoothLe.State;
+    }
+
     private void InitOnBleStateChanged()
     {
         _bluetoothLe.StateChanged += (_, args) => OnBleStateChangedEvent?.Invoke(this, (BluetoothState)args.NewState);

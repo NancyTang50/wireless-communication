@@ -8,4 +8,5 @@ public interface IBleService
     public event OnBleStateChanged OnBleStateChangedEvent;
 
     Task<bool> HasCorrectPermissions();
+    BluetoothState GetBluetoothState();
 }

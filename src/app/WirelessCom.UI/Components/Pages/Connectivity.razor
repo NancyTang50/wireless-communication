@@ -6,5 +6,9 @@
 <p>@ViewModel.BluetoothStateMessage</p>
 
 @code {
-    
+    protected override async Task OnInitializedAsync()
+    {
+        // Todo: Look into this BS. Cus this should be required......
+        ViewModel.PropertyChanged += (_, _) => StateHasChanged();
+    }
 }

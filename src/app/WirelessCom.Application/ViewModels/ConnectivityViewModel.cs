@@ -14,14 +14,15 @@ public partial class ConnectivityViewModel : BaseViewModel
         _bleService = bleService;
         _bleService.HasCorrectPermissions();
         
+        BluetoothStateMessage = _bleService.GetBluetoothState().ToReadableString();
         _bleService.OnBleStateChangedEvent += OnBleStateChanged;
     }
-
-    private void OnBleStateChanged(object source, BluetoothState bluetoothstate)
-    {
-        BluetoothStateMessage = bluetoothstate.ToReadableString();
-    }
-
+    
     [ObservableProperty]
-    private string _bluetoothStateMessage = "Unknown";
+    private string _bluetoothStateMessage;
+
+    private void OnBleStateChanged(object source, BluetoothState bluetoothState)
+    {
+        BluetoothStateMessage = bluetoothState.ToReadableString();
+    }
 }
