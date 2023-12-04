@@ -14,6 +14,7 @@ use tracing::info;
 use uuid::Uuid;
 
 use crate::{
+    ble_encode::BleEncode,
     gatt::characteristic::{CharacteristicCreator, GattEventHandler},
     TEMPERATURE_CHARACTERISTIC_UUID,
 };
@@ -74,7 +75,7 @@ impl GattEventHandler for TemperatureCharacteristic {
             bluster::gatt::event::Event::ReadRequest(read_request) => {
                 read_request
                     .response
-                    .send(Response::Success(23.5f32.to_le_bytes().to_vec()))
+                    .send(Response::Success(23.5f32.to_ble_bytes())) // 23.50 degrees
                     .unwrap();
             }
             bluster::gatt::event::Event::WriteRequest(_)

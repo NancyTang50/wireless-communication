@@ -7,6 +7,7 @@ use uuid::Uuid;
 
 use crate::gatt::create_service;
 
+mod ble_encode;
 mod gatt;
 
 // NOTE: https://www.bluetooth.com/wp-content/uploads/Files/Specification/Assigned_Numbers.pdf
