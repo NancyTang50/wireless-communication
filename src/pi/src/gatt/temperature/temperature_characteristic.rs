@@ -74,7 +74,7 @@ impl GattEventHandler for TemperatureCharacteristic {
             bluster::gatt::event::Event::ReadRequest(read_request) => {
                 read_request
                     .response
-                    .send(Response::Success(vec![20]))
+                    .send(Response::Success(23.5f32.to_le_bytes().to_vec()))
                     .unwrap();
             }
             bluster::gatt::event::Event::WriteRequest(_)
