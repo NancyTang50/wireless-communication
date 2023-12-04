@@ -1,62 +1,85 @@
-use std::collections::HashSet;
-
+use async_trait::async_trait;
 use bluster::{
     gatt::{
         characteristic::{Characteristic, Properties, Read, Secure},
-        descriptor::Descriptor,
-        event::Response,
+        event::{Event, Response},
     },
     SdpShortUuid,
 };
-use futures::{channel::mpsc::channel, StreamExt};
-use tracing::debug;
+use futures::{
+    channel::mpsc::{channel, Receiver},
+    StreamExt,
+};
+use tracing::info;
 use uuid::Uuid;
 
 use crate::{
-    gatt::{create_gatt_characteristic_presentation_format, create_gatt_description},
+    gatt::characteristic::{CharacteristicCreator, GattEventHandler},
     TEMPERATURE_CHARACTERISTIC_UUID,
 };
 
-async fn create_descriptors() -> HashSet<Descriptor> {
-    let mut descriptors = HashSet::new();
-
-    descriptors.insert(create_gatt_description("Temperature").await);
-    descriptors.insert(create_gatt_characteristic_presentation_format(4, 1, 44327, 0, 0).await);
-
-    descriptors
+pub struct TemperatureCharacteristic {
+    rx: Receiver<Event>,
 }
 
-pub async fn create_temperature() -> Characteristic {
-    let (tx, mut rx) = channel(1);
+impl TemperatureCharacteristic {
+    fn new(rx: Receiver<Event>) -> Self {
+        Self { rx }
+    }
+}
 
-    tokio::spawn(async move {
-        loop {
-            if let Some(event) = rx.next().await {
-                debug!("Temperature event {:?}", event);
-                match event {
-                    bluster::gatt::event::Event::ReadRequest(read_request) => {
-                        read_request
-                            .response
-                            .send(Response::Success(vec![20]))
-                            .unwrap();
-                    }
-                    bluster::gatt::event::Event::WriteRequest(_) => todo!(),
-                    bluster::gatt::event::Event::NotifySubscribe(_) => todo!(),
-                    bluster::gatt::event::Event::NotifyUnsubscribe => todo!(),
-                }
+impl CharacteristicCreator<TemperatureCharacteristic> for TemperatureCharacteristic {
+    fn create_characteristic() -> Characteristic {
+        let (tx, rx) = channel(1);
+
+        let (mut handler, descriptors) = Self::create_handler_and_descriptors(
+            TemperatureCharacteristic::new(rx),
+            "Temperature",
+            4,
+            1,
+            44327,
+            0,
+            0,
+        );
+
+        tokio::spawn(async move {
+            loop {
+                handler.handle_requests().await;
             }
-        }
-    });
+        });
 
-    Characteristic::new(
-        Uuid::from_sdp_short_uuid(TEMPERATURE_CHARACTERISTIC_UUID),
-        Properties::new(
-            Some(Read(Secure::Insecure(tx.clone()))),
-            None,
-            None,
-            Some(tx),
-        ),
-        Some(vec![10]),
-        create_descriptors().await,
-    )
+        Characteristic::new(
+            Uuid::from_sdp_short_uuid(TEMPERATURE_CHARACTERISTIC_UUID),
+            Properties::new(
+                Some(Read(Secure::Insecure(tx.clone()))),
+                None,
+                None,
+                Some(tx),
+            ),
+            Some(vec![10]),
+            descriptors,
+        )
+    }
+}
+
+#[async_trait]
+impl GattEventHandler for TemperatureCharacteristic {
+    async fn recv_request(&mut self) -> Option<Event> {
+        self.rx.next().await
+    }
+
+    fn handle_request(&mut self, event: Event) {
+        info!("Temperature event {:?}", event);
+        match event {
+            bluster::gatt::event::Event::ReadRequest(read_request) => {
+                read_request
+                    .response
+                    .send(Response::Success(vec![20]))
+                    .unwrap();
+            }
+            bluster::gatt::event::Event::WriteRequest(_)
+            | bluster::gatt::event::Event::NotifySubscribe(_)
+            | bluster::gatt::event::Event::NotifyUnsubscribe => {}
+        }
+    }
 }

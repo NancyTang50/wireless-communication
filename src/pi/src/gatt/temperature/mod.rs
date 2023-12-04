@@ -1,3 +1,3 @@
 mod temperature_characteristic;
 
-pub use temperature_characteristic::create_temperature;
+pub use temperature_characteristic::TemperatureCharacteristic;

@@ -9,8 +9,10 @@ use crate::gatt::create_service;
 
 mod gatt;
 
-pub const TEMPERATURE_CHARACTERISTIC_UUID: u16 = 0x2A19; // org.bluetooth.characteristic.battery_level
-pub const SERVICE_UUID: u16 = 0x180F; // org.bluetooth.service.battery_service
+// NOTE: https://www.bluetooth.com/wp-content/uploads/Files/Specification/Assigned_Numbers.pdf
+pub const TEMPERATURE_CHARACTERISTIC_UUID: u16 = 0x2A6E;
+pub const HUMIDITY_CHARACTERISTIC_UUID: u16 = 0x2A6F;
+pub const SERVICE_UUID: u16 = 0x181A;
 const ADVERTISE_NAME: &str = "SOME_NAME";
 
 #[tokio::main]
