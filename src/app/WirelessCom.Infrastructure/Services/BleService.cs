@@ -17,11 +17,13 @@ public class BleService : IBleService
         InitOnBleStateChanged();
     }
 
+    /// <inheritdoc />
     public event IBleService.OnBleStateChanged? OnBleStateChangedEvent;
 
+    /// <inheritdoc />
     public async Task<bool> HasCorrectPermissions()
     {
-        if (await Permissions.RequestAsync<Permissions.Bluetooth>() == PermissionStatus.Granted)
+        if (await Permissions.RequestAsync<Permissions.Bluetooth>().ConfigureAwait(false) == PermissionStatus.Granted)
         {
             return true;
         }
@@ -30,6 +32,7 @@ public class BleService : IBleService
         return false;
     }
 
+    /// <inheritdoc />
     public BluetoothState GetBluetoothState()
     {
         return (BluetoothState)_bluetoothLe.State;
