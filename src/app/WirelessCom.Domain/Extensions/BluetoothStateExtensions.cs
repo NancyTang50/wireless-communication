@@ -1,4 +1,4 @@
-﻿using WirelessCom.Domain.Enums;
+﻿using WirelessCom.Domain.Models.Enums;
 
 namespace WirelessCom.Domain.Extensions;
 

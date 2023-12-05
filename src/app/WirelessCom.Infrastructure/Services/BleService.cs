@@ -1,11 +1,15 @@
-﻿using Plugin.BLE.Abstractions.Contracts;
+﻿using Plugin.BLE.Abstractions;
+using Plugin.BLE.Abstractions.Contracts;
+using WirelessCom.Application.Caching;
 using WirelessCom.Application.Services;
-using BluetoothState = WirelessCom.Domain.Enums.BluetoothState;
+using WirelessCom.Domain.Models;
+using BluetoothState = WirelessCom.Domain.Models.Enums.BluetoothState;
 
 namespace WirelessCom.Infrastructure.Services;
 
 public class BleService : IBleService
 {
+    private readonly GenericConcurrentDictionary<Guid, IDevice> _devices = new();
     private readonly IAdapter _adapter;
     private readonly IBluetoothLE _bluetoothLe;
 
@@ -15,10 +19,14 @@ public class BleService : IBleService
         _adapter = adapter;
 
         InitOnBleStateChanged();
+        InitOnDevicesChangedEvent();
     }
 
     /// <inheritdoc />
     public event IBleService.OnBleStateChanged? OnBleStateChangedEvent;
+
+    /// <inheritdoc />
+    public event IBleService.OnDevicesChanged? OnDevicesChangedEvent;
 
     /// <inheritdoc />
     public async Task<bool> HasCorrectPermissions()
@@ -38,8 +46,32 @@ public class BleService : IBleService
         return (BluetoothState)_bluetoothLe.State;
     }
 
+    /// <inheritdoc />
+    public async Task ScanForDevices(Guid[]? guids, CancellationToken cancellationToken = default)
+    {
+        var scanFilterOptions = new ScanFilterOptions();
+        if (guids != null)
+        {
+            scanFilterOptions.ServiceUuids = guids;
+        }
+
+        _adapter.DeviceDiscovered += (_, a) => _devices.Add(a.Device.Id, a.Device);
+        await _adapter.StartScanningForDevicesAsync(scanFilterOptions, cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
     private void InitOnBleStateChanged()
     {
         _bluetoothLe.StateChanged += (_, args) => OnBleStateChangedEvent?.Invoke(this, (BluetoothState)args.NewState);
+    }
+
+    private void InitOnDevicesChangedEvent()
+    {
+        _devices.ItemAdded += (_, _) => OnDevicesChangedEvent?.Invoke(this, GetAllBasicBleDevices());
+        _devices.ItemRemoved += (_, _) => OnDevicesChangedEvent?.Invoke(this, GetAllBasicBleDevices());
+    }
+
+    private List<BasicBleDevice> GetAllBasicBleDevices()
+    {
+        return _devices.GetAll().Select(device => new BasicBleDevice(device.Key, device.Value.Name)).ToList();
     }
 }

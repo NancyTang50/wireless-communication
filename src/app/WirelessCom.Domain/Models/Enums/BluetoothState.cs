@@ -1,4 +1,4 @@
-﻿namespace WirelessCom.Domain.Enums;
+﻿namespace WirelessCom.Domain.Models.Enums;
 
 public enum BluetoothState
 {

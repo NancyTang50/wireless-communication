@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WirelessCom.Domain.Entities;
+using WirelessCom.Domain.Models.Entities;
 
 namespace WirelessCom.Infrastructure.Persistence;
 

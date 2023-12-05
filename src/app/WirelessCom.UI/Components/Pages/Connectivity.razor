@@ -1,14 +1,34 @@
 ﻿@page "/Connectivity"
 @inject ConnectivityViewModel ViewModel
 
-<h3>Connectivity</h3>
+<TitleCard Title="Connectivity"/>
 
-<p>@ViewModel.BluetoothStateMessage</p>
+<div class="flex flex-wrap justify-center space-y-8 py-8">
+    <button class="w-3/4 rounded-lg px-4 py-2 bg-gray-600 text-gray-100 hover:bg-gray-700 duration-300" @onclick="ViewModel.ScanForDevices">Scan</button>
+    <div class="mb-2 ml-4 mt-1 cursor-pointer text-xs text-gray-700 hover:underline">
+        Bluetooth status: @ViewModel.BluetoothStateMessage
+    </div>
+
+    <div class="w-full bg-slate-100 p-6">
+        @foreach (var device in ViewModel.BleDevices)
+        {
+            <hr/>
+            <div class="flex flex-row items-start justify-between p-4">
+                <div class="text-md">
+                    <p class="font-semibold text-gray-900">@device.Id.ToString()</p>
+                </div>
+                <span class="text-lg font-bold"> @(string.IsNullOrWhiteSpace(device.Name) ? "Unknown" : device.Name) </span>
+            </div>
+        }
+    </div>
+</div>
 
 @code {
+
     protected override async Task OnInitializedAsync()
     {
-        // Todo: Look into this BS. Cus this should be required......
+    // Todo: Look into this BS. Cus this should be required......
         ViewModel.PropertyChanged += (_, _) => StateHasChanged();
     }
+
 }
