@@ -4,6 +4,7 @@ using WirelessCom.Application.Caching;
 using WirelessCom.Application.Services;
 using WirelessCom.Domain.Exceptions;
 using WirelessCom.Domain.Models;
+using WirelessCom.Domain.Models.Enums;
 using BluetoothState = WirelessCom.Domain.Models.Enums.BluetoothState;
 
 namespace WirelessCom.Infrastructure.Services;
@@ -71,6 +72,13 @@ public class BleService : IBleService
 
         var services = await device.GetServicesAsync(cancellationToken).ConfigureAwait(false);
         return services.Select(service => new BasicBleService(service.Id, service.Device.Id, service.Name, service.IsPrimary)).ToList();
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<BareBleAdvertisement> GetBareBleAdvertisements(Guid deviceId)
+    {
+        var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
+        return device.AdvertisementRecords.Select(record => new BareBleAdvertisement((BleAdvertisementType)record.Type, record.Data)).ToList();
     }
 
     private void InitOnBleStateChanged()

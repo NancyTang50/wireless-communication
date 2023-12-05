@@ -12,7 +12,7 @@
     <div class="w-max bg-slate-100 p-6">
         @foreach (var device in ViewModel.BleDevices)
         {
-            <div class="flex flex-row items-start justify-between p-4" @onclick="async () => await ViewModel.OpenServicesModal(device.Id)">
+            <div class="flex flex-row items-start justify-between p-4" @onclick="() => ViewModel.OpenServicesModal(device.Id)">
                 <div class="text-md">
                     <p class="font-semibold text-gray-900">@device.Id.ToString()</p>
                 </div>
@@ -23,12 +23,23 @@
     </div>
 </div>
 
-@if (ViewModel.ServiceModalIsActive && ViewModel.ModalBleServices != null)
+@if (ViewModel.ServiceModalIsActive && ViewModel.BleAdvertisements != null)
 {
     <Modal CloseModalClicked="ViewModel.CloseServicesModal">
-        <div class="bg-white rounded-lg">
-            <h1 class="text-xl font-medium">Advertised</h1>
-            
+        <div class="bg-white rounded-lg p-4">
+            <h1 class="text-xl font-medium justify-center text-center">Advertised</h1>
+            @foreach (var advertisement in ViewModel.BleAdvertisements)
+            {
+                <div class="flex flex-col justify-items-start p-4">
+                    <div class="text-md">
+                        <p class="font-semibold text-gray-900"><span class="font-bold">Type: </span>@advertisement.Type.ToString()</p>
+                    </div>
+                    <div class="text-md">
+                        <p class="font-semibold text-gray-900"><span class="font-bold">Data: </span>@BitConverter.ToString(advertisement.Data)</p>
+                    </div>
+                </div>
+                <hr/>
+            }
         </div>
     </Modal>
 }

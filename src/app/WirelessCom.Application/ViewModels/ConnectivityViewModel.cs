@@ -43,7 +43,7 @@ public partial class ConnectivityViewModel : BaseViewModel
     private IReadOnlyList<BasicBleDevice> _bleDevices = new List<BasicBleDevice>();
 
     [ObservableProperty]
-    private IReadOnlyList<BasicBleService>? _modalBleServices = new List<BasicBleService>();
+    private IReadOnlyList<BareBleAdvertisement>? _bleAdvertisements = new List<BareBleAdvertisement>();
 
     private void OnBleStateChanged(object source, BluetoothState bluetoothState)
     {
@@ -53,12 +53,12 @@ public partial class ConnectivityViewModel : BaseViewModel
     public void CloseServicesModal()
     {
         ServiceModalIsActive = false;
-        ModalBleServices = null;
+        BleAdvertisements = null;
     }
 
-    public async Task OpenServicesModal(Guid deviceId)
+    public void OpenServicesModal(Guid deviceId)
     {
-        ModalBleServices = await _bleService.GetServicesAsync(deviceId).ConfigureAwait(false);
+        BleAdvertisements = _bleService.GetBareBleAdvertisements(deviceId);
         ServiceModalIsActive = true;
     }
 }
