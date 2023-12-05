@@ -34,13 +34,31 @@ public partial class ConnectivityViewModel : BaseViewModel
     }
 
     [ObservableProperty]
+    private bool _serviceModalIsActive;
+
+    [ObservableProperty]
     private string _bluetoothStateMessage = string.Empty;
 
     [ObservableProperty]
     private IReadOnlyList<BasicBleDevice> _bleDevices = new List<BasicBleDevice>();
 
+    [ObservableProperty]
+    private IReadOnlyList<BasicBleService>? _modalBleServices = new List<BasicBleService>();
+
     private void OnBleStateChanged(object source, BluetoothState bluetoothState)
     {
         BluetoothStateMessage = bluetoothState.ToReadableString();
+    }
+
+    public void CloseServicesModal()
+    {
+        ServiceModalIsActive = false;
+        ModalBleServices = null;
+    }
+
+    public async Task OpenServicesModal(Guid deviceId)
+    {
+        ModalBleServices = await _bleService.GetServicesAsync(deviceId).ConfigureAwait(false);
+        ServiceModalIsActive = true;
     }
 }
