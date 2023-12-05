@@ -15,7 +15,7 @@ use uuid::Uuid;
 
 use crate::{
     ble_encode::BleEncode,
-    gatt::characteristic::{CharacteristicCreator, GattEventHandler},
+    gatt::characteristic::{GattEventHandler, setup_handler_and_descriptors},
     HUMIDITY_CHARACTERISTIC_UUID,
 };
 
@@ -27,20 +27,17 @@ impl HumidityCharacteristic {
     fn new(rx: Receiver<Event>) -> Self {
         Self { rx }
     }
-}
+    pub fn create_characteristic() -> Characteristic {
+        let (rx, tx) = channel(1);
 
-impl CharacteristicCreator<HumidityCharacteristic> for HumidityCharacteristic {
-    fn create_characteristic() -> Characteristic {
-        let (tx, rx) = channel(1);
-
-        let (mut handler, descriptors) = Self::create_handler_and_descriptors(
+        let (mut handler, descriptors) = setup_handler_and_descriptors!(
             HumidityCharacteristic::new(rx),
             "Humidity",
             4,
             1,
             44327,
             0,
-            0,
+            0
         );
 
         tokio::spawn(async move {

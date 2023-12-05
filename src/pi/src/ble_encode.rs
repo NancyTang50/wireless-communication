@@ -13,7 +13,7 @@ impl BleEncode for f32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_conversion_of_f32() {
         assert_eq!(20f32.to_ble_bytes(), vec![208, 7]);

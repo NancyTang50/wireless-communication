@@ -1,62 +1,87 @@
-use std::collections::HashSet;
-
 use bluster::{
-    gatt::{
-        characteristic::Characteristic,
-        descriptor::{Descriptor, Properties, Read, Secure},
-    },
+    gatt::descriptor::{Descriptor, Properties, Read, Secure},
     SdpShortUuid,
 };
 use futures::channel::mpsc::channel;
 use uuid::Uuid;
 
-use super::{
-    description_characteristic_handler::DescriptionCharacteristicHandler, CharacteristicHandler,
-    GattEventHandler,
-};
+use super::description_characteristic_handler::DescriptionCharacteristicHandler;
 
-pub trait CharacteristicCreator<T>
-where
-    T: GattEventHandler,
-{
-    fn create_handler_and_descriptors(
-        characteristic: T,
-        description_text: impl ToString,
-        format: u8,
-        exponent: u8,
-        unit: u16,
-        namespace: u8,
-        description: u16,
-    ) -> (CharacteristicHandler<T>, HashSet<Descriptor>) {
-        let (description_char, description_char_handler) =
-            create_gatt_description(description_text);
-        let (presentation_char, presentation_char_handler) =
-            create_gatt_characteristic_presentation_format(
-                format,
-                exponent,
-                unit,
-                namespace,
-                description,
-            );
+macro_rules! setup_handler_and_descriptors {
+    ($characteristic: expr, $description_text: expr, $format: expr, $exponent: expr, $unit: expr, $namespace: expr, $description: expr) => {
+        fn create_handler_and_descriptors() -> (CharacteristicHandler<_>, HashSet<Descriptors>)  {
+            let description_text_char =
+                $crate::gatt::characteristic::create_gatt_description($description_text);
 
-        let mut descriptors = HashSet::new();
-        descriptors.insert(description_char);
-        descriptors.insert(presentation_char);
+            let (presentation_char, presentation_char_handler) =
+                $crate::gatt::characteristic::create_gatt_characteristic_presentation_format(
+                    $format,
+                    $exponent,
+                    $unit,
+                    $namespace,
+                    $description,
+                );
 
-        (
-            CharacteristicHandler::new(
-                characteristic,
-                description_char_handler,
-                presentation_char_handler,
-            ),
-            descriptors,
-        )
-    }
+            let mut descriptors = std::collections::HashSet::new();
+            descriptors.insert(description_text_char.0);
+            descriptors.insert(presentation_char);
 
-    fn create_characteristic() -> Characteristic;
+            (
+                $crate::gatt::characteristic::CharacteristicHandler::new(
+                    $characteristic,
+                    description_char_handler,
+                    presentation_char_handler,
+                ),
+                descriptors,
+            )
+        }
+    };
 }
 
-fn create_gatt_description(
+pub(crate) use setup_handler_and_descriptors;
+
+// pub trait CharacteristicCreator<T>
+// where
+//     T: GattEventHandler,
+// {
+//     fn create_handler_and_descriptors(
+//         characteristic: T,
+//         description_text: impl ToString,
+//         format: u8,
+//         exponent: u8,
+//         unit: u16,
+//         namespace: u8,
+//         description: u16,
+//     ) -> (CharacteristicHandler<T>, HashSet<Descriptor>) {
+//         let (description_char, description_char_handler) =
+//             create_gatt_description(description_text);
+//         let (presentation_char, presentation_char_handler) =
+//             create_gatt_characteristic_presentation_format(
+//                 format,
+//                 exponent,
+//                 unit,
+//                 namespace,
+//                 description,
+//             );
+
+//         let mut descriptors = HashSet::new();
+//         descriptors.insert(description_char);
+//         descriptors.insert(presentation_char);
+
+//         (
+//             CharacteristicHandler::new(
+//                 characteristic,
+//                 description_char_handler,
+//                 presentation_char_handler,
+//             ),
+//             descriptors,
+//         )
+//     }
+
+//     fn create_characteristic() -> Characteristic;
+// }
+
+pub fn create_gatt_description(
     description: impl ToString,
 ) -> (Descriptor, DescriptionCharacteristicHandler) {
     let (tx, rx) = channel(1);
@@ -73,7 +98,7 @@ fn create_gatt_description(
     )
 }
 
-fn create_gatt_characteristic_presentation_format(
+pub fn create_gatt_characteristic_presentation_format(
     format: u8,
     exponent: u8,
     unit: u16,

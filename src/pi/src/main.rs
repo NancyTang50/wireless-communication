@@ -5,9 +5,10 @@ use bluster::Peripheral;
 use tracing::{debug, info};
 use uuid::Uuid;
 
-use crate::gatt::create_service;
+use crate::{gatt::create_evironmental_service, sensor_data::start_reading_sensor_data};
 
 mod ble_encode;
+mod sensor_data;
 mod gatt;
 
 // NOTE: https://www.bluetooth.com/wp-content/uploads/Files/Specification/Assigned_Numbers.pdf
@@ -21,17 +22,6 @@ async fn main() -> Result<()> {
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::DEBUG)
         .init();
-
-    loop {
-        let result = dht22_pi::read(4);
-        match result {
-            Ok(res) => {
-                info!("result is: {:?}", res);
-                break;
-            }
-            Err(_) => thread::sleep(Duration::from_millis(500)),
-        }
-    }
 
     let (service_uuid, peripheral) = make_peripheral().await.unwrap();
 
@@ -62,7 +52,7 @@ async fn make_peripheral() -> Result<(Uuid, Peripheral)> {
         .context("Could not make peripheral")?;
 
     debug!("Adding service");
-    let (service_uuid, service) = create_service().await;
+    let (service_uuid, service) = create_evironmental_service().await;
     peripheral
         .add_service(&service)
         .context("Could not add service to peripheral")?;

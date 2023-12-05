@@ -15,7 +15,7 @@ use uuid::Uuid;
 
 use crate::{
     ble_encode::BleEncode,
-    gatt::characteristic::{CharacteristicCreator, GattEventHandler},
+    gatt::characteristic::{GattEventHandler, setup_handler_and_descriptors},
     TEMPERATURE_CHARACTERISTIC_UUID,
 };
 
@@ -25,22 +25,22 @@ pub struct TemperatureCharacteristic {
 
 impl TemperatureCharacteristic {
     fn new(rx: Receiver<Event>) -> Self {
+
+
         Self { rx }
     }
-}
 
-impl CharacteristicCreator<TemperatureCharacteristic> for TemperatureCharacteristic {
-    fn create_characteristic() -> Characteristic {
-        let (tx, rx) = channel(1);
+    pub fn create_characteristic() -> Characteristic {
+        let (rx, tx) = channel(1);
 
-        let (mut handler, descriptors) = Self::create_handler_and_descriptors(
+        let (mut handler, descriptors) = setup_handler_and_descriptors!(
             TemperatureCharacteristic::new(rx),
             "Temperature",
             4,
             1,
             44327,
             0,
-            0,
+            0
         );
 
         tokio::spawn(async move {
