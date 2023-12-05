@@ -37,12 +37,7 @@ class EnvironmentalService{
         humidity = (int16_t)(newHumidity * 100);
         ble.gattServer().write(humidityCharacteristic.getValueHandle(), (uint8_t*)&humidity, sizeof(int16_t));
     }
-    
 };
-
-
-
-
 
 
 // #ifndef CLIMATE_SERVICE_H_
