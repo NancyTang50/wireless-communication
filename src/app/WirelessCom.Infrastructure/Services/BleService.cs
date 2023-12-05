@@ -2,6 +2,7 @@
 using Plugin.BLE.Abstractions.Contracts;
 using WirelessCom.Application.Caching;
 using WirelessCom.Application.Services;
+using WirelessCom.Domain.Exceptions;
 using WirelessCom.Domain.Models;
 using BluetoothState = WirelessCom.Domain.Models.Enums.BluetoothState;
 
@@ -57,6 +58,22 @@ public class BleService : IBleService
 
         _adapter.DeviceDiscovered += (_, a) => _devices.Add(a.Device.Id, a.Device);
         await _adapter.StartScanningForDevicesAsync(scanFilterOptions, cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<IReadOnlyList<BasicBleService>> GetServicesAsync(Guid deviceId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
+            var services = await device.GetServicesAsync(cancellationToken).ConfigureAwait(false);
+            return services.Select(service => new BasicBleService(service.Id, service.Device.Id, service.Name, service.IsPrimary)).ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+
     }
 
     private void InitOnBleStateChanged()
