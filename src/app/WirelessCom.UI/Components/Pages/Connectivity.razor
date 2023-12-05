@@ -27,17 +27,8 @@
 {
     <Modal CloseModalClicked="ViewModel.CloseServicesModal">
         <div class="bg-white rounded-lg">
-            <h1 class="text-xl font-medium">Services</h1>
-            @foreach (var service in ViewModel.ModalBleServices)
-            {
-                <div class="flex flex-row items-start justify-between p-4">
-                    <div class="text-md">
-                        <p class="font-semibold text-gray-900">@service.Id.ToString()</p>
-                    </div>
-                    <span class="text-lg font-bold"> @(string.IsNullOrWhiteSpace(service.Name) ? "Unknown" : service.Name) </span>
-                </div>
-                <hr/>
-            }
+            <h1 class="text-xl font-medium">Advertised</h1>
+            
         </div>
     </Modal>
 }
