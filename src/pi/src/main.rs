@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{time::Duration, thread};
 
 use anyhow::{Context, Result};
 use bluster::Peripheral;
@@ -21,6 +21,17 @@ async fn main() -> Result<()> {
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::DEBUG)
         .init();
+
+    loop {
+        let result = dht22_pi::read(4);
+        match result {
+            Ok(res) => {
+                info!("result is: {:?}", res);
+                break;
+            }
+            Err(_) => thread::sleep(Duration::from_millis(500)),
+        }
+    }
 
     let (service_uuid, peripheral) = make_peripheral().await.unwrap();
 
