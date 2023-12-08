@@ -1,11 +1,11 @@
-use std::{time::Duration, thread};
+use std::time::Duration;
 
 use anyhow::{Context, Result};
 use bluster::Peripheral;
 use tracing::{debug, info};
 use uuid::Uuid;
 
-use crate::{gatt::create_evironmental_service, sensor_data::start_reading_sensor_data};
+use crate::gatt::create_evironmental_service;
 
 mod ble_encode;
 mod sensor_data;
@@ -17,7 +17,7 @@ pub const HUMIDITY_CHARACTERISTIC_UUID: u16 = 0x2A6F;
 pub const SERVICE_UUID: u16 = 0x181A;
 const ADVERTISE_NAME: &str = "SOME_NAME";
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread", worker_threads = 4)]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::DEBUG)
@@ -38,7 +38,7 @@ async fn main() -> Result<()> {
 
     // Wait while peripheral is advertising
     while peripheral.is_advertising().await.unwrap() {
-        std::thread::sleep(Duration::from_millis(100));
+        std::thread::sleep(Duration::from_millis(250));
     }
     info!("Peripheral stopped advertising");
 

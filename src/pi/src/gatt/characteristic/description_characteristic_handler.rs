@@ -3,7 +3,7 @@ use bluster::gatt::event::{Event, Response};
 use futures::{channel::mpsc::Receiver, StreamExt};
 use tracing::debug;
 
-use super::GattEventHandler;
+use super::GattDescriptionHandler;
 
 pub struct DescriptionCharacteristicHandler {
     value: Vec<u8>,
@@ -17,7 +17,7 @@ impl DescriptionCharacteristicHandler {
 }
 
 #[async_trait]
-impl GattEventHandler for DescriptionCharacteristicHandler {
+impl GattDescriptionHandler for DescriptionCharacteristicHandler {
     async fn recv_request(&mut self) -> Option<Event> {
         self.rx.next().await
     }

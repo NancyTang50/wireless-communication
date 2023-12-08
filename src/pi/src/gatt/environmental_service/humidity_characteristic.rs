@@ -1,4 +1,3 @@
-use async_trait::async_trait;
 use bluster::{
     gatt::{
         characteristic::{Characteristic, Properties, Read, Secure},
@@ -6,43 +5,44 @@ use bluster::{
     },
     SdpShortUuid,
 };
-use futures::{
-    channel::mpsc::{channel, Receiver},
-    StreamExt,
-};
-use tracing::info;
+use futures::channel::mpsc::{channel, Sender, Receiver};
+use tracing::{info, debug};
 use uuid::Uuid;
 
 use crate::{
-    ble_encode::BleEncode,
-    gatt::characteristic::{GattEventHandler, setup_handler_and_descriptors},
-    HUMIDITY_CHARACTERISTIC_UUID,
+    gatt::characteristic::{GattEventHandler, setup_handler_and_descriptors, SensorDataHandler},
+    HUMIDITY_CHARACTERISTIC_UUID, ble_encode::BleEncode,
 };
 
 pub struct HumidityCharacteristic {
-    rx: Receiver<Event>,
+    humidity: f32,
+    notifier: Option<Sender<Vec<u8>>>
 }
 
 impl HumidityCharacteristic {
-    fn new(rx: Receiver<Event>) -> Self {
-        Self { rx }
+    fn new() -> Self {
+        Self { humidity: f32::MIN, notifier: None }
     }
-    pub fn create_characteristic() -> Characteristic {
-        let (rx, tx) = channel(1);
 
-        let (mut handler, descriptors) = setup_handler_and_descriptors!(
-            HumidityCharacteristic::new(rx),
-            "Humidity",
-            4,
-            1,
-            44327,
-            0,
-            0
-        );
+    setup_handler_and_descriptors!(
+        Self,
+        "Humidity",
+        4,
+        1,
+        44327,
+        0,
+        0
+    );
+
+    pub fn create_characteristic(humidity_changed_receiver: Receiver<f32>) -> Characteristic {
+        let (tx, mut rx) = channel(1);
+
+        let (mut handler, descriptors) = Self::create_handler_and_get_descriptors(HumidityCharacteristic::new());
 
         tokio::spawn(async move {
+            let mut sensor_rx = humidity_changed_receiver;
             loop {
-                handler.handle_requests().await;
+                handler.handle_requests_sensor_data(&mut rx, &mut sensor_rx).await;
             }
         });
 
@@ -60,24 +60,43 @@ impl HumidityCharacteristic {
     }
 }
 
-#[async_trait]
 impl GattEventHandler for HumidityCharacteristic {
-    async fn recv_request(&mut self) -> Option<Event> {
-        self.rx.next().await
-    }
-
     fn handle_request(&mut self, event: Event) {
         info!("Humidity event {:?}", event);
         match event {
             bluster::gatt::event::Event::ReadRequest(read_request) => {
                 read_request
                     .response
-                    .send(Response::Success(50.5f32.to_ble_bytes())) // 50.50% humidity
+                    .send(Response::Success(self.humidity.to_ble_bytes()))
                     .unwrap();
             }
-            bluster::gatt::event::Event::WriteRequest(_)
-            | bluster::gatt::event::Event::NotifySubscribe(_)
-            | bluster::gatt::event::Event::NotifyUnsubscribe => {}
+            bluster::gatt::event::Event::WriteRequest(_) => {},
+            bluster::gatt::event::Event::NotifySubscribe(notify_event) => {
+                self.notifier = Some(notify_event.notification);
+            }
+            bluster::gatt::event::Event::NotifyUnsubscribe => {
+                self.notifier = None;
+            }
+        }
+    }
+}
+
+impl SensorDataHandler for HumidityCharacteristic {
+    fn handle_addtional_sender(&mut self, data: f32) {
+        debug!("Got new humidity sensor value: {}", data);
+
+        self.humidity = data;
+        if let Some(notifier) = &mut self.notifier {
+            match notifier.try_send(data.to_ble_bytes()) {
+                Ok(_) => {}
+                Err(error) => {
+                    // NOTE: if this crashes try also kicking the notifier if the channel is full,
+                    // because that means the notifier is not reading the messages
+                    if error.is_disconnected() {
+                        self.notifier = None;
+                    }
+                }
+            }
         }
     }
 }
