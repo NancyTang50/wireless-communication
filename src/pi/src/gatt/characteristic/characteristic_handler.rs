@@ -61,7 +61,7 @@ where
             Some(event) = self.description_handler.recv_request() => self.description_handler.handle_request(event),
             Some(event) = self.presentation_format_handler.recv_request() => self.presentation_format_handler.handle_request(event),
             Some(event) = characteristic_receiver.next() => self.characteristic.handle_request(event),
-            Some(sensor_data) = sensor_receiver.next() => self.characteristic.handle_addtional_sender(sensor_data),
+            Some(sensor_data) = sensor_receiver.next() => self.characteristic.handle_sensor_data(sensor_data),
         }
     }
 }

@@ -81,7 +81,7 @@ impl GattEventHandler for HumidityCharacteristic {
 }
 
 impl SensorDataHandler for HumidityCharacteristic {
-    fn handle_addtional_sender(&mut self, data: f32) {
+    fn handle_sensor_data(&mut self, data: f32) {
         self.humidity = data;
         if let Some(notifier) = &mut self.notifier {
             match notifier.try_send(data.to_ble_bytes()) {

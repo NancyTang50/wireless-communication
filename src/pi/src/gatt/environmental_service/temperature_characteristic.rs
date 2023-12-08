@@ -81,7 +81,7 @@ impl GattEventHandler for TemperatureCharacteristic {
 }
 
 impl SensorDataHandler for TemperatureCharacteristic {
-    fn handle_addtional_sender(&mut self, data: f32) {
+    fn handle_sensor_data(&mut self, data: f32) {
         self.temperature = data;
         if let Some(notifier) = &mut self.notifier {
             match notifier.try_send(data.to_ble_bytes()) {

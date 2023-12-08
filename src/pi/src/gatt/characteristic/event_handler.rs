@@ -6,7 +6,7 @@ pub trait GattEventHandler {
 }
 
 pub trait SensorDataHandler {
-    fn handle_addtional_sender(&mut self, data: f32);
+    fn handle_sensor_data(&mut self, data: f32);
 }
 
 #[async_trait]
