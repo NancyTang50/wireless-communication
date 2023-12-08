@@ -9,7 +9,9 @@ use super::description_characteristic_handler::DescriptionCharacteristicHandler;
 
 macro_rules! setup_handler_and_descriptors {
     ($handler_type: tt, $description_text: expr, $format: expr, $exponent: expr, $unit: expr, $namespace: expr, $description: expr) => {
-        fn create_handler_and_get_descriptors(event_handler: $handler_type) -> (
+        fn create_handler_and_get_descriptors(
+            event_handler: $handler_type,
+        ) -> (
             $crate::gatt::characteristic::CharacteristicHandler<$handler_type>,
             std::collections::HashSet<bluster::gatt::descriptor::Descriptor>,
         ) {
@@ -34,11 +36,8 @@ macro_rules! setup_handler_and_descriptors {
                 description_char_handler,
                 presentation_char_handler,
             );
-            
-            (
-                handler,
-                descriptors
-            )
+
+            (handler, descriptors)
         }
     };
 }

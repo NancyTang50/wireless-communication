@@ -4,7 +4,8 @@ use futures::{channel::mpsc::Receiver, StreamExt};
 use crate::gatt::characteristic::GattDescriptionHandler;
 
 use super::{
-    description_characteristic_handler::DescriptionCharacteristicHandler, GattEventHandler, SensorDataHandler
+    description_characteristic_handler::DescriptionCharacteristicHandler, GattEventHandler,
+    SensorDataHandler,
 };
 
 pub struct CharacteristicHandler<T>
@@ -51,14 +52,16 @@ impl<T> CharacteristicHandler<T>
 where
     T: GattEventHandler + SensorDataHandler,
 {
-    pub async fn handle_requests_sensor_data(&mut self, characteristic_reciever: &mut Receiver<Event>, sensor_reciever: &mut Receiver<f32>) {
+    pub async fn handle_requests_sensor_data(
+        &mut self,
+        characteristic_receiver: &mut Receiver<Event>,
+        sensor_receiver: &mut Receiver<f32>,
+    ) {
         tokio::select! {
             Some(event) = self.description_handler.recv_request() => self.description_handler.handle_request(event),
             Some(event) = self.presentation_format_handler.recv_request() => self.presentation_format_handler.handle_request(event),
-            Some(event) = characteristic_reciever.next() => self.characteristic.handle_request(event),
-            Some(sensor_data) = sensor_reciever.next() => self.characteristic.handle_addtional_sender(sensor_data),
+            Some(event) = characteristic_receiver.next() => self.characteristic.handle_request(event),
+            Some(sensor_data) = sensor_receiver.next() => self.characteristic.handle_addtional_sender(sensor_data),
         }
     }
 }
-
-
