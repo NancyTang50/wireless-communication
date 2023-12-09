@@ -12,3 +12,7 @@ After this the binary can be executing using:
 ```bash
 ./pi
 ```
+
+# Connecting the sensor
+
+The sensor needs to be connected to GPIO pin 4/ Wiring PI pin 7
