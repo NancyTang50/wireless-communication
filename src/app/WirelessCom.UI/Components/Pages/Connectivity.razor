@@ -48,6 +48,7 @@ else
             <div class="modal-body">
                 <h3>Devices stats</h3>
                 <ul>
+                    <li>Name: @ViewModel.DeviceModalData?.Device.Name</li>
                     <li>RSSI: @ViewModel.DeviceModalData?.Device.Rssi</li>
                     <li>Is connected: @ViewModel.DeviceModalData?.Device.IsConnected</li>
                 </ul>
@@ -106,7 +107,12 @@ else
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" @onclick="ViewModel.CloseServicesModal">Close</button>
-                <button type="button" class="btn btn-success" @onclick="ViewModel.ConnectDevice">Connect</button>
+                <button type="button"
+                        class="btn btn-success"
+                        @onclick="ViewModel.ConnectDevice"
+                        disabled="@(ViewModel.DeviceModalData?.Device.IsConnected ?? false)">
+                    Connect
+                </button>
             </div>
         </div>
     </div>
