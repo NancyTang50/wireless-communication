@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using WirelessCom.Infrastructure.Persistence;
-using WirelessCom.UI.Extensions;
+using WirelessCom.UI.Extension;
 
 namespace WirelessCom.UI;
 
@@ -23,7 +23,7 @@ public static class MauiProgram
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
         #endif
-        
+
         var app = builder.Build();
 
         using var scope = app.Services.CreateScope();
