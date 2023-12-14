@@ -72,4 +72,14 @@ public interface IBleService
     ///     A list of all <see cref="BareBleAdvertisement" />s of the device with the given <paramref name="deviceId" />.
     /// </returns>
     IReadOnlyList<BareBleAdvertisement> GetBareBleAdvertisements(Guid deviceId);
+
+    /// <summary>
+    ///     Connects to the device with the given <paramref name="deviceId" />.
+    /// </summary>
+    /// <param name="deviceId">The id of the device.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     A task that represents the asynchronous connect operation.
+    /// </returns>
+    Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default);
 }

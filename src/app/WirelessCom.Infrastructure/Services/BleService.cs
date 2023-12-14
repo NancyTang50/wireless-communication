@@ -81,6 +81,13 @@ public class BleService : IBleService
         return device.AdvertisementRecords.Select(record => new BareBleAdvertisement((BleAdvertisementType)record.Type, record.Data)).ToList();
     }
 
+    /// <inheritdoc />
+    public async Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default)
+    {
+        var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
+        await _adapter.ConnectToDeviceAsync(device, cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
     private void InitOnBleStateChanged()
     {
         _bluetoothLe.StateChanged += (_, args) => OnBleStateChangedEvent?.Invoke(this, (BluetoothState)args.NewState);
