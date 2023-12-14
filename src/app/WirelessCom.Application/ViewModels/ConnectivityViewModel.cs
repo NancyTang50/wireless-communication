@@ -11,10 +11,13 @@ public partial class ConnectivityViewModel : BaseViewModel
     private readonly IBleService _bleService;
 
     [ObservableProperty]
-    private IReadOnlyList<BareBleAdvertisement>? _bleAdvertisements = new List<BareBleAdvertisement>();
+    private IReadOnlyList<BareBleAdvertisement>? _bleDeviceAdvertisements = new List<BareBleAdvertisement>();
 
     [ObservableProperty]
     private IReadOnlyList<BasicBleDevice> _bleDevices = new List<BasicBleDevice>();
+    
+    [ObservableProperty]
+    private BasicBleDevice? _serviceModalDevice;
 
     [ObservableProperty]
     private string _bluetoothStateMessage = string.Empty;
@@ -53,12 +56,14 @@ public partial class ConnectivityViewModel : BaseViewModel
     public void CloseServicesModal()
     {
         ServiceModalIsActive = false;
-        BleAdvertisements = null;
+        BleDeviceAdvertisements = null;
+        ServiceModalDevice = null;
     }
 
     public void OpenServicesModal(Guid deviceId)
     {
-        BleAdvertisements = _bleService.GetBareBleAdvertisements(deviceId);
+        BleDeviceAdvertisements = _bleService.GetBareBleAdvertisements(deviceId);
+        ServiceModalDevice = BleDevices.FirstOrDefault(x => x.Id == deviceId);
         ServiceModalIsActive = true;
     }
 }

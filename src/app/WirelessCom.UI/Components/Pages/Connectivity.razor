@@ -28,7 +28,7 @@ else
         <tbody>
         @foreach (var device in ViewModel.BleDevices)
         {
-            <tr class="@(!device.IsConnected ? "text-success" : string.Empty)" @onclick="() => ViewModel.OpenServicesModal(device.Id)">
+            <tr class="@(device.IsConnected ? "text-success" : string.Empty)" @onclick="() => ViewModel.OpenServicesModal(device.Id)">
                 <td>@(string.IsNullOrWhiteSpace(device.Name) ? "Unknown" : device.Name)</td>
                 <td>@device.Id.ToString()</td>
             </tr>
@@ -42,11 +42,20 @@ else
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Advertisements</h5>
+                <h5 class="modal-title">Device info</h5>
                 <button type="button" class="btn-close" aria-label="Close" @onclick="ViewModel.CloseServicesModal"></button>
             </div>
             <div class="modal-body">
-                @if (ViewModel.BleAdvertisements == null || ViewModel.BleAdvertisements.Count == 0)
+                <h3>Devices stats</h3>
+                <hr/>
+                <ul>
+                    <li>RSSI: @ViewModel.ServiceModalDevice?.Rssi</li>
+                    <li>Is connected: @ViewModel.ServiceModalDevice?.IsConnected</li>
+                </ul>
+
+                <h3>Advertisements</h3>
+                <hr/>
+                @if (ViewModel.BleDeviceAdvertisements == null || ViewModel.BleDeviceAdvertisements.Count == 0)
                 {
                     <p>
                         <em>No advertisements found</em>
@@ -62,7 +71,7 @@ else
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var advertisement in ViewModel.BleAdvertisements)
+                        @foreach (var advertisement in ViewModel.BleDeviceAdvertisements)
                         {
                             <tr>
                                 <td>@advertisement.Type.ToString()</td>
