@@ -76,5 +76,12 @@ public partial class ConnectivityViewModel : BaseViewModel
         }
 
         await _bleService.ConnectDeviceByIdAsync(DeviceModalData.Device.Id);
+
+        BleDevices = _bleService.GetAllBasicBleDevices();
+        DeviceModalData = new BleDeviceModalData(
+            DeviceModalData.Device,
+            _bleService.GetBareBleAdvertisements(DeviceModalData.Device.Id),
+            await _bleService.GetServicesAsync(DeviceModalData.Device.Id)
+        );
     }
 }

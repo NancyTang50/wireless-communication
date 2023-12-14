@@ -82,4 +82,9 @@ public interface IBleService
     ///     A task that represents the asynchronous connect operation.
     /// </returns>
     Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Returns a list of all <see cref="BasicBleDevice" />s.
+    /// </summary>
+    List<BasicBleDevice> GetAllBasicBleDevices();
 }

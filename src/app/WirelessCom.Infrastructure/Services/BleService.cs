@@ -88,18 +88,8 @@ public class BleService : IBleService
         await _adapter.ConnectToDeviceAsync(device, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
-    private void InitOnBleStateChanged()
-    {
-        _bluetoothLe.StateChanged += (_, args) => OnBleStateChangedEvent?.Invoke(this, (BluetoothState)args.NewState);
-    }
-
-    private void InitOnDevicesChangedEvent()
-    {
-        _devices.ItemAdded += (_, _) => OnDevicesChangedEvent?.Invoke(this, GetAllBasicBleDevices());
-        _devices.ItemRemoved += (_, _) => OnDevicesChangedEvent?.Invoke(this, GetAllBasicBleDevices());
-    }
-
-    private List<BasicBleDevice> GetAllBasicBleDevices()
+    /// <inheritdoc />
+    public List<BasicBleDevice> GetAllBasicBleDevices()
     {
         return _devices.GetAll()
             .Select(
@@ -111,5 +101,16 @@ public class BleService : IBleService
                 )
             )
             .ToList();
+    }
+
+    private void InitOnBleStateChanged()
+    {
+        _bluetoothLe.StateChanged += (_, args) => OnBleStateChangedEvent?.Invoke(this, (BluetoothState)args.NewState);
+    }
+
+    private void InitOnDevicesChangedEvent()
+    {
+        _devices.ItemAdded += (_, _) => OnDevicesChangedEvent?.Invoke(this, GetAllBasicBleDevices());
+        _devices.ItemRemoved += (_, _) => OnDevicesChangedEvent?.Invoke(this, GetAllBasicBleDevices());
     }
 }
