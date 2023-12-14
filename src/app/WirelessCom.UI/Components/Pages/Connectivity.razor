@@ -28,7 +28,7 @@ else
         <tbody>
         @foreach (var device in ViewModel.BleDevices)
         {
-            <tr @onclick="() => ViewModel.OpenServicesModal(device.Id)">
+            <tr class="@(!device.IsConnected ? "text-success" : string.Empty)" @onclick="() => ViewModel.OpenServicesModal(device.Id)">
                 <td>@(string.IsNullOrWhiteSpace(device.Name) ? "Unknown" : device.Name)</td>
                 <td>@device.Id.ToString()</td>
             </tr>

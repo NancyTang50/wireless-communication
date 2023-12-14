@@ -94,6 +94,6 @@ public class BleService : IBleService
 
     private List<BasicBleDevice> GetAllBasicBleDevices()
     {
-        return _devices.GetAll().Select(device => new BasicBleDevice(device.Key, device.Value.Name)).ToList();
+        return _devices.GetAll().Select(device => new BasicBleDevice(device.Key, device.Value.Name, _adapter.ConnectedDevices.Any(x => x.Id == device.Key))).ToList();
     }
 }
