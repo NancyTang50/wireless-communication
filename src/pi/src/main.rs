@@ -1,57 +1,87 @@
-use btleplug::{api::{bleuuid::uuid_from_u16, Manager as _, Central, ScanFilter, CentralEvent}, platform::{Manager, Adapter}};
+use std::time::Duration;
+
+use anyhow::{Context, Result};
+use bluster::Peripheral;
+use time::{macros::format_description, UtcOffset};
+use tracing::{debug, info, Level};
+use tracing_subscriber::fmt::time::OffsetTime;
 use uuid::Uuid;
-use futures::stream::StreamExt;
-use anyhow::{Result, Context};
-use tracing::debug;
 
-const TEMPERATURE_CHARACTERISTIC_UUID : Uuid = uuid_from_u16(0xFFE9);
-const HUMIDITY_CHARACTERISTIC_UUID : Uuid = uuid_from_u16(0xFFE9);
+use crate::gatt::create_evironmental_service;
 
-async fn get_central(manager: &Manager) -> Result<Option<Adapter>> {
-    let adapters = manager.adapters().await?;
-    Ok(adapters.into_iter().next())
-}
+mod ble_encode;
+mod gatt;
+mod sensor_data;
+
+// NOTE: https://www.bluetooth.com/wp-content/uploads/Files/Specification/Assigned_Numbers.pdf
+pub const TEMPERATURE_CHARACTERISTIC_UUID: u16 = 0x2A6E;
+pub const HUMIDITY_CHARACTERISTIC_UUID: u16 = 0x2A6F;
+pub const SERVICE_UUID: u16 = 0x181A;
+const ADVERTISE_NAME: &str = "SOME_NAME";
+
+/// The max level of logging in debug mode
+#[cfg(debug_assertions)]
+const TRACING_LEVEL: Level = Level::DEBUG;
+/// The max level of logging in release mode
+#[cfg(not(debug_assertions))]
+const TRACING_LEVEL: Level = Level::INFO;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    tracing_subscriber::fmt::init();
+    tracing_subscriber::fmt()
+        .compact()
+        .with_timer(time_formatter())
+        .with_max_level(TRACING_LEVEL)
+        .init();
 
-    debug!("Temperature uuid {}", TEMPERATURE_CHARACTERISTIC_UUID);
-    debug!("Humidity uuid {}", HUMIDITY_CHARACTERISTIC_UUID);
+    let (service_uuid, peripheral) = make_peripheral().await.unwrap();
 
-    let manager = Manager::new().await.context("The BLE Manager could not create a new instance")?;
+    info!("Powering on peripheral");
 
-    let central = get_central(&manager).await?.expect("Some adapter from the manager");
+    while !peripheral.is_powered().await.unwrap() {}
 
-    let mut events = central.events().await?;
+    peripheral
+        .start_advertising(ADVERTISE_NAME, &[service_uuid])
+        .await
+        .context("Failed to advertise")
+        .unwrap();
+    info!("Start advertising {}", ADVERTISE_NAME);
 
-    central.start_scan(ScanFilter::default()).await?;
-
-    while let Some(event) = events.next().await {
-        match event {
-            CentralEvent::DeviceDiscovered(id) => {
-                debug!("DeviceDiscoverd: {:?}", id);
-            }
-            CentralEvent::DeviceUpdated(id) => {
-                debug!("DeviceUpdated: {:?}", id);
-            }
-            CentralEvent::DeviceConnected(id) => {
-                debug!("DeviceConnected: {:?}", id);
-            }
-            CentralEvent::DeviceDisconnected(id) => {
-                debug!("DeviceDisconnected: {:?}", id);
-            }
-            CentralEvent::ManufacturerDataAdvertisement { id, manufacturer_data } => {
-                debug!("ManufacturerDataAdvertisement: {:?} {:?}", id, manufacturer_data);
-            }
-            CentralEvent::ServiceDataAdvertisement { id, service_data } => {
-                debug!("ServiceDataAdvertisement: {:?} {:?}", id, service_data);
-            }
-            CentralEvent::ServicesAdvertisement { id, services } => {
-                debug!("ServicesAdvertisement: {:?} {:?}", id, services);
-            }
-        }
+    // Wait while peripheral is advertising
+    while peripheral.is_advertising().await.unwrap() {
+        std::thread::sleep(Duration::from_millis(250));
     }
+    info!("Peripheral stopped advertising");
 
     Ok(())
+}
+
+async fn make_peripheral() -> Result<(Uuid, Peripheral)> {
+    debug!("Starting to make peripheral");
+    let peripheral = Peripheral::new()
+        .await
+        .context("Could not make peripheral")?;
+
+    debug!("Adding service");
+    let (service_uuid, service) = create_evironmental_service().await;
+    peripheral
+        .add_service(&service)
+        .context("Could not add service to peripheral")?;
+
+    debug!("Powering the peripheral");
+    while !peripheral.is_powered().await? {}
+
+    debug!("Registering gatt");
+    peripheral
+        .register_gatt()
+        .await
+        .context("Failed to register gatt service")?;
+
+    Ok((service_uuid, peripheral))
+}
+
+fn time_formatter() -> OffsetTime<&'static [time::format_description::FormatItem<'static>]> {
+    let timer = format_description!("[hour]:[minute]:[second]");
+    let time_offset = UtcOffset::current_local_offset().unwrap_or(UtcOffset::UTC);
+    OffsetTime::new(time_offset, timer)
 }
