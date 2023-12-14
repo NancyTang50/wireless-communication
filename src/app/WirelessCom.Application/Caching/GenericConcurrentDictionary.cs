@@ -48,11 +48,17 @@ public class GenericConcurrentDictionary<TKey, TValue> where TValue : class wher
         {
             var oldValue = Get(key);
             if (!_dictionary.TryUpdate(key, value, oldValue!))
+            {
                 throw new GenericConcurrentDictionaryUpdateException<TKey>(key);
+            }
+
             return;
         }
 
-        if (!_dictionary.TryAdd(key, value)) throw new GenericConcurrentDictionaryAddException<TKey>(key);
+        if (!_dictionary.TryAdd(key, value))
+        {
+            throw new GenericConcurrentDictionaryAddException<TKey>(key);
+        }
     }
 
     /// <summary>
@@ -91,10 +97,15 @@ public class GenericConcurrentDictionary<TKey, TValue> where TValue : class wher
     /// </returns>
     public virtual bool Remove(TKey key)
     {
-        if (!_dictionary.ContainsKey(key)) return false;
+        if (!_dictionary.ContainsKey(key))
+        {
+            return false;
+        }
 
         if (!_dictionary.TryRemove(key, out var value))
+        {
             throw new GenericConcurrentDictionaryRemoveException<TKey>(key);
+        }
 
         ItemRemoved?.Invoke(key, value);
         return true;

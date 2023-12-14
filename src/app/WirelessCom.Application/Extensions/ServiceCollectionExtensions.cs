@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
                 .AsSelf()
                 .WithTransientLifetime()
         );
-        
+
         return serviceCollection;
     }
 }

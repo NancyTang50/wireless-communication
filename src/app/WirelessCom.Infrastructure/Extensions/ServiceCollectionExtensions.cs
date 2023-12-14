@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped(_ => CrossBluetoothLE.Current.Adapter);
 
         serviceCollection.AddSingleton<IBleService, BleService>();
-        
+
         return serviceCollection;
     }
 }

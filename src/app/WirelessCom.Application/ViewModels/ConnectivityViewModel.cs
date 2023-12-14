@@ -10,6 +10,18 @@ public partial class ConnectivityViewModel : BaseViewModel
 {
     private readonly IBleService _bleService;
 
+    [ObservableProperty]
+    private IReadOnlyList<BareBleAdvertisement>? _bleAdvertisements = new List<BareBleAdvertisement>();
+
+    [ObservableProperty]
+    private IReadOnlyList<BasicBleDevice> _bleDevices = new List<BasicBleDevice>();
+
+    [ObservableProperty]
+    private string _bluetoothStateMessage = string.Empty;
+
+    [ObservableProperty]
+    private bool _serviceModalIsActive;
+
     public ConnectivityViewModel(IBleService bleService)
     {
         _bleService = bleService;
@@ -32,18 +44,6 @@ public partial class ConnectivityViewModel : BaseViewModel
             return Task.CompletedTask;
         }
     }
-
-    [ObservableProperty]
-    private bool _serviceModalIsActive;
-
-    [ObservableProperty]
-    private string _bluetoothStateMessage = string.Empty;
-
-    [ObservableProperty]
-    private IReadOnlyList<BasicBleDevice> _bleDevices = new List<BasicBleDevice>();
-
-    [ObservableProperty]
-    private IReadOnlyList<BareBleAdvertisement>? _bleAdvertisements = new List<BareBleAdvertisement>();
 
     private void OnBleStateChanged(object source, BluetoothState bluetoothState)
     {

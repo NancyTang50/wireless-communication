@@ -11,9 +11,9 @@ namespace WirelessCom.Infrastructure.Services;
 
 public class BleService : IBleService
 {
-    private readonly GenericConcurrentDictionary<Guid, IDevice> _devices = new();
     private readonly IAdapter _adapter;
     private readonly IBluetoothLE _bluetoothLe;
+    private readonly GenericConcurrentDictionary<Guid, IDevice> _devices = new();
 
     public BleService(IBluetoothLE bluetoothLe, IAdapter adapter)
     {
