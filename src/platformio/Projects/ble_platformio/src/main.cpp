@@ -35,20 +35,6 @@ BLEUnsignedShortCharacteristic humidityCharacteristic = BLEUnsignedShortCharacte
 DHT dht(DHT22_PIN, DHT22); 
 float lastHumidity, lastTemperature;
 
-// void loop() {
-//   humidity = dht.readHumidity();
-//   temperature = dht.readTemperature();
-
-//   Serial.print("Temperature: ");
-//   Serial.print(temperature);
-//   Serial.print("°C / Humidity: ");
-//   Serial.print(humidity);
-//   Serial.println("%");
-
-//   delay(5000);
-
-// }
-
 boolean significantChange(float val1, float val2, float threshold) {
     return (abs(val1 - val2) >= threshold);
 }
@@ -61,10 +47,6 @@ void blePeripheralConnectHandler(BLECentral& central) {
 void blePeripheralDisconnectHandler(BLECentral& central) {
     Serial.print(F("Disconnected event, central: "));
     Serial.println(central.address());
-}
-
-void timerHandler() {
-    // SensorReadTimer.run();
 }
 
 bool updateReadSensor(void *) {
@@ -117,17 +99,6 @@ void setup()
 
     timer.every(2000, updateReadSensor);
 
-    // Interval in microsecs
-    // if (ITimer.attachInterruptInterval(1000, timerHandler))
-    // {
-    //     Serial.print(F("Starting ITimer OK, millis() = "));
-    //     Serial.println(millis());
-    // }
-    // else {
-    //     Serial.println(F("Can't set ITimer. Select another freq. or timer"));
-    // }
-
-    // SensorReadTimer.setInterval(2000L, updateReadSensor);
     Serial.println(F("BLE LED Peripheral"));
 }
 
@@ -135,46 +106,11 @@ void loop()
 {
     blePeripheral.poll();
 
-    if(readFromSensor) { // NOTE: this is some volitile boolean, on a interup timer
+    if(readFromSensor) {
         setTempCharacteristicValue();
         setHumidityCharacteristicValue();
         readFromSensor = false;
     }
 
     timer.tick();
-  
-  // BLECentral central = blePeripheral.central();
-
-  // if (central)
-  // {
-  //   // central connected to peripheral
-  //   Serial.print(F("Connected to central: "));
-  //   Serial.println(central.address());
-
-  //   while (central.connected())
-  //   {
-  //     // central still connected to peripheral
-  //     if (temperatureCharacteristic.written())
-  //     {
-  //       // central wrote new value to characteristic, update LED
-  //       if (temperatureCharacteristic.value())
-  //       {
-  //         Serial.println(F("LED on"));
-  //         // digitalWrite(LED_PIN, LOW);
-  //       }
-  //       else
-  //       {
-  //         Serial.println(F("LED off"));
-  //         // digitalWrite(LED_PIN, HIGH);
-  //       }
-  //     }
-  //   }
-
-  //   // central disconnected
-  //   Serial.print(F("Disconnected from central: "));
-  //   Serial.println(central.address());
-  // }
 }
-
-
-
