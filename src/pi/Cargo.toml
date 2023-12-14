@@ -19,3 +19,9 @@ async-trait = "0.1.74"
 dht22_pi = "1.0.0"
 lazy_static = "1.4.0"
 time = { version = "0.3.30", features = [ "macros", "parsing", "local-offset" ] }
+time-sys = "0.0.2"
+linux-api = "0.0.5"
+chrono = "0.4.31"
+
+[dev-dependencies]
+rstest = "0.18.2"

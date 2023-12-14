@@ -2,6 +2,11 @@ pub trait BleEncode {
     fn to_ble_bytes(self) -> Vec<u8>;
 }
 
+pub trait BleDecode {
+    type Output;
+    fn from_ble_byte(ble_bytes: Vec<u8>) -> Self::Output;
+}
+
 impl BleEncode for f32 {
     fn to_ble_bytes(self) -> Vec<u8> {
         let value = self * 100f32;

@@ -9,10 +9,10 @@ use bluster::{gatt::service::Service, SdpShortUuid};
 use std::collections::HashSet;
 use uuid::Uuid;
 
-use crate::{sensor_data::start_reading_sensor_data, SERVICE_UUID};
+use crate::{sensor_data::start_reading_sensor_data, ENVIRONMENTAL_SENSING_SERVICE_UUID};
 
 pub async fn create_evironmental_service() -> (Uuid, Service) {
-    let service_uuid = Uuid::from_sdp_short_uuid(SERVICE_UUID);
+    let service_uuid = Uuid::from_sdp_short_uuid(ENVIRONMENTAL_SENSING_SERVICE_UUID);
 
     let (temperature_tx, temperature_rx) = channel(0);
     let (humidity_tx, humidity_rx) = channel(0);
