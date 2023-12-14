@@ -1,4 +1,4 @@
-﻿namespace WirelessCom.Domain.Entities;
+﻿namespace WirelessCom.Domain.Models.Entities;
 
 public record Temperature(double Kelvin, DateTime DateTime, string PeripheralName) : BaseEntity
 {

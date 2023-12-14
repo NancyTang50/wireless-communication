@@ -1,0 +1,105 @@
+﻿@page "/Connectivity"
+@using WirelessCom.Application.ViewModels
+@inject ConnectivityViewModel ViewModel
+
+<h1>Connectivity</h1>
+
+<p role="status">Bluetooth status: @ViewModel.BluetoothStateMessage</p>
+
+<button class="btn btn-primary" @onclick="ViewModel.ScanForDevices">Scan</button>
+
+@if (ViewModel.BleDevices.Count == 0)
+{
+    <p>
+        <em>No devices found</em>
+    </p>
+}
+else
+{
+    <h3>Devices</h3>
+    <hr/>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>ID</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var device in ViewModel.BleDevices)
+        {
+            <tr class="@(device.IsConnected ? "text-success" : string.Empty)" @onclick="() => ViewModel.OpenServicesModal(device.Id)">
+                <td>@(string.IsNullOrWhiteSpace(device.Name) ? "Unknown" : device.Name)</td>
+                <td>@device.Id.ToString()</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<!-- Advertisements Modal -->
+<div class="modal @(ViewModel.ServiceModalIsActive ? "show" : "")" tabindex="-1" role="dialog" style="display:@(ViewModel.ServiceModalIsActive ? "block" : "none"); overflow-y: auto;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Device info</h5>
+                <button type="button" class="btn-close" aria-label="Close" @onclick="ViewModel.CloseServicesModal"></button>
+            </div>
+            <div class="modal-body">
+                <h3>Devices stats</h3>
+                <hr/>
+                <ul>
+                    <li>RSSI: @ViewModel.ServiceModalDevice?.Rssi</li>
+                    <li>Is connected: @ViewModel.ServiceModalDevice?.IsConnected</li>
+                </ul>
+
+                <h3>Advertisements</h3>
+                <hr/>
+                @if (ViewModel.BleDeviceAdvertisements == null || ViewModel.BleDeviceAdvertisements.Count == 0)
+                {
+                    <p>
+                        <em>No advertisements found</em>
+                    </p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Raw data</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var advertisement in ViewModel.BleDeviceAdvertisements)
+                        {
+                            <tr>
+                                <td>@advertisement.Type.ToString()</td>
+                                <td>@BitConverter.ToString(advertisement.Data)</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="ViewModel.CloseServicesModal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewModel.ServiceModalIsActive)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        // Todo: Look into this. Cus this shouldn't be required......
+        ViewModel.PropertyChanged += (_, _) => StateHasChanged();
+    }
+
+}

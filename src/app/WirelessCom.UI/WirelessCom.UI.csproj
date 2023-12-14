@@ -58,6 +58,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Maui" Version="7.0.0"/>
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)"/>
@@ -65,7 +66,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\WirelessCom.Infrastructure\WirelessCom.Infrastructure.csproj" />
+        <ProjectReference Include="..\WirelessCom.Infrastructure\WirelessCom.Infrastructure.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -4,8 +4,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{872AFCFD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0869BD02-14B3-45BF-8F9D-A500D508A318}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WirelessCom.UI", "WirelessCom.UI\WirelessCom.UI.csproj", "{7FA12E9D-B0D5-438A-A93B-113A98332C2F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WirelessCom.Infrastructure", "WirelessCom.Infrastructure\WirelessCom.Infrastructure.csproj", "{627313C5-FEEE-4996-B151-5242E8EE20BE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WirelessCom.Domain", "WirelessCom.Domain\WirelessCom.Domain.csproj", "{B904AAB9-7292-4DDA-B9F3-C3BDA4C45BF7}"
@@ -14,16 +12,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WirelessCom.Application", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WirelessCom.Infrastructure.Persistence", "WirelessCom.Infrastructure.Persistence\WirelessCom.Infrastructure.Persistence.csproj", "{C86A785B-20DB-4C5C-91E4-BFBC76E901DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WirelessCom.UI", "WirelessCom.UI\WirelessCom.UI.csproj", "{BF8B1EDA-0888-4859-89C0-526CBB5D79C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7FA12E9D-B0D5-438A-A93B-113A98332C2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7FA12E9D-B0D5-438A-A93B-113A98332C2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7FA12E9D-B0D5-438A-A93B-113A98332C2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7FA12E9D-B0D5-438A-A93B-113A98332C2F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{627313C5-FEEE-4996-B151-5242E8EE20BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{627313C5-FEEE-4996-B151-5242E8EE20BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{627313C5-FEEE-4996-B151-5242E8EE20BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -40,12 +36,16 @@ Global
 		{C86A785B-20DB-4C5C-91E4-BFBC76E901DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C86A785B-20DB-4C5C-91E4-BFBC76E901DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C86A785B-20DB-4C5C-91E4-BFBC76E901DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF8B1EDA-0888-4859-89C0-526CBB5D79C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF8B1EDA-0888-4859-89C0-526CBB5D79C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF8B1EDA-0888-4859-89C0-526CBB5D79C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF8B1EDA-0888-4859-89C0-526CBB5D79C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{7FA12E9D-B0D5-438A-A93B-113A98332C2F} = {0869BD02-14B3-45BF-8F9D-A500D508A318}
 		{627313C5-FEEE-4996-B151-5242E8EE20BE} = {0869BD02-14B3-45BF-8F9D-A500D508A318}
 		{B904AAB9-7292-4DDA-B9F3-C3BDA4C45BF7} = {0869BD02-14B3-45BF-8F9D-A500D508A318}
 		{E71C5539-8EEA-4194-A500-3B7BFD4F9683} = {0869BD02-14B3-45BF-8F9D-A500D508A318}
 		{C86A785B-20DB-4C5C-91E4-BFBC76E901DC} = {0869BD02-14B3-45BF-8F9D-A500D508A318}
+		{BF8B1EDA-0888-4859-89C0-526CBB5D79C0} = {0869BD02-14B3-45BF-8F9D-A500D508A318}
 	EndGlobalSection
 EndGlobal

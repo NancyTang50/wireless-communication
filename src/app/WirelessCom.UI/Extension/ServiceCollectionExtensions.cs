@@ -1,6 +1,6 @@
 ﻿using WirelessCom.Infrastructure.Extensions;
 
-namespace WirelessCom.UI.Extensions;
+namespace WirelessCom.UI.Extension;
 
 public static class ServiceCollectionExtensions
 {

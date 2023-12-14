@@ -1,6 +1,6 @@
 ﻿namespace WirelessCom.UI;
 
-public partial class App : Microsoft.Maui.Controls.Application
+public partial class App
 {
     public App()
     {

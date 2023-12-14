@@ -1,4 +1,4 @@
-﻿namespace WirelessCom.Domain.Entities;
+﻿namespace WirelessCom.Domain.Models.Entities;
 
 public record Humidity(double Value, DateTime DateTime, string PeripheralName) : BaseEntity
 {
