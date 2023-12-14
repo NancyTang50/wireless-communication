@@ -81,18 +81,15 @@ public class BleService : IBleService
         return device.AdvertisementRecords.Select(record => new BareBleAdvertisement((BleAdvertisementType)record.Type, record.Data)).ToList();
     }
 
-    private void InitOnBleStateChanged()
+    /// <inheritdoc />
+    public async Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default)
     {
-        _bluetoothLe.StateChanged += (_, args) => OnBleStateChangedEvent?.Invoke(this, (BluetoothState)args.NewState);
+        var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
+        await _adapter.ConnectToDeviceAsync(device, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
-    private void InitOnDevicesChangedEvent()
-    {
-        _devices.ItemAdded += (_, _) => OnDevicesChangedEvent?.Invoke(this, GetAllBasicBleDevices());
-        _devices.ItemRemoved += (_, _) => OnDevicesChangedEvent?.Invoke(this, GetAllBasicBleDevices());
-    }
-
-    private List<BasicBleDevice> GetAllBasicBleDevices()
+    /// <inheritdoc />
+    public List<BasicBleDevice> GetAllBasicBleDevices()
     {
         return _devices.GetAll()
             .Select(
@@ -104,5 +101,16 @@ public class BleService : IBleService
                 )
             )
             .ToList();
+    }
+
+    private void InitOnBleStateChanged()
+    {
+        _bluetoothLe.StateChanged += (_, args) => OnBleStateChangedEvent?.Invoke(this, (BluetoothState)args.NewState);
+    }
+
+    private void InitOnDevicesChangedEvent()
+    {
+        _devices.ItemAdded += (_, _) => OnDevicesChangedEvent?.Invoke(this, GetAllBasicBleDevices());
+        _devices.ItemRemoved += (_, _) => OnDevicesChangedEvent?.Invoke(this, GetAllBasicBleDevices());
     }
 }
