@@ -54,24 +54,22 @@ bool updateReadSensor(void *) {
     return true; // NOTE: this is to repeat the timer
 }
 
-void setTempCharacteristicValue() {
-  float reading = dht.readTemperature();
-  if (!isnan(reading) && significantChange(lastTemperature, reading, 0.5)) {
-    Serial.print(F("Temperature: ")); Serial.print(reading); Serial.println(F("C"));
-    
-    temperatureCharacteristic.setValue(reading * 100);
-    lastTemperature = reading;
-  }
+void setTempCharacteristicValue(float reading) {
+    if (!isnan(reading) && significantChange(lastTemperature, reading, 0.5)) {
+        Serial.print(F("Temperature: ")); Serial.print(reading); Serial.println(F("C"));
+
+        temperatureCharacteristic.setValue(reading * 100);
+        lastTemperature = reading;
+    }
 }
 
-void setHumidityCharacteristicValue() {
-  float reading = dht.readHumidity();
-  if (!isnan(reading) && significantChange(lastHumidity, reading, 1.0)) {
-    Serial.print(F("Humidity: ")); Serial.print(reading); Serial.println(F("%"));
+void setHumidityCharacteristicValue(float reading) {
+    if (!isnan(reading) && significantChange(lastHumidity, reading, 1.0)) {
+        Serial.print(F("Humidity: ")); Serial.print(reading); Serial.println(F("%"));
 
-    humidityCharacteristic.setValue(reading * 100);
-    lastHumidity = reading;
-  }
+        humidityCharacteristic.setValue(reading * 100);
+        lastHumidity = reading;
+    }
 }
 
 void setup()
@@ -107,8 +105,19 @@ void loop()
     blePeripheral.poll();
 
     if(readFromSensor) {
-        setTempCharacteristicValue();
-        setHumidityCharacteristicValue();
+        Serial.println(F("3"));
+        auto temperature_reading = dht.readTemperature();
+        Serial.println(F("4"));
+        auto humidity_reading = dht.readHumidity();
+        Serial.println(F("5"));
+
+        if(!isnan(temperature_reading) && !isnan(humidity_reading)) {
+            setTempCharacteristicValue(temperature_reading);
+            setHumidityCharacteristicValue(humidity_reading);
+        } else {
+            Serial.println(F("Failed to read from DHT sensor!"));
+        }
+
         readFromSensor = false;
     }
 
