@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using WirelessCom.Application.Models;
 using WirelessCom.Application.Services;
 using WirelessCom.Domain.Extensions;
 using WirelessCom.Domain.Models;
@@ -11,13 +12,10 @@ public partial class ConnectivityViewModel : BaseViewModel
     private readonly IBleService _bleService;
 
     [ObservableProperty]
-    private IReadOnlyList<BareBleAdvertisement>? _bleDeviceAdvertisements = new List<BareBleAdvertisement>();
+    private IReadOnlyList<BasicBleDevice> _bleDevices = new List<BasicBleDevice>();
 
     [ObservableProperty]
-    private IReadOnlyList<BasicBleDevice> _bleDevices = new List<BasicBleDevice>();
-    
-    [ObservableProperty]
-    private BasicBleDevice? _serviceModalDevice;
+    private BleDeviceModalData? _deviceModalData;
 
     [ObservableProperty]
     private string _bluetoothStateMessage = string.Empty;
@@ -37,7 +35,7 @@ public partial class ConnectivityViewModel : BaseViewModel
     public async Task ScanForDevices()
     {
         _bleService.OnDevicesChangedEvent += BleServiceOnOnDevicesChangedEvent;
-        await _bleService.ScanForDevices().ConfigureAwait(false);
+        await _bleService.ScanForDevices();
         _bleService.OnDevicesChangedEvent -= BleServiceOnOnDevicesChangedEvent;
         return;
 
@@ -56,14 +54,27 @@ public partial class ConnectivityViewModel : BaseViewModel
     public void CloseServicesModal()
     {
         ServiceModalIsActive = false;
-        BleDeviceAdvertisements = null;
-        ServiceModalDevice = null;
+        DeviceModalData = null;
     }
 
-    public void OpenServicesModal(Guid deviceId)
+    public async Task OpenServicesModal(Guid deviceId)
     {
-        BleDeviceAdvertisements = _bleService.GetBareBleAdvertisements(deviceId);
-        ServiceModalDevice = BleDevices.FirstOrDefault(x => x.Id == deviceId);
+        var device = BleDevices.First(x => x.Id == deviceId);
+        var services = device.IsConnected
+            ? await _bleService.GetServicesAsync(deviceId)
+            : new List<BasicBleService>();
+
+        DeviceModalData = new BleDeviceModalData(device, _bleService.GetBareBleAdvertisements(deviceId), services);
         ServiceModalIsActive = true;
+    }
+
+    public async Task ConnectDevice()
+    {
+        if (DeviceModalData is null)
+        {
+            return;
+        }
+
+        await _bleService.ConnectDeviceByIdAsync(DeviceModalData.Device.Id);
     }
 }

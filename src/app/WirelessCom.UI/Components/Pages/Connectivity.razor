@@ -47,15 +47,37 @@ else
             </div>
             <div class="modal-body">
                 <h3>Devices stats</h3>
-                <hr/>
                 <ul>
-                    <li>RSSI: @ViewModel.ServiceModalDevice?.Rssi</li>
-                    <li>Is connected: @ViewModel.ServiceModalDevice?.IsConnected</li>
+                    <li>RSSI: @ViewModel.DeviceModalData?.Device.Rssi</li>
+                    <li>Is connected: @ViewModel.DeviceModalData?.Device.IsConnected</li>
                 </ul>
 
-                <h3>Advertisements</h3>
+                @if (ViewModel.DeviceModalData?.Services.Count > 0)
+                {
+                    <hr/>
+                    <h3>Services</h3>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>ID</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var service in ViewModel.DeviceModalData!.Services)
+                        {
+                            <tr>
+                                <td>@service.Name</td>
+                                <td>@service.Id</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+
                 <hr/>
-                @if (ViewModel.BleDeviceAdvertisements == null || ViewModel.BleDeviceAdvertisements.Count == 0)
+                <h3>Advertisements</h3>
+                @if (ViewModel.DeviceModalData?.Advertisements == null || ViewModel.DeviceModalData?.Advertisements.Count == 0)
                 {
                     <p>
                         <em>No advertisements found</em>
@@ -71,7 +93,7 @@ else
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var advertisement in ViewModel.BleDeviceAdvertisements)
+                        @foreach (var advertisement in ViewModel.DeviceModalData!.Advertisements)
                         {
                             <tr>
                                 <td>@advertisement.Type.ToString()</td>
@@ -84,6 +106,7 @@ else
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" @onclick="ViewModel.CloseServicesModal">Close</button>
+                <button type="button" class="btn btn-success" @onclick="ViewModel.ConnectDevice">Connect</button>
             </div>
         </div>
     </div>
