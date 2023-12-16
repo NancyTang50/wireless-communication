@@ -2,6 +2,7 @@ use std::time::SystemTime;
 
 use time::Month;
 use chrono::{DateTime, TimeZone, Utc, Datelike, Timelike};
+use tracing::debug;
 
 use crate::ble_encode::{BleDecode, BleEncode};
 
@@ -36,17 +37,18 @@ impl BleDateTime {
 
     pub fn from_system_time() -> Self {
         let system_time = SystemTime::now();
-        let current_date_time: DateTime<_> = system_time.into();
-        let month = Month::try_from(current_date_time.month()).unwrap_or(Month::January);
-        Self::new(current_date_time.year().into(), month, current_date_time.day().into(), current_date_time.hour().into(), current_date_time.minute().into(), current_date_time.second().into())
+        let current_date_time: DateTime<chrono::Utc> = system_time.into();
+        let month = current_date_time.month() as u8;
+        let month = Month::try_from(month).unwrap_or(Month::January);
+        Self::new(current_date_time.year() as u16, month, current_date_time.day() as u8, current_date_time.hour() as u8, current_date_time.minute() as u8, current_date_time.second() as u8)
     }
 
-    pub fn to_epoch_seconds(self) -> i64 {
+    pub fn to_epoch_seconds(&self) -> i64 {
         let month = self.month as u8;
-        let date_time = Utc.with_ymd_and_hms(self.year.into(), month.into(), self.day.into(), self.hours.into(), self.minutes.into(), self.seconds.into()).expect("This should be a valid datetime");
+        let date_time = Utc.with_ymd_and_hms(self.year.into(), month.into(), self.day.into(), self.hours.into(), self.minutes.into(), self.seconds.into()).unwrap();
+        debug!("To epoch is {:?}", date_time);
         date_time.timestamp()
     }
-
 }
 
 impl BleEncode for BleDateTime {
@@ -59,6 +61,14 @@ impl BleEncode for BleDateTime {
         ble_bytes.push(self.hours);
         ble_bytes.push(self.minutes);
         ble_bytes.push(self.seconds);
+        ble_bytes.push(0); // TODO: Unknown day of the week
+        ble_bytes.push(0); // TODO: Unknown Fractions265 https://github.com/t2t-sonbui/BLECurrentTimeServiceServer/blob/master/app/src/main/java/xyz/vidieukhien/embedded/ble/currenttimeservice/server/TimeProfile.java
+        
+        // TODO: Set your adjust reasons accordingly, in my case they were unnecessary
+        // Adjust Reasons: Manual Update, External Update, Time Zone Change, Daylight Savings Change
+        // const adjustReasons = [true, false, false, true];
+
+        ble_bytes.push(0); // TODO: Unknown update reason
 
         ble_bytes
     }

@@ -17,6 +17,6 @@ pub async fn create_current_time_service() -> (Uuid, Service) {
 
     (
         service_uuid,
-        Service::new(service_uuid, false, characteristics),
+        Service::new(service_uuid, true, characteristics),
     )
 }
