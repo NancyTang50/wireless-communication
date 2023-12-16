@@ -1,7 +1,7 @@
 use std::time::SystemTime;
 
 use time::Month;
-use chrono::{DateTime, TimeZone, Utc, Datelike};
+use chrono::{DateTime, TimeZone, Utc, Datelike, Timelike};
 
 use crate::ble_encode::{BleDecode, BleEncode};
 
@@ -36,15 +36,15 @@ impl BleDateTime {
 
     pub fn from_system_time() -> Self {
         let system_time = SystemTime::now();
-        let current_datetime: DateTime<_> = system_time.into();
-        let month = Month::try_from(current_datetime.month()).unwrap_or(Month::January);
-        Self::new(current_datetime.year().into(), month, current_datetime.day(), current_datetime.hour())
+        let current_date_time: DateTime<_> = system_time.into();
+        let month = Month::try_from(current_date_time.month()).unwrap_or(Month::January);
+        Self::new(current_date_time.year().into(), month, current_date_time.day().into(), current_date_time.hour().into(), current_date_time.minute().into(), current_date_time.second().into())
     }
 
     pub fn to_epoch_seconds(self) -> i64 {
         let month = self.month as u8;
-        let datetime = Utc.with_ymd_and_hms(self.year.into(), month.into(), self.day.into(), self.hours.into(), self.minutes.into(), self.seconds.into()).expect("This should be a valid datetime");
-        datetime.timestamp()
+        let date_time = Utc.with_ymd_and_hms(self.year.into(), month.into(), self.day.into(), self.hours.into(), self.minutes.into(), self.seconds.into()).expect("This should be a valid datetime");
+        date_time.timestamp()
     }
 
 }

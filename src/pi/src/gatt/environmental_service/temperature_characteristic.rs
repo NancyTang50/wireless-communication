@@ -53,7 +53,7 @@ impl TemperatureCharacteristic {
                 Some(tx),
                 None,
             ),
-            Some(vec![10]),
+            Some(vec![]),
             descriptors,
         )
     }

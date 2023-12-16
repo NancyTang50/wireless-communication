@@ -41,11 +41,11 @@ impl CurrentTimeCharacteristic {
             Uuid::from_sdp_short_uuid(CURRENT_TIME_CHARACTERISTIC_UUID),
             Properties::new(
                 Some(Read(Secure::Insecure(tx.clone()))),
+                Some(Write::WithResponse(Secure::Insecure(tx))),
                 None,
                 None,
-                Some(tx),
             ),
-            Some(vec![10]),
+            Some(vec![]),
             descriptors,
         )
     }
@@ -56,7 +56,7 @@ impl GattEventHandler for CurrentTimeCharacteristic {
         info!("Time event {:?}", event);
         match event {
             bluster::gatt::event::Event::ReadRequest(read_request) => {
-                
+                read_request.response.send(Response::Success(BleDateTime::from_system_time().to_ble_bytes())).unwrap();
             }
             bluster::gatt::event::Event::WriteRequest(write_request) => {
                 let ble_date_time = BleDateTime::from_ble_byte(write_request.data);
