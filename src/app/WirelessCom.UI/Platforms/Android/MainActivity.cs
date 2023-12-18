@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content.PM;
 
+// ReSharper disable once CheckNamespace
 namespace WirelessCom.UI;
 
 [Activity(
@@ -13,6 +14,4 @@ namespace WirelessCom.UI;
         ConfigChanges.SmallestScreenSize |
         ConfigChanges.Density
 )]
-public class MainActivity : MauiAppCompatActivity
-{
-}
+public class MainActivity : MauiAppCompatActivity;

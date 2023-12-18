@@ -2,6 +2,4 @@
 
 namespace WirelessCom.Application.ViewModels;
 
-public class BaseViewModel : ObservableObject
-{
-}
+public class BaseViewModel : ObservableObject;

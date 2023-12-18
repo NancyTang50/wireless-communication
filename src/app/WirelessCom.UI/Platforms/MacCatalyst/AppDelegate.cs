@@ -1,5 +1,6 @@
 ﻿using Foundation;
 
+// ReSharper disable once CheckNamespace
 namespace WirelessCom.UI;
 
 [Register("AppDelegate")]

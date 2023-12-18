@@ -6,7 +6,7 @@
              x:Class="WirelessCom.UI.MainPage"
              BackgroundColor="{DynamicResource PageBackgroundColor}">
 
-    <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+    <BlazorWebView HostPage="wwwroot/index.html">
         <BlazorWebView.RootComponents>
             <RootComponent Selector="#app" ComponentType="{x:Type local:Routes}" />
         </BlazorWebView.RootComponents>
