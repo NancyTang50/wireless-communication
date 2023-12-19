@@ -27,6 +27,8 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
     [ObservableProperty]
     private bool _filterIsChecked;
 
+    private bool _disposed;
+
     public ConnectivityViewModel(IBleService bleService)
     {
         _bleService = bleService;
@@ -74,7 +76,7 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
 
         await _bleService.ConnectDeviceByIdAsync(DeviceModalData.Device.Id);
 
-        BleDevices = _bleService.GetAllBasicBleDevices();
+        BleDevices = GetFilteredDevices(_bleService.GetAllBasicBleDevices());
         DeviceModalData = new BleDeviceModalData(
             DeviceModalData.Device,
             await _bleService.GetServicesAsync(DeviceModalData.Device.Id)
@@ -83,34 +85,29 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
 
     private Task BleServiceOnOnDevicesChangedEvent(object _, IReadOnlyList<BasicBleDevice> devices)
     {
-        BleDevices = devices;
+        BleDevices = GetFilteredDevices(devices);
         return Task.CompletedTask;
     }
 
-    public void Dispose()
+    public void FilterChanged()
     {
-        _bleService.OnBleStateChangedEvent -= OnBleStateChanged;
-        _bleService.OnDevicesChangedEvent -= BleServiceOnOnDevicesChangedEvent;
+        BleDevices = GetFilteredDevices(_bleService.GetAllBasicBleDevices());
     }
 
-    // Todo: This is pure garbage, but it works for now. We need to have a better way of filtering. For example a better device name "RoomSensor-<4 random chars>"
-    public void FilterChanged()
+    private IReadOnlyList<BasicBleDevice> GetFilteredDevices(IReadOnlyList<BasicBleDevice> devices)
     {
         if (FilterIsChecked)
         {
-            BleDevices = _bleService
-                .GetAllBasicBleDevices()
-                .Where(
+            // Todo: This is pure garbage, but it works for now. We need to have a better way of filtering. For example a better device name "RoomSensor-<4 random chars>"
+            return devices.Where(
                     x => x.Advertisements.Any(
                         z => z.Type == BleAdvertisementType.UuidsComplete16Bit && ConvertBytesToIntegers(z.Data).Any(y => y == 0x181A)
                     )
                 )
                 .ToList();
         }
-        else
-        {
-            BleDevices = _bleService.GetAllBasicBleDevices();
-        }
+
+        return devices;
     }
 
     private static IEnumerable<int> ConvertBytesToIntegers(IReadOnlyList<byte> bytes)
@@ -119,5 +116,37 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
         {
             yield return (bytes[i] << 8) | (i + 1 < bytes.Count ? bytes[i + 1] : 0);
         }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+
+        // Suppress finalization.
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        if (disposing)
+        {
+            _bleService.OnBleStateChangedEvent -= OnBleStateChanged;
+            _bleService.OnDevicesChangedEvent -= BleServiceOnOnDevicesChangedEvent;
+        }
+
+        BleDevices = null!;
+
+        _disposed = true;
+    }
+
+    public async Task<string> Test(Guid device)
+    {
+        var result = await _bleService.ReadCharacteristicAsync(device, 0x181A.ToBleGuid(), 0x2A6E.ToBleGuid());
+        return BitConverter.ToString(result.Bytes.ToArray());
     }
 }

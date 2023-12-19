@@ -56,6 +56,9 @@ public interface IBleService
     /// <summary>
     ///     Returns a list of all services of the device with the given <paramref name="deviceId" />.
     /// </summary>
+    /// <remarks>
+    ///     The device must be connected before calling this method.
+    /// </remarks>
     /// <param name="deviceId">The id of the device.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
@@ -78,4 +81,25 @@ public interface IBleService
     ///     Returns a list of all <see cref="BasicBleDevice" />s.
     /// </summary>
     List<BasicBleDevice> GetAllBasicBleDevices();
+
+    /// <summary>
+    ///     Read a characteristic from a device.
+    /// </summary>
+    /// <remarks>
+    ///     The device must be connected before calling this method.
+    /// </remarks>
+    /// <param name="deviceId">The id of the device.</param>
+    /// <param name="serviceId">The id of the service where the characteristic is located.</param>
+    /// <param name="characteristicId">The id of the characteristic to read.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     A task that represents the asynchronous read operation.
+    ///     The Result will contain the <see cref="BleCharacteristicReading" />.
+    /// </returns>
+    Task<BleCharacteristicReading> ReadCharacteristicAsync(
+        Guid deviceId,
+        Guid serviceId,
+        Guid characteristicId,
+        CancellationToken cancellationToken = default
+    );
 }

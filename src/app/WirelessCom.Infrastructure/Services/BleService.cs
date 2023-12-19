@@ -97,6 +97,22 @@ public class BleService : IBleService
             .ToList();
     }
 
+    /// <inheritdoc />
+    public async Task<BleCharacteristicReading> ReadCharacteristicAsync(
+        Guid deviceId,
+        Guid serviceId,
+        Guid characteristicId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
+        var service = await device.GetServiceAsync(serviceId, cancellationToken).ConfigureAwait(false);
+        var characteristic = await service.GetCharacteristicAsync(characteristicId).ConfigureAwait(false);
+        var result = await characteristic.ReadAsync(cancellationToken).ConfigureAwait(false);
+
+        return new BleCharacteristicReading(result.data, result.resultCode);
+    }
+
     private void InitOnBleStateChanged()
     {
         _bluetoothLe.StateChanged += (_, args) => OnBleStateChangedEvent?.Invoke(this, (BluetoothState)args.NewState);
