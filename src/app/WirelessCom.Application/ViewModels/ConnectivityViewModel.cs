@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using WirelessCom.Application.Extensions;
 using WirelessCom.Application.Models;
 using WirelessCom.Application.Services;
 using WirelessCom.Domain.Extensions;
@@ -7,7 +8,7 @@ using WirelessCom.Domain.Models.Enums;
 
 namespace WirelessCom.Application.ViewModels;
 
-public partial class ConnectivityViewModel : BaseViewModel
+public partial class ConnectivityViewModel : BaseViewModel, IDisposable
 {
     private readonly IBleService _bleService;
 
@@ -23,27 +24,23 @@ public partial class ConnectivityViewModel : BaseViewModel
     [ObservableProperty]
     private bool _serviceModalIsActive;
 
+    [ObservableProperty]
+    private bool _filterIsChecked;
+
     public ConnectivityViewModel(IBleService bleService)
     {
         _bleService = bleService;
         _bleService.HasCorrectPermissions();
 
         BluetoothStateMessage = _bleService.GetBluetoothState().ToReadableString();
+
         _bleService.OnBleStateChangedEvent += OnBleStateChanged;
+        _bleService.OnDevicesChangedEvent += BleServiceOnOnDevicesChangedEvent;
     }
 
     public async Task ScanForDevices()
     {
-        _bleService.OnDevicesChangedEvent += BleServiceOnOnDevicesChangedEvent;
         await _bleService.ScanForDevices();
-        _bleService.OnDevicesChangedEvent -= BleServiceOnOnDevicesChangedEvent;
-        return;
-
-        Task BleServiceOnOnDevicesChangedEvent(object _, IReadOnlyList<BasicBleDevice> devices)
-        {
-            BleDevices = devices;
-            return Task.CompletedTask;
-        }
     }
 
     private void OnBleStateChanged(object source, BluetoothState bluetoothState)
@@ -64,7 +61,7 @@ public partial class ConnectivityViewModel : BaseViewModel
             ? await _bleService.GetServicesAsync(deviceId)
             : new List<BasicBleService>();
 
-        DeviceModalData = new BleDeviceModalData(device, _bleService.GetBareBleAdvertisements(deviceId), services);
+        DeviceModalData = new BleDeviceModalData(device, services);
         ServiceModalIsActive = true;
     }
 
@@ -80,8 +77,47 @@ public partial class ConnectivityViewModel : BaseViewModel
         BleDevices = _bleService.GetAllBasicBleDevices();
         DeviceModalData = new BleDeviceModalData(
             DeviceModalData.Device,
-            _bleService.GetBareBleAdvertisements(DeviceModalData.Device.Id),
             await _bleService.GetServicesAsync(DeviceModalData.Device.Id)
         );
+    }
+
+    private Task BleServiceOnOnDevicesChangedEvent(object _, IReadOnlyList<BasicBleDevice> devices)
+    {
+        BleDevices = devices;
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _bleService.OnBleStateChangedEvent -= OnBleStateChanged;
+        _bleService.OnDevicesChangedEvent -= BleServiceOnOnDevicesChangedEvent;
+    }
+
+    // Todo: This is pure garbage, but it works for now. We need to have a better way of filtering. For example a better device name "RoomSensor-<4 random chars>"
+    public void FilterChanged()
+    {
+        if (FilterIsChecked)
+        {
+            BleDevices = _bleService
+                .GetAllBasicBleDevices()
+                .Where(
+                    x => x.Advertisements.Any(
+                        z => z.Type == BleAdvertisementType.UuidsComplete16Bit && ConvertBytesToIntegers(z.Data).Any(y => y == 0x181A)
+                    )
+                )
+                .ToList();
+        }
+        else
+        {
+            BleDevices = _bleService.GetAllBasicBleDevices();
+        }
+    }
+
+    private static IEnumerable<int> ConvertBytesToIntegers(IReadOnlyList<byte> bytes)
+    {
+        for (var i = 0; i < bytes.Count; i += 2)
+        {
+            yield return (bytes[i] << 8) | (i + 1 < bytes.Count ? bytes[i + 1] : 0);
+        }
     }
 }

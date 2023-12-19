@@ -75,13 +75,6 @@ public class BleService : IBleService
     }
 
     /// <inheritdoc />
-    public IReadOnlyList<BareBleAdvertisement> GetBareBleAdvertisements(Guid deviceId)
-    {
-        var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
-        return device.AdvertisementRecords.Select(record => new BareBleAdvertisement((BleAdvertisementType)record.Type, record.Data)).ToList();
-    }
-
-    /// <inheritdoc />
     public async Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default)
     {
         var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
@@ -97,7 +90,8 @@ public class BleService : IBleService
                     device.Key,
                     device.Value.Name,
                     _adapter.ConnectedDevices.Any(x => x.Id == device.Key),
-                    device.Value.Rssi
+                    device.Value.Rssi,
+                    device.Value.AdvertisementRecords.Select(record => new BareBleAdvertisement((BleAdvertisementType)record.Type, record.Data)).ToList()
                 )
             )
             .ToList();

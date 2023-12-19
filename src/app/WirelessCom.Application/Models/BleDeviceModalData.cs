@@ -2,4 +2,4 @@
 
 namespace WirelessCom.Application.Models;
 
-public record BleDeviceModalData(BasicBleDevice Device, IReadOnlyList<BareBleAdvertisement> Advertisements, IReadOnlyList<BasicBleService> Services);
+public record BleDeviceModalData(BasicBleDevice Device, IReadOnlyList<BasicBleService> Services);

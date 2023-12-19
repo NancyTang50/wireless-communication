@@ -1,12 +1,15 @@
 ﻿@page "/Connectivity"
 @using WirelessCom.Application.ViewModels
 @inject ConnectivityViewModel ViewModel
+@implements IDisposable
 
 <h1>Connectivity</h1>
 
 <p role="status">Bluetooth status: @ViewModel.BluetoothStateMessage</p>
 
-<button class="btn btn-primary" @onclick="ViewModel.ScanForDevices">Scan</button>
+<div>
+    <button class="btn btn-primary mb-2" @onclick="ViewModel.ScanForDevices">Scan</button>
+</div>
 
 @if (ViewModel.BleDevices.Count == 0)
 {
@@ -17,7 +20,10 @@
 else
 {
     <h3>Devices</h3>
+
     <hr/>
+    <p><input type="checkbox" @bind-value="@ViewModel.FilterIsChecked" @bind-value:after="ViewModel.FilterChanged"/> Room temperature sensors only</p>
+
     <table class="table">
         <thead>
         <tr>
@@ -78,7 +84,7 @@ else
 
                 <hr/>
                 <h3>Advertisements</h3>
-                @if (ViewModel.DeviceModalData?.Advertisements == null || ViewModel.DeviceModalData?.Advertisements.Count == 0)
+                @if (ViewModel.DeviceModalData?.Device.Advertisements == null || ViewModel.DeviceModalData?.Device.Advertisements.Count == 0)
                 {
                     <p>
                         <em>No advertisements found</em>
@@ -94,7 +100,7 @@ else
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var advertisement in ViewModel.DeviceModalData!.Advertisements)
+                        @foreach (var advertisement in ViewModel.DeviceModalData!.Device.Advertisements)
                         {
                             <tr>
                                 <td>@advertisement.Type.ToString()</td>
@@ -129,6 +135,11 @@ else
     {
         // Todo: Look into this. Cus this shouldn't be required......
         ViewModel.PropertyChanged += (_, _) => StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        ViewModel?.Dispose();
     }
 
 }
