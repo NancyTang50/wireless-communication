@@ -59,7 +59,7 @@ public class LockedBleService : IBleService
     ) =>
         ExecuteWithDeviceLock(() => _bleService.RegisterNotifyHandler(deviceId, serviceId, characteristicId, handler, cancellationToken), deviceId);
 
-    public async Task<T> ExecuteWithDeviceLock<T>(Func<Task<T>> task, Guid deviceId)
+    private async Task<T> ExecuteWithDeviceLock<T>(Func<Task<T>> task, Guid deviceId)
     {
         var semaphore = GetDeviceSemaphores(deviceId);
         await semaphore.WaitAsync().ConfigureAwait(false);
@@ -76,7 +76,7 @@ public class LockedBleService : IBleService
         }
     }
 
-    public async Task ExecuteWithDeviceLock(Func<Task> task, Guid deviceId)
+    private async Task ExecuteWithDeviceLock(Func<Task> task, Guid deviceId)
     {
         var semaphore = GetDeviceSemaphores(deviceId);
         await semaphore.WaitAsync().ConfigureAwait(false);

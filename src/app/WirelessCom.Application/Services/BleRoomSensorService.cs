@@ -6,18 +6,18 @@ namespace WirelessCom.Application.Services;
 
 public class BleRoomSensorService : IBleRoomSensorService
 {
-    private static SemaphoreSlim _registerNotifySemaphore = new(1, 1);
+    private static readonly SemaphoreSlim RegisterNotifySemaphore = new(1, 1);
     private readonly IBleService _bleService;
-    private readonly List<Guid> _roomSensorNotifying = new List<Guid>();
+    private readonly List<Guid> _roomSensorNotifying = new();
     private IReadOnlyList<BasicBleDevice> _roomSensors = new List<BasicBleDevice>();
 
     public BleRoomSensorService(IBleService bleService)
     {
         _bleService = bleService;
-        _bleService.OnDevicesChangedEvent += BleServiceOnOnDevicesChangedEvent;
+        _bleService.OnDevicesChangedEvent += BleServiceOnDevicesChangedEvent;
     }
 
-    public async Task ScanForDevices(CancellationToken cancellationToken = default)
+    public async Task ScanForRoomSensors(CancellationToken cancellationToken = default)
     {
         await _bleService.ScanForDevices(
                 new[] { BleServiceDefinitions.EnvironmentalService.ServiceGuid, BleServiceDefinitions.TimeService.ServiceGuid },
@@ -26,12 +26,7 @@ public class BleRoomSensorService : IBleRoomSensorService
             .ConfigureAwait(false);
     }
 
-    public IReadOnlyList<BasicBleDevice> GetRoomSensors()
-    {
-        return _roomSensors;
-    }
-
-    private async Task BleServiceOnOnDevicesChangedEvent(object _, IReadOnlyList<BasicBleDevice> devices)
+    private async Task BleServiceOnDevicesChangedEvent(object _, IReadOnlyList<BasicBleDevice> devices)
     {
         _roomSensors = devices.FilterByServiceId(
             BleServiceDefinitions.EnvironmentalService.ServiceIdPrefix,
@@ -43,7 +38,7 @@ public class BleRoomSensorService : IBleRoomSensorService
 
     private async Task RegisterNotifyForRoomSensors(CancellationToken cancellationToken = default)
     {
-        await _registerNotifySemaphore.WaitAsync(cancellationToken);
+        await RegisterNotifySemaphore.WaitAsync(cancellationToken);
 
         try
         {
@@ -78,7 +73,7 @@ public class BleRoomSensorService : IBleRoomSensorService
         }
         finally
         {
-            _registerNotifySemaphore.Release();
+            RegisterNotifySemaphore.Release();
         }
     }
 
