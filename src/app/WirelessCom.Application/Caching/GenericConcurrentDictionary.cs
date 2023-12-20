@@ -40,7 +40,7 @@ public class GenericConcurrentDictionary<TKey, TValue> where TValue : class wher
     /// </exception>
     /// <typeparam name="TKey">The key of the objects that you want to store.</typeparam>
     /// <typeparam name="TValue">The objects that you want to store.</typeparam>
-    public virtual void Add(TKey key, TValue value)
+    public virtual void AddOrUpdate(TKey key, TValue value)
     {
         ItemAdded?.Invoke(key, value);
 

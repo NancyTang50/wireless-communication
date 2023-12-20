@@ -22,6 +22,7 @@ public class BleService : IBleService
 
         InitOnBleStateChanged();
         InitOnDevicesChangedEvent();
+        InitOnBleDeviceConnectionChangedEvents();
     }
 
     /// <inheritdoc />
@@ -57,7 +58,7 @@ public class BleService : IBleService
             scanFilterOptions.ServiceUuids = guids;
         }
 
-        _adapter.DeviceDiscovered += (_, a) => _devices.Add(a.Device.Id, a.Device);
+        _adapter.ScanMode = ScanMode.LowLatency;
         await _adapter.StartScanningForDevicesAsync(scanFilterOptions, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
@@ -65,10 +66,7 @@ public class BleService : IBleService
     public async Task<IReadOnlyList<BasicBleService>> GetServicesAsync(Guid deviceId, CancellationToken cancellationToken = default)
     {
         var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
-        if (!_bluetoothLe.Adapter.ConnectedDevices.Contains(device))
-        {
-            throw new RequireBleConnectionException(deviceId);
-        }
+        ValidateBleConnected(deviceId, device);
 
         var services = await device.GetServicesAsync(cancellationToken).ConfigureAwait(false);
         return services.Select(service => new BasicBleService(service.Id, service.Device.Id, service.Name, service.IsPrimary)).ToList();
@@ -106,6 +104,8 @@ public class BleService : IBleService
     )
     {
         var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
+        ValidateBleConnected(deviceId, device);
+
         var service = await device.GetServiceAsync(serviceId, cancellationToken).ConfigureAwait(false);
         var characteristic = await service.GetCharacteristicAsync(characteristicId).ConfigureAwait(false);
         var result = await characteristic.ReadAsync(cancellationToken).ConfigureAwait(false);
@@ -123,11 +123,21 @@ public class BleService : IBleService
     )
     {
         var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
+        ValidateBleConnected(deviceId, device);
+
         var service = await device.GetServiceAsync(serviceId, cancellationToken).ConfigureAwait(false);
         var characteristic = await service.GetCharacteristicAsync(characteristicId).ConfigureAwait(false);
 
         await characteristic.StartUpdatesAsync(cancellationToken).ConfigureAwait(false);
         characteristic.ValueUpdated += (_, args) => handler(new BleCharacteristicReading(args.Characteristic.Value));
+    }
+
+    private void ValidateBleConnected(Guid deviceId, IDevice device)
+    {
+        if (!_bluetoothLe.Adapter.ConnectedDevices.Contains(device))
+        {
+            throw new RequireBleConnectionException(deviceId);
+        }
     }
 
     private void InitOnBleStateChanged()
@@ -139,5 +149,15 @@ public class BleService : IBleService
     {
         _devices.ItemAdded += (_, _) => OnDevicesChangedEvent?.Invoke(this, GetAllBasicBleDevices());
         _devices.ItemRemoved += (_, _) => OnDevicesChangedEvent?.Invoke(this, GetAllBasicBleDevices());
+    }
+
+    private void InitOnBleDeviceConnectionChangedEvents()
+    {
+        _adapter.DeviceDiscovered += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
+        _adapter.DeviceAdvertised += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
+        _adapter.DeviceConnected += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
+        _adapter.DeviceDisconnected += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
+        _adapter.DeviceConnectionLost += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
+        _adapter.DeviceConnectionError += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
     }
 }

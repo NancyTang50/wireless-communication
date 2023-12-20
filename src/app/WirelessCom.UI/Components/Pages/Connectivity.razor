@@ -136,7 +136,7 @@ else
     protected override void OnInitialized()
     {
         // Todo: Look into this. Cus this shouldn't be required......
-        ViewModel.PropertyChanged += (_, _) => StateHasChanged();
+        ViewModel.PropertyChanged += (_, _) => InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
