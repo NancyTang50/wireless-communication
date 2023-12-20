@@ -1,4 +1,5 @@
 ﻿using Plugin.BLE;
+using Plugin.BLE.Abstractions.Contracts;
 using WirelessCom.Application.Extensions;
 using WirelessCom.Application.Services;
 using WirelessCom.Infrastructure.Persistence.Extensions;
@@ -14,7 +15,15 @@ public static class ServiceCollectionExtensions
         serviceCollection.RegisterPersistenceLayer();
 
         serviceCollection.AddScoped(_ => CrossBluetoothLE.Current);
-        serviceCollection.AddScoped(_ => CrossBluetoothLE.Current.Adapter);
+        serviceCollection.AddScoped(
+            _ =>
+            {
+                var adapter = CrossBluetoothLE.Current.Adapter;
+                adapter.ScanMode = ScanMode.LowLatency;
+
+                return adapter;
+            }
+        );
 
         serviceCollection.AddSingleton<IBleService, BleService>();
 

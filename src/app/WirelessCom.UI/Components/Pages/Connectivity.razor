@@ -1,5 +1,6 @@
 ﻿@page "/Connectivity"
 @using WirelessCom.Application.ViewModels
+@using WirelessCom.Application.Extensions
 @inject ConnectivityViewModel ViewModel
 @implements IDisposable
 
@@ -63,6 +64,7 @@
                     <li>Name: @ViewModel.DeviceModalData?.Device.Name</li>
                     <li>RSSI: @ViewModel.DeviceModalData?.Device.Rssi</li>
                     <li>Is connected: @ViewModel.DeviceModalData?.Device.IsConnected</li>
+                    <li>Is room sensor: @ViewModel.DeviceModalData?.Device.IsRoomSensor()</li>
                 </ul>
 
                 @if (ViewModel.DeviceModalData?.Services.Count > 0)
@@ -120,9 +122,9 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" @onclick="ViewModel.CloseServicesModal">Close</button>
                 <button type="button"
-                        class="btn btn-success"
+                        class="btn @(ViewModel.DeviceModalData?.Device.IsRoomSensor() == false ? "btn-danger" : "btn-success")"
                         @onclick="ViewModel.ConnectDevice"
-                        disabled="@(ViewModel.DeviceModalData?.Device.IsConnected ?? false)">
+                        disabled="@((!ViewModel.DeviceModalData?.Device.IsRoomSensor() ?? false) || (ViewModel.DeviceModalData?.Device.IsConnected ?? false))">
                     Connect
                 </button>
             </div>

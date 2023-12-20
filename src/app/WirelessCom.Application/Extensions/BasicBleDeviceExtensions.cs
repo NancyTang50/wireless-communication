@@ -20,6 +20,20 @@ public static class BasicBleDeviceExtensions
         );
     }
 
+    public static bool IsRoomSensor(this BasicBleDevice device)
+    {
+        var roomSensorServiceIdPrefix = new[]
+        {
+            BleServiceDefinitions.EnvironmentalService.ServiceIdPrefix,
+            BleServiceDefinitions.TimeService.ServiceIdPrefix
+        };
+
+        return device.Advertisements.Any(
+            z => z.Type == BleAdvertisementType.UuidsComplete16Bit &&
+                ConvertBytesToIntegers(z.Data).Any(roomSensorServiceIdPrefix.Contains)
+        );
+    }
+
     private static IEnumerable<int> ConvertBytesToIntegers(IReadOnlyList<byte> bytes)
     {
         for (var i = 0; i < bytes.Count; i += 2)

@@ -126,7 +126,7 @@ public interface IBleService
         Guid deviceId,
         Guid serviceId,
         Guid characteristicId,
-        IBleService.NotifyCharacteristicUpdated handler,
+        NotifyCharacteristicUpdated handler,
         CancellationToken cancellationToken = default
     );
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using WirelessCom.Application.Services;
 using WirelessCom.Application.ViewModels;
+using WirelessCom.Domain.Services;
 
 namespace WirelessCom.Application.Extensions;
 
@@ -14,6 +16,8 @@ public static class ServiceCollectionExtensions
                 .AsSelf()
                 .WithTransientLifetime()
         );
+
+        serviceCollection.AddSingleton<IBleRoomSensorService, BleRoomSensorService>();
 
         return serviceCollection;
     }

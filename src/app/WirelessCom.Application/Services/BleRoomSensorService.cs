@@ -1,7 +1,5 @@
-﻿using WirelessCom.Application.Caching;
-using WirelessCom.Application.Extensions;
+﻿using WirelessCom.Application.Extensions;
 using WirelessCom.Domain.Models;
-using WirelessCom.Domain.Models.Enums;
 using WirelessCom.Domain.Services;
 
 namespace WirelessCom.Application.Services;
@@ -9,7 +7,7 @@ namespace WirelessCom.Application.Services;
 public class BleRoomSensorService : IBleRoomSensorService
 {
     private readonly IBleService _bleService;
-    private IReadOnlyList<BasicBleDevice> _bleDevices = new List<BasicBleDevice>();
+    private IReadOnlyList<BasicBleDevice> _roomSensors = new List<BasicBleDevice>();
 
     public BleRoomSensorService(IBleService bleService)
     {
@@ -28,7 +26,14 @@ public class BleRoomSensorService : IBleRoomSensorService
 
     private Task BleServiceOnOnDevicesChangedEvent(object _, IReadOnlyList<BasicBleDevice> devices)
     {
-        _bleDevices = devices.FilterByServiceId(BleServiceDefinitions.EnvironmentalService.ServiceIdPrefix, BleServiceDefinitions.TimeService.ServiceIdPrefix);
+        _roomSensors = devices.FilterByServiceId(BleServiceDefinitions.EnvironmentalService.ServiceIdPrefix, BleServiceDefinitions.TimeService.ServiceIdPrefix);
         return Task.CompletedTask;
     }
+    
+    public IReadOnlyList<BasicBleDevice> GetRoomSensors()
+    {
+        return _roomSensors;
+    }
+    
+    
 }
