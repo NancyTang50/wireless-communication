@@ -1,7 +1,10 @@
 ﻿using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
+using WirelessCom.Application.Database;
 using WirelessCom.Application.Extensions;
 using WirelessCom.Application.Services;
+using WirelessCom.Infrastructure.Database;
+using WirelessCom.Infrastructure.Database.Repositories;
 using WirelessCom.Infrastructure.Persistence.Extensions;
 using WirelessCom.Infrastructure.Services;
 
@@ -27,6 +30,15 @@ public static class ServiceCollectionExtensions
 
         serviceCollection.AddSingleton<IBleService, LockedBleService>();
 
+        serviceCollection.AddTransient<IUnitOfWork, UnitOfWork>();
+        serviceCollection.Scan(
+            scan => scan
+                .FromAssemblyOf<IUnitOfWork>()
+                .AddClasses(classes => classes.AssignableTo(typeof(Repository<>)))
+                .AsSelf()
+                .WithTransientLifetime()
+        );
+        
         return serviceCollection;
     }
 }

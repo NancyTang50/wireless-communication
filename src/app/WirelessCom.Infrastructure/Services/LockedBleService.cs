@@ -6,6 +6,7 @@ using BluetoothState = WirelessCom.Domain.Models.Enums.BluetoothState;
 
 namespace WirelessCom.Infrastructure.Services;
 
+// Yes this incredibly weird to do. However, the BLE plugin is not thread safe and will throw randomly get stuck if you try to do multiple things at once.
 public class LockedBleService : IBleService
 {
     private readonly BleService _bleService;

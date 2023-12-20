@@ -111,7 +111,7 @@ public class BleService : IBleService
         var characteristic = await service.GetCharacteristicAsync(characteristicId).ConfigureAwait(false);
         var result = await characteristic.ReadAsync(cancellationToken).ConfigureAwait(false);
 
-        return new BleCharacteristicReading(result.data);
+        return new BleCharacteristicReading(deviceId, result.data);
     }
 
     /// <inheritdoc />
@@ -135,7 +135,7 @@ public class BleService : IBleService
         }
         
         await characteristic.StartUpdatesAsync(cancellationToken).ConfigureAwait(false);
-        characteristic.ValueUpdated += (_, args) => handler(new BleCharacteristicReading(args.Characteristic.Value));
+        characteristic.ValueUpdated += (_, args) => handler(new BleCharacteristicReading(deviceId, args.Characteristic.Value));
     }
 
     private void ValidateBleConnected(Guid deviceId, IDevice device)
@@ -162,5 +162,7 @@ public class BleService : IBleService
         _adapter.DeviceDiscovered += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
         _adapter.DeviceConnected += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
         _adapter.DeviceDisconnected += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
+        _adapter.DeviceConnectionLost += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
+        _adapter.DeviceConnectionError += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
     }
 }

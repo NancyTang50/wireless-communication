@@ -11,8 +11,7 @@ public class ClimateDbContext : DbContext
         DbPath = Path.Join(path, "climate.db");
     }
 
-    public required DbSet<Temperature> Temperatures { get; set; }
-    public required DbSet<Humidity> Humidities { get; set; }
+    public required DbSet<RoomClimateReading> RoomClimateReadings { get; set; }
 
     private string DbPath { get; }
 
