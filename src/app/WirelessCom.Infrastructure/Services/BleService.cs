@@ -128,6 +128,11 @@ public class BleService : IBleService
         var service = await device.GetServiceAsync(serviceId, cancellationToken).ConfigureAwait(false);
         var characteristic = await service.GetCharacteristicAsync(characteristicId).ConfigureAwait(false);
 
+        if (!characteristic.CanUpdate)
+        {
+            throw new BleCharacteristicNotifiableException(characteristicId);
+        }
+        
         await characteristic.StartUpdatesAsync(cancellationToken).ConfigureAwait(false);
         characteristic.ValueUpdated += (_, args) => handler(new BleCharacteristicReading(args.Characteristic.Value));
     }
