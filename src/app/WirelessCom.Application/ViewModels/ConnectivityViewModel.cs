@@ -27,6 +27,9 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
     [ObservableProperty]
     private bool _filterIsChecked;
 
+    [ObservableProperty]
+    private bool _isScanning;
+
     private bool _disposed;
 
     public ConnectivityViewModel(IBleService bleService)
@@ -42,7 +45,9 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
 
     public async Task ScanForDevices()
     {
+        IsScanning = true;
         await _bleService.ScanForDevices();
+        IsScanning = false;
     }
 
     private void OnBleStateChanged(object source, BluetoothState bluetoothState)

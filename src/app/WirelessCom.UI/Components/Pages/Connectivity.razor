@@ -5,10 +5,14 @@
 
 <h1>Connectivity</h1>
 
-<p role="status">Bluetooth status: @ViewModel.BluetoothStateMessage</p>
+<ul class="list-group list-group-flush">
+  <li class="list-group-item">Bluetooth status: @ViewModel.BluetoothStateMessage</li>
+  <li class="list-group-item">Is scanning: @ViewModel.IsScanning</li>
+  <li class="list-group-item">Devices found: @ViewModel.BleDevices.Count</li>
+</ul>
 
 <div class="mb-2">
-    <button class="btn btn-primary" @onclick="ViewModel.ScanForDevices">Scan</button>
+    <button class="btn btn-primary" @onclick="ViewModel.ScanForDevices" disabled="@(ViewModel.IsScanning)">Scan</button>
 </div>
 
 <div>
@@ -133,10 +137,12 @@ else
 
 @code {
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         // Todo: Look into this. Cus this shouldn't be required......
         ViewModel.PropertyChanged += (_, _) => InvokeAsync(StateHasChanged);
+
+        await ViewModel.ScanForDevices();
     }
 
     public void Dispose()
