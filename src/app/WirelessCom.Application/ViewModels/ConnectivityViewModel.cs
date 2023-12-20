@@ -103,24 +103,10 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
     {
         if (FilterIsChecked)
         {
-            // Todo: This is pure garbage, but it works for now. We need to have a better way of filtering. For example a better device name "RoomSensor-<4 random chars>"
-            return devices.Where(
-                    x => x.Advertisements.Any(
-                        z => z.Type == BleAdvertisementType.UuidsComplete16Bit && ConvertBytesToIntegers(z.Data).Any(y => y == 0x181A)
-                    )
-                )
-                .ToList();
+            return devices.FilterByServiceId(BleServiceDefinitions.EnvironmentalService.ServiceIdPrefix, BleServiceDefinitions.TimeService.ServiceIdPrefix);
         }
 
         return devices;
-    }
-
-    private static IEnumerable<int> ConvertBytesToIntegers(IReadOnlyList<byte> bytes)
-    {
-        for (var i = 0; i < bytes.Count; i += 2)
-        {
-            yield return (bytes[i] << 8) | (i + 1 < bytes.Count ? bytes[i + 1] : 0);
-        }
     }
 
     public void Dispose()
@@ -147,11 +133,5 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
         BleDevices = null!;
 
         _disposed = true;
-    }
-
-    public async Task<string> Test(Guid device)
-    {
-        var result = await _bleService.ReadCharacteristicAsync(device, 0x181A.ToBleGuid(), 0x2A6E.ToBleGuid());
-        return BitConverter.ToString(result.Bytes.ToArray());
     }
 }
