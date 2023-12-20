@@ -6,6 +6,11 @@ namespace WirelessCom.Application.Services;
 public interface IBleService
 {
     /// <summary>
+    ///     Delegate for when a notify for a characteristic is received.
+    /// </summary>
+    public delegate bool NotifyCharacteristicUpdated(BleCharacteristicReading reading);
+
+    /// <summary>
     ///     Delegate for the <see cref="OnBleStateChangedEvent" /> event.
     /// </summary>
     public delegate void OnBleStateChanged(object source, BluetoothState bluetoothState);
@@ -100,6 +105,28 @@ public interface IBleService
         Guid deviceId,
         Guid serviceId,
         Guid characteristicId,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
+    ///     Registers a handler for notify events of a characteristic.
+    /// </summary>
+    /// <remarks>
+    ///     The device must be connected before calling this method.
+    /// </remarks>
+    /// <param name="deviceId">The id of the device.</param>
+    /// <param name="serviceId">The id of the service where the characteristic is located.</param>
+    /// <param name="characteristicId">The id of the characteristic to handle the notify events for.</param>
+    /// <param name="handler">The handler that will be called when a notify event is received.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     A task that represents the asynchronous register operation.
+    /// </returns>
+    Task RegisterNotifyHandler(
+        Guid deviceId,
+        Guid serviceId,
+        Guid characteristicId,
+        IBleService.NotifyCharacteristicUpdated handler,
         CancellationToken cancellationToken = default
     );
 }

@@ -110,7 +110,24 @@ public class BleService : IBleService
         var characteristic = await service.GetCharacteristicAsync(characteristicId).ConfigureAwait(false);
         var result = await characteristic.ReadAsync(cancellationToken).ConfigureAwait(false);
 
-        return new BleCharacteristicReading(result.data, result.resultCode);
+        return new BleCharacteristicReading(result.data);
+    }
+
+    /// <inheritdoc />
+    public async Task RegisterNotifyHandler(
+        Guid deviceId,
+        Guid serviceId,
+        Guid characteristicId,
+        IBleService.NotifyCharacteristicUpdated handler,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
+        var service = await device.GetServiceAsync(serviceId, cancellationToken).ConfigureAwait(false);
+        var characteristic = await service.GetCharacteristicAsync(characteristicId).ConfigureAwait(false);
+
+        await characteristic.StartUpdatesAsync(cancellationToken).ConfigureAwait(false);
+        characteristic.ValueUpdated += (_, args) => handler(new BleCharacteristicReading(args.Characteristic.Value));
     }
 
     private void InitOnBleStateChanged()
