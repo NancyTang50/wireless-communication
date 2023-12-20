@@ -160,10 +160,7 @@ public class BleService : IBleService
     private void InitOnBleDeviceConnectionChangedEvents()
     {
         _adapter.DeviceDiscovered += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
-        _adapter.DeviceAdvertised += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
         _adapter.DeviceConnected += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
         _adapter.DeviceDisconnected += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
-        _adapter.DeviceConnectionLost += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
-        _adapter.DeviceConnectionError += (_, a) => _devices.AddOrUpdate(a.Device.Id, a.Device);
     }
 }

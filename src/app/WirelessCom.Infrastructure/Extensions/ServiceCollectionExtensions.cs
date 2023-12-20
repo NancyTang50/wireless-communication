@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
             }
         );
 
-        serviceCollection.AddSingleton<IBleService, BleService>();
+        serviceCollection.AddSingleton<IBleService, LockedBleService>();
 
         return serviceCollection;
     }
