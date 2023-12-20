@@ -75,8 +75,9 @@ public class BleService : IBleService
     /// <inheritdoc />
     public async Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default)
     {
+        var parameters = new ConnectParameters(forceBleTransport: true);
         var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
-        await _adapter.ConnectToDeviceAsync(device, cancellationToken: cancellationToken).ConfigureAwait(false);
+        await _adapter.ConnectToDeviceAsync(device, parameters, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

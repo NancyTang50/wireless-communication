@@ -8,7 +8,7 @@ public interface IBleService
     /// <summary>
     ///     Delegate for when a notify for a characteristic is received.
     /// </summary>
-    public delegate bool NotifyCharacteristicUpdated(BleCharacteristicReading reading);
+    public delegate Task NotifyCharacteristicUpdated(BleCharacteristicReading reading);
 
     /// <summary>
     ///     Delegate for the <see cref="OnBleStateChangedEvent" /> event.
