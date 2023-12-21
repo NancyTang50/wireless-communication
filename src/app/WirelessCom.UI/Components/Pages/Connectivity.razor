@@ -1,6 +1,7 @@
 ﻿@page "/Connectivity"
 @using WirelessCom.Application.ViewModels
 @using WirelessCom.Application.Extensions
+@using System.ComponentModel
 @inject ConnectivityViewModel ViewModel
 @implements IDisposable
 
@@ -141,15 +142,19 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Todo: Look into this. Cus this shouldn't be required......
-        ViewModel.PropertyChanged += (_, _) => InvokeAsync(StateHasChanged);
+        ViewModel.PropertyChanged += HandlePropertyChanged;
 
         await ViewModel.ScanForDevices();
     }
 
     public void Dispose()
     {
+        ViewModel.PropertyChanged -= HandlePropertyChanged;
         ViewModel?.Dispose();
     }
 
+    private async void HandlePropertyChanged(object? sender, PropertyChangedEventArgs propertyChangedEventArgs)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 }

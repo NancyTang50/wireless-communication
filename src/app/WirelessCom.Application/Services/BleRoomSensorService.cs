@@ -8,6 +8,7 @@ using WirelessCom.Domain.Services;
 
 namespace WirelessCom.Application.Services;
 
+// Todo: Manually read data from device after not receiving any data for 1 minute.
 public class BleRoomSensorService : IBleRoomSensorService
 {
     private static readonly SemaphoreSlim RegisterNotifySemaphore = new(1, 1);
@@ -24,6 +25,10 @@ public class BleRoomSensorService : IBleRoomSensorService
         _bleService.OnDevicesChangedEvent += BleServiceOnDevicesChangedEvent;
     }
 
+    /// <inheritdoc />
+    public event IBleRoomSensorService.OnNewReadingReceived? OnNewReadingReceivedEvent;
+
+    /// <inheritdoc />
     public async Task ScanForRoomSensors(CancellationToken cancellationToken = default)
     {
         await _bleService.ScanForDevices(
@@ -33,13 +38,14 @@ public class BleRoomSensorService : IBleRoomSensorService
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
     public async Task<RoomClimateReading> ReadRoomClimate(Guid deviceId, CancellationToken cancellationToken = default)
     {
         var temperature = await GetTemperature(deviceId, cancellationToken).ConfigureAwait(false);
         var humidity = await GetHumidity(deviceId, cancellationToken).ConfigureAwait(false);
 
         // TODO: Get timestamp from device
-        var timestamp = DateTime.UtcNow;
+        var timestamp = DateTime.Now;
 
         var reading = new RoomClimateReading(deviceId, timestamp, Math.Round(temperature, 1), Math.Round(humidity, 1));
         await _unitOfWork.RoomClimateReading.AddAsync(reading);
@@ -148,12 +154,13 @@ public class BleRoomSensorService : IBleRoomSensorService
         humidity ??= previousReading?.Humidity ?? await GetHumidity(deviceId).ConfigureAwait(false);
 
         // TODO: Get timestamp from device
-        var timestamp = DateTime.UtcNow;
+        var timestamp = DateTime.Now;
 
         var reading = new RoomClimateReading(deviceId, timestamp, Math.Round(temperature.Value, 1), Math.Round(humidity.Value, 1));
         await _unitOfWork.RoomClimateReading.AddAsync(reading);
         await _unitOfWork.SaveChangesAsync();
 
         _previousRoomClimateReadings.AddOrUpdate(deviceId, reading);
+        OnNewReadingReceivedEvent?.Invoke(this, reading);
     }
 }
