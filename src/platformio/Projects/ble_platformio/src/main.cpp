@@ -55,8 +55,9 @@ bool updateReadSensor(void *) {
 }
 
 void setTempCharacteristicValue(float reading) {
-    if (!isnan(reading) && significantChange(lastTemperature, reading, 0.5)) {
-        Serial.print(F("Temperature: ")); Serial.print(reading); Serial.println(F("C"));
+    if (significantChange(lastTemperature, reading, 0.5)) {
+        Serial.print(F("Temperature: ")); 
+        Serial.print(reading); Serial.println(F("C"));
 
         temperatureCharacteristic.setValue(reading * 100);
         lastTemperature = reading;
@@ -64,11 +65,12 @@ void setTempCharacteristicValue(float reading) {
 }
 
 void setHumidityCharacteristicValue(float reading) {
-    if (!isnan(reading) && significantChange(lastHumidity, reading, 1.0)) {
+    if (significantChange(lastHumidity, reading, 1.0)) {
         Serial.print(F("Humidity: ")); Serial.print(reading); Serial.println(F("%"));
 
+     
         humidityCharacteristic.setValue(reading * 100);
-        lastHumidity = reading;
+        lastHumidity = reading;     
     }
 }
 
@@ -95,7 +97,7 @@ void setup()
     // begin initialization
     blePeripheral.begin();
 
-    timer.every(2000, updateReadSensor);
+    timer.every(3000, updateReadSensor);
 
     Serial.println(F("BLE LED Peripheral"));
 }
@@ -105,11 +107,8 @@ void loop()
     blePeripheral.poll();
 
     if(readFromSensor) {
-        Serial.println(F("3"));
         auto temperature_reading = dht.readTemperature();
-        Serial.println(F("4"));
         auto humidity_reading = dht.readHumidity();
-        Serial.println(F("5"));
 
         if(!isnan(temperature_reading) && !isnan(humidity_reading)) {
             setTempCharacteristicValue(temperature_reading);
