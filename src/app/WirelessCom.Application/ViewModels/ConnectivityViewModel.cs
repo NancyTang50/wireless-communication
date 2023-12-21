@@ -40,7 +40,7 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
         BluetoothStateMessage = _bleService.GetBluetoothState().ToReadableString();
 
         _bleService.OnBleStateChangedEvent += OnBleStateChanged;
-        _bleService.OnDevicesChangedEvent += BleServiceOnOnDevicesChangedEvent;
+        _bleService.OnDevicesChangedEvent += BleServiceOnDevicesChangedEvent;
     }
 
     public async Task ScanForDevices()
@@ -88,7 +88,7 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
         );
     }
 
-    private Task BleServiceOnOnDevicesChangedEvent(object _, IReadOnlyList<BasicBleDevice> devices)
+    private Task BleServiceOnDevicesChangedEvent(object _, IReadOnlyList<BasicBleDevice> devices)
     {
         BleDevices = GetFilteredDevices(devices);
         return Task.CompletedTask;
@@ -127,7 +127,7 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
         if (disposing)
         {
             _bleService.OnBleStateChangedEvent -= OnBleStateChanged;
-            _bleService.OnDevicesChangedEvent -= BleServiceOnOnDevicesChangedEvent;
+            _bleService.OnDevicesChangedEvent -= BleServiceOnDevicesChangedEvent;
         }
 
         BleDevices = null!;
