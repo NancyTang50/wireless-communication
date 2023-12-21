@@ -20,6 +20,17 @@ pub struct TemperatureCharacteristic {
     notifier: Option<Sender<Vec<u8>>>,
 }
 
+struct CurrentTime
+{
+    uint16_t year;
+    uint8_t month;
+    uint8_t day;
+    uint8_t hours;
+    uint8_t minutes;
+    uint8_t seconds;
+};
+
+
 impl TemperatureCharacteristic {
     fn new() -> Self {
         Self {
