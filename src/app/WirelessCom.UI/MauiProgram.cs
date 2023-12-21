@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using WirelessCom.Domain.Services;
 using WirelessCom.Infrastructure.Persistence;
 using WirelessCom.UI.Extension;
 
@@ -32,6 +33,9 @@ public static class MauiProgram
         var dbContext = scope.ServiceProvider.GetRequiredService<ClimateDbContext>();
         dbContext.Database.Migrate();
 
+        // Required to initialize the notify event handlers on room sensor connection events.
+        _ = scope.ServiceProvider.GetRequiredService<IBleRoomSensorService>();
+        
         return app;
     }
 }

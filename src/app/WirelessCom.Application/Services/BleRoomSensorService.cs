@@ -1,4 +1,5 @@
-﻿using WirelessCom.Application.Database;
+﻿using WirelessCom.Application.Caching;
+using WirelessCom.Application.Database;
 using WirelessCom.Application.Extensions;
 using WirelessCom.Application.Helpers;
 using WirelessCom.Domain.Models;
@@ -14,6 +15,7 @@ public class BleRoomSensorService : IBleRoomSensorService
     private readonly IUnitOfWork _unitOfWork;
     private readonly List<Guid> _roomSensorNotifying = new();
     private IReadOnlyList<BasicBleDevice> _roomSensors = new List<BasicBleDevice>();
+    private readonly GenericConcurrentDictionary<Guid, RoomClimateReading> _previousRoomClimateReadings = new();
 
     public BleRoomSensorService(IBleService bleService, IUnitOfWork unitOfWork)
     {
@@ -129,8 +131,11 @@ public class BleRoomSensorService : IBleRoomSensorService
 
     private async Task RoomClimateChanged(Guid deviceId, double? temperature, double? humidity)
     {
-        temperature ??= await GetTemperature(deviceId).ConfigureAwait(false);
-        humidity ??= await GetHumidity(deviceId).ConfigureAwait(false);
+        // Only get temperature and humidity if no previous reading is available.
+        // This is to avoid reading the same value twice. New changes will be captured by the notify events.
+        var previousReading = _previousRoomClimateReadings.Get(deviceId);
+        temperature ??= previousReading?.Temperature ?? await GetTemperature(deviceId).ConfigureAwait(false);
+        humidity ??= previousReading?.Humidity ?? await GetHumidity(deviceId).ConfigureAwait(false);
 
         // TODO: Get timestamp from device
         var timestamp = DateTime.UtcNow;
@@ -138,5 +143,7 @@ public class BleRoomSensorService : IBleRoomSensorService
         var roomClimateReading = new RoomClimateReading(deviceId, timestamp, Math.Round(temperature.Value, 1), Math.Round(humidity.Value, 1));
         await _unitOfWork.RoomClimateReading.AddAsync(roomClimateReading);
         await _unitOfWork.SaveChangesAsync();
+
+        _previousRoomClimateReadings.AddOrUpdate(deviceId, roomClimateReading);
     }
 }
