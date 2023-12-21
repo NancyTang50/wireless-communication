@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-    <title>WirelessCom.UI</title>
+    <title>Wireless Communication</title>
     <base href="/"/>
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet"/>
     <link href="css/app.css" rel="stylesheet"/>
@@ -24,6 +24,12 @@
 </div>
 
 <script autostart="false" src="_framework/blazor.webview.js"></script>
+
+<!-- Chart.js library deps -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<!-- This is the glue between Blazor and Chart.js -->
+<script src="_content/ChartJs.Blazor.Fork/ChartJsBlazorInterop.js"></script>
 
 </body>
 

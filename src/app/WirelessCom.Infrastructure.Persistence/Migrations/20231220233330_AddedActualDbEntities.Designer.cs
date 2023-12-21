@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WirelessCom.Infrastructure.Persistence;
 
@@ -10,9 +11,11 @@ using WirelessCom.Infrastructure.Persistence;
 namespace WirelessCom.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ClimateDbContext))]
-    partial class ClimateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231220233330_AddedActualDbEntities")]
+    partial class AddedActualDbEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -23,11 +26,12 @@ namespace WirelessCom.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("DeviceId")
-                        .HasColumnType("TEXT");
-
                     b.Property<double>("Humidity")
                         .HasColumnType("REAL");
+
+                    b.Property<string>("RoomName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<double>("Temperature")
                         .HasColumnType("REAL");

@@ -1,6 +1,11 @@
 ﻿using Plugin.BLE;
+using Plugin.BLE.Abstractions.Contracts;
+using WirelessCom.Application.Database;
+using WirelessCom.Application.Database.Repositories;
 using WirelessCom.Application.Extensions;
 using WirelessCom.Application.Services;
+using WirelessCom.Infrastructure.Database;
+using WirelessCom.Infrastructure.Database.Repositories;
 using WirelessCom.Infrastructure.Persistence.Extensions;
 using WirelessCom.Infrastructure.Services;
 
@@ -14,10 +19,21 @@ public static class ServiceCollectionExtensions
         serviceCollection.RegisterPersistenceLayer();
 
         serviceCollection.AddScoped(_ => CrossBluetoothLE.Current);
-        serviceCollection.AddScoped(_ => CrossBluetoothLE.Current.Adapter);
+        serviceCollection.AddScoped(
+            _ =>
+            {
+                var adapter = CrossBluetoothLE.Current.Adapter;
+                adapter.ScanMode = ScanMode.LowLatency;
 
-        serviceCollection.AddSingleton<IBleService, BleService>();
+                return adapter;
+            }
+        );
 
+        serviceCollection.AddSingleton<IBleService, LockedBleService>();
+
+        serviceCollection.AddTransient<IUnitOfWork, UnitOfWork>();
+        serviceCollection.AddTransient<IRoomClimateReadingRepository, RoomClimateReadingRepository>();
+        
         return serviceCollection;
     }
 }

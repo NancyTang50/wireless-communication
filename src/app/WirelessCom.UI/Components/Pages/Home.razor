@@ -1,5 +1,32 @@
 ﻿@page "/"
+@using WirelessCom.Application.ViewModels
+@using System.ComponentModel
+@inject HomeViewModel ViewModel
+@implements IDisposable
 
-<h1>Hello, world!</h1>
+@* TODO: Add chart to show temperature and humidity over time. *@
 
-Welcome to your new app.
+<h1>Room sensors</h1>
+
+<LineChart Title="Temperature" ValueTitle="test value" Data="ViewModel.Data"/>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        ViewModel.PropertyChanged += HandlePropertyChanged;
+        await ViewModel.OnInitializedAsync();
+    }
+
+    public void Dispose()
+    {
+        ViewModel.PropertyChanged -= HandlePropertyChanged;
+        ViewModel?.Dispose();
+    }
+
+    private async void HandlePropertyChanged(object? sender, PropertyChangedEventArgs propertyChangedEventArgs)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+}

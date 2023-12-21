@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WirelessCom.Infrastructure.Persistence;
 
@@ -10,9 +11,11 @@ using WirelessCom.Infrastructure.Persistence;
 namespace WirelessCom.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ClimateDbContext))]
-    partial class ClimateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231221131436_ReplacedRoomNameWithDeviceId")]
+    partial class ReplacedRoomNameWithDeviceId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");

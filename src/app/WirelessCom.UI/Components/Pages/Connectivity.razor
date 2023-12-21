@@ -1,41 +1,55 @@
 ﻿@page "/Connectivity"
 @using WirelessCom.Application.ViewModels
+@using WirelessCom.Application.Extensions
+@using System.ComponentModel
 @inject ConnectivityViewModel ViewModel
+@implements IDisposable
 
 <h1>Connectivity</h1>
+<div class="mb-2">
+    <button class="btn btn-primary" @onclick="ViewModel.ScanForDevices" disabled="@(ViewModel.IsScanning)">Scan</button>
+</div>
 
-<p role="status">Bluetooth status: @ViewModel.BluetoothStateMessage</p>
+<h3>Status</h3>
+<hr/>
+<ul class="list-group list-group-flush">
+    <li class="list-group-item">Bluetooth status: @ViewModel.BluetoothStateMessage</li>
+    <li class="list-group-item">Is scanning: @ViewModel.IsScanning</li>
+    <li class="list-group-item">Devices found: @ViewModel.BleDevices.Count</li>
+</ul>
 
-<button class="btn btn-primary" @onclick="ViewModel.ScanForDevices">Scan</button>
+<h3>Devices</h3>
+<hr/>
+<div>
+    <input type="checkbox" @bind-value="@ViewModel.FilterIsChecked" @bind-value:after="ViewModel.FilterChanged"/> Room temperature sensors only
+</div>
 
-@if (ViewModel.BleDevices.Count == 0)
-{
-    <p>
-        <em>No devices found</em>
-    </p>
-}
-else
-{
-    <h3>Devices</h3>
-    <hr/>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>ID</th>
-        </tr>
-        </thead>
-        <tbody>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">ID</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (ViewModel.BleDevices.Count == 0)
+    {
+        <p>
+            <em>No devices found</em>
+        </p>
+    }
+    else
+    {
         @foreach (var device in ViewModel.BleDevices)
         {
-            <tr class="@(device.IsConnected ? "text-success" : string.Empty)" @onclick="() => ViewModel.OpenServicesModal(device.Id)">
+            <tr scope="row" class="@(device.IsConnected ? "text-success" : string.Empty)" @onclick="() => ViewModel.OpenServicesModal(device.Id)">
                 <td>@(string.IsNullOrWhiteSpace(device.Name) ? "Unknown" : device.Name)</td>
                 <td>@device.Id.ToString()</td>
             </tr>
         }
-        </tbody>
-    </table>
-}
+    }
+    </tbody>
+</table>
 
 <!-- Advertisements Modal -->
 <div class="modal @(ViewModel.ServiceModalIsActive ? "show" : "")" tabindex="-1" role="dialog" style="display:@(ViewModel.ServiceModalIsActive ? "block" : "none"); overflow-y: auto;">
@@ -51,23 +65,24 @@ else
                     <li>Name: @ViewModel.DeviceModalData?.Device.Name</li>
                     <li>RSSI: @ViewModel.DeviceModalData?.Device.Rssi</li>
                     <li>Is connected: @ViewModel.DeviceModalData?.Device.IsConnected</li>
+                    <li>Is room sensor: @ViewModel.DeviceModalData?.Device.IsRoomSensor()</li>
                 </ul>
 
                 @if (ViewModel.DeviceModalData?.Services.Count > 0)
                 {
                     <hr/>
                     <h3>Services</h3>
-                    <table class="table">
+                    <table class="table table-striped">
                         <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">ID</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach (var service in ViewModel.DeviceModalData!.Services)
                         {
-                            <tr>
+                            <tr scope="row">
                                 <td>@service.Name</td>
                                 <td>@service.Id</td>
                             </tr>
@@ -78,7 +93,7 @@ else
 
                 <hr/>
                 <h3>Advertisements</h3>
-                @if (ViewModel.DeviceModalData?.Advertisements == null || ViewModel.DeviceModalData?.Advertisements.Count == 0)
+                @if (ViewModel.DeviceModalData?.Device.Advertisements == null || ViewModel.DeviceModalData?.Device.Advertisements.Count == 0)
                 {
                     <p>
                         <em>No advertisements found</em>
@@ -86,17 +101,17 @@ else
                 }
                 else
                 {
-                    <table class="table">
+                    <table class="table table-striped">
                         <thead>
                         <tr>
-                            <th>Type</th>
-                            <th>Raw data</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Raw data</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var advertisement in ViewModel.DeviceModalData!.Advertisements)
+                        @foreach (var advertisement in ViewModel.DeviceModalData!.Device.Advertisements)
                         {
-                            <tr>
+                            <tr scope="row">
                                 <td>@advertisement.Type.ToString()</td>
                                 <td>@BitConverter.ToString(advertisement.Data)</td>
                             </tr>
@@ -108,9 +123,9 @@ else
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" @onclick="ViewModel.CloseServicesModal">Close</button>
                 <button type="button"
-                        class="btn btn-success"
+                        class="btn @(ViewModel.DeviceModalData?.Device.IsRoomSensor() == false ? "btn-danger" : "btn-success")"
                         @onclick="ViewModel.ConnectDevice"
-                        disabled="@(ViewModel.DeviceModalData?.Device.IsConnected ?? false)">
+                        disabled="@((!ViewModel.DeviceModalData?.Device.IsRoomSensor() ?? false) || (ViewModel.DeviceModalData?.Device.IsConnected ?? false))">
                     Connect
                 </button>
             </div>
@@ -125,10 +140,21 @@ else
 
 @code {
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // Todo: Look into this. Cus this shouldn't be required......
-        ViewModel.PropertyChanged += (_, _) => StateHasChanged();
+        ViewModel.PropertyChanged += HandlePropertyChanged;
+
+        await ViewModel.ScanForDevices();
     }
 
+    public void Dispose()
+    {
+        ViewModel.PropertyChanged -= HandlePropertyChanged;
+        ViewModel?.Dispose();
+    }
+
+    private async void HandlePropertyChanged(object? sender, PropertyChangedEventArgs propertyChangedEventArgs)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 }
