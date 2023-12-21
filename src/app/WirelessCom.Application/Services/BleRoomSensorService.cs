@@ -41,7 +41,11 @@ public class BleRoomSensorService : IBleRoomSensorService
         // TODO: Get timestamp from device
         var timestamp = DateTime.UtcNow;
 
-        return new RoomClimateReading(deviceId, timestamp, Math.Round(temperature, 1), Math.Round(humidity, 1));
+        var reading = new RoomClimateReading(deviceId, timestamp, Math.Round(temperature, 1), Math.Round(humidity, 1));
+        await _unitOfWork.RoomClimateReading.AddAsync(reading);
+        await _unitOfWork.SaveChangesAsync();
+
+        return reading;
     }
 
     private async Task<double> GetTemperature(Guid deviceId, CancellationToken cancellationToken = default)
@@ -72,10 +76,18 @@ public class BleRoomSensorService : IBleRoomSensorService
 
     private async Task BleServiceOnDevicesChangedEvent(object _, IReadOnlyList<BasicBleDevice> devices)
     {
-        _roomSensors = devices.FilterByServiceId(
+        var roomSensors = devices.FilterByServiceId(
             BleServiceDefinitions.EnvironmentalService.ServiceIdPrefix,
             BleServiceDefinitions.TimeService.ServiceIdPrefix
         );
+
+        // TODO: Check if room sensors have changed
+        if (roomSensors.SequenceEqual(_roomSensors))
+        {
+            return;
+        }
+
+        _roomSensors = roomSensors;
 
         await RegisterNotifyForRoomSensors().ConfigureAwait(false);
     }
@@ -109,8 +121,6 @@ public class BleRoomSensorService : IBleRoomSensorService
                     BleServiceDefinitions.EnvironmentalService.TemperatureCharacteristicGuid,
                     SensorTemperatureChanged
                 );
-
-                Console.WriteLine($"Registered notify for {roomSensor.Name}");
             }
         }
         finally
@@ -140,10 +150,10 @@ public class BleRoomSensorService : IBleRoomSensorService
         // TODO: Get timestamp from device
         var timestamp = DateTime.UtcNow;
 
-        var roomClimateReading = new RoomClimateReading(deviceId, timestamp, Math.Round(temperature.Value, 1), Math.Round(humidity.Value, 1));
-        await _unitOfWork.RoomClimateReading.AddAsync(roomClimateReading);
+        var reading = new RoomClimateReading(deviceId, timestamp, Math.Round(temperature.Value, 1), Math.Round(humidity.Value, 1));
+        await _unitOfWork.RoomClimateReading.AddAsync(reading);
         await _unitOfWork.SaveChangesAsync();
 
-        _previousRoomClimateReadings.AddOrUpdate(deviceId, roomClimateReading);
+        _previousRoomClimateReadings.AddOrUpdate(deviceId, reading);
     }
 }
