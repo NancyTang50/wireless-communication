@@ -5,4 +5,4 @@
 /// </summary>
 /// <param name="DeviceId">The ID of the device that sent the reading.</param>
 /// <param name="Bytes">The raw bytes of the reading.</param>
-public record BleCharacteristicReading(Guid DeviceId, IReadOnlyList<byte> Bytes);
+public record BleCharacteristicReading(Guid DeviceId, byte[] Bytes);

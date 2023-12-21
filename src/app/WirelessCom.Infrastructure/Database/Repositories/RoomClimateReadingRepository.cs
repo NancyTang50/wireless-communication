@@ -4,9 +4,9 @@ using WirelessCom.Infrastructure.Persistence;
 
 namespace WirelessCom.Infrastructure.Database.Repositories;
 
-public class TemperatureRepository : Repository<RoomClimateReading>, IRoomClimateReadingRepository
+public class RoomClimateReadingRepository : Repository<RoomClimateReading>, IRoomClimateReadingRepository
 {
-    public TemperatureRepository(ClimateDbContext context) : base(context)
+    public RoomClimateReadingRepository(ClimateDbContext context) : base(context)
     {
     }
 }
