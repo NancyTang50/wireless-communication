@@ -90,7 +90,8 @@ public class BleService : IBleService
                     device.Value.Name,
                     _adapter.ConnectedDevices.Any(x => x.Id == device.Key),
                     device.Value.Rssi,
-                    device.Value.AdvertisementRecords.Select(record => new BareBleAdvertisement((BleAdvertisementType)record.Type, record.Data)).ToList()
+                    device.Value.AdvertisementRecords.Select(record => new BareBleAdvertisement((BleAdvertisementType)record.Type, record.Data)).ToList(),
+                    null
                 )
             )
             .ToList();
@@ -133,7 +134,7 @@ public class BleService : IBleService
         {
             throw new BleCharacteristicNotifiableException(characteristicId);
         }
-        
+
         await characteristic.StartUpdatesAsync(cancellationToken).ConfigureAwait(false);
         characteristic.ValueUpdated += (_, args) => handler(new BleCharacteristicReading(deviceId, args.Characteristic.Value));
     }

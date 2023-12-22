@@ -13,7 +13,7 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
     private readonly IBleService _bleService;
 
     [ObservableProperty]
-    private IReadOnlyList<BasicBleDevice> _bleDevices = new List<BasicBleDevice>();
+    private List<BasicBleDevice> _bleDevices = new();
 
     [ObservableProperty]
     private BleDeviceModalData? _deviceModalData;
@@ -30,6 +30,9 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
     [ObservableProperty]
     private bool _isScanning;
 
+    [ObservableProperty]
+    private bool _isConnecting;
+
     private bool _disposed;
 
     public ConnectivityViewModel(IBleService bleService)
@@ -45,9 +48,15 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
 
     public async Task ScanForDevices()
     {
-        IsScanning = true;
-        await _bleService.ScanForDevices();
-        IsScanning = false;
+        try
+        {
+            IsScanning = true;
+            await _bleService.ScanForDevices();
+        }
+        finally
+        {
+            IsScanning = false;
+        }
     }
 
     private void OnBleStateChanged(object source, BluetoothState bluetoothState)
@@ -65,7 +74,7 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
     {
         var device = BleDevices.First(x => x.Id == deviceId);
         var services = device.IsConnected
-            ? await _bleService.GetServicesAsync(deviceId)
+            ? device.BleServices ?? await _bleService.GetServicesAsync(deviceId)
             : new List<BasicBleService>();
 
         DeviceModalData = new BleDeviceModalData(device, services);
@@ -79,18 +88,28 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
             return;
         }
 
-        await _bleService.ConnectDeviceByIdAsync(DeviceModalData.Device.Id);
+        try
+        {
+            IsConnecting = true;
+            await _bleService.ConnectDeviceByIdAsync(DeviceModalData.Device.Id);
 
-        BleDevices = GetFilteredDevices(_bleService.GetAllBasicBleDevices());
-        DeviceModalData = new BleDeviceModalData(
-            DeviceModalData.Device,
-            await _bleService.GetServicesAsync(DeviceModalData.Device.Id)
-        );
+            var services = await _bleService.GetServicesAsync(DeviceModalData.Device.Id);
+            var device = BleDevices.First(x => x.Id == DeviceModalData.Device.Id);
+            var index = BleDevices.IndexOf(device);
+
+            BleDevices[index] = device with { IsConnected = true, BleServices = services };
+            BleDevices = GetFilteredDevices(_bleService.GetAllBasicBleDevices());
+            DeviceModalData = new BleDeviceModalData(BleDevices[index], services);
+        }
+        finally
+        {
+            IsConnecting = false;
+        }
     }
 
     private Task BleServiceOnDevicesChangedEvent(object _, IReadOnlyList<BasicBleDevice> devices)
     {
-        BleDevices = GetFilteredDevices(devices);
+        BleDevices = GetFilteredDevices(devices.ToList());
         return Task.CompletedTask;
     }
 
@@ -99,11 +118,13 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
         BleDevices = GetFilteredDevices(_bleService.GetAllBasicBleDevices());
     }
 
-    private IReadOnlyList<BasicBleDevice> GetFilteredDevices(IReadOnlyList<BasicBleDevice> devices)
+    private List<BasicBleDevice> GetFilteredDevices(List<BasicBleDevice> devices)
     {
         if (FilterIsChecked)
         {
-            return devices.FilterByServiceId(BleServiceDefinitions.EnvironmentalService.ServiceIdPrefix, BleServiceDefinitions.TimeService.ServiceIdPrefix);
+            return devices
+                .FilterByServiceId(BleServiceDefinitions.EnvironmentalService.ServiceIdPrefix, BleServiceDefinitions.TimeService.ServiceIdPrefix)
+                .ToList();
         }
 
         return devices;
