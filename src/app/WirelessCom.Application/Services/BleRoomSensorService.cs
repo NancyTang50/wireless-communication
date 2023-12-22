@@ -80,7 +80,7 @@ public class BleRoomSensorService : IBleRoomSensorService
         return BleDecoding.BleBytesToDouble(reading.Bytes);
     }
 
-    private async Task BleServiceOnDevicesChangedEvent(object _, IReadOnlyList<BasicBleDevice> devices)
+    private async Task BleServiceOnDevicesChangedEvent(object _, IEnumerable<BasicBleDevice> devices)
     {
         var roomSensors = devices.FilterByServiceId(
                 BleServiceDefinitions.EnvironmentalService.ServiceIdPrefix,

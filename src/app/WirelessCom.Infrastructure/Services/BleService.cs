@@ -63,7 +63,7 @@ public class BleService : IBleService
     }
 
     /// <inheritdoc />
-    public async Task<IReadOnlyList<BasicBleService>> GetServicesAsync(Guid deviceId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<BasicBleService>> GetServicesAsync(Guid deviceId, CancellationToken cancellationToken = default)
     {
         var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
         ValidateBleConnected(deviceId, device);

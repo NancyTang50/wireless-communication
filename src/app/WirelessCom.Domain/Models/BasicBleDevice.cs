@@ -6,5 +6,5 @@ public record BasicBleDevice(
     bool IsConnected,
     int Rssi,
     IReadOnlyList<BareBleAdvertisement> Advertisements,
-    IReadOnlyList<BasicBleService>? BleServices
+    IReadOnlyList<BasicBleService>? Services
 );

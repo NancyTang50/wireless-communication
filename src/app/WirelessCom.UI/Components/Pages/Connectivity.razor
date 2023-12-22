@@ -62,13 +62,13 @@
             <div class="modal-body">
                 <h3>Devices stats</h3>
                 <ul>
-                    <li>Name: @(ViewModel.DeviceModalData?.Device.Name ?? "Unknown")</li>
-                    <li>RSSI: @ViewModel.DeviceModalData?.Device.Rssi</li>
-                    <li>Is connected: @ViewModel.DeviceModalData?.Device.IsConnected</li>
-                    <li>Is room sensor: @ViewModel.DeviceModalData?.Device.IsRoomSensor()</li>
+                    <li>Name: @(ViewModel.SelectedDevice?.Name ?? "Unknown")</li>
+                    <li>RSSI: @ViewModel.SelectedDevice?.Rssi</li>
+                    <li>Is connected: @ViewModel.SelectedDevice?.IsConnected</li>
+                    <li>Is room sensor: @ViewModel.SelectedDevice?.IsRoomSensor()</li>
                 </ul>
 
-                @if (ViewModel.DeviceModalData?.Services.Count > 0)
+                @if (ViewModel.SelectedDevice?.Services?.Count > 0)
                 {
                     <hr/>
                     <h3>Services</h3>
@@ -80,7 +80,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var service in ViewModel.DeviceModalData!.Services)
+                        @foreach (var service in ViewModel.SelectedDevice!.Services)
                         {
                             <tr scope="row">
                                 <td>@service.Name</td>
@@ -93,7 +93,7 @@
 
                 <hr/>
                 <h3>Advertisements</h3>
-                @if (ViewModel.DeviceModalData?.Device.Advertisements == null || ViewModel.DeviceModalData?.Device.Advertisements.Count == 0)
+                @if (ViewModel.SelectedDevice?.Advertisements == null || ViewModel.SelectedDevice?.Advertisements.Count == 0)
                 {
                     <p>
                         <em>No advertisements found</em>
@@ -109,7 +109,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach (var advertisement in ViewModel.DeviceModalData!.Device.Advertisements)
+                        @foreach (var advertisement in ViewModel.SelectedDevice!.Advertisements)
                         {
                             <tr scope="row">
                                 <td>@advertisement.Type.ToString()</td>
@@ -123,9 +123,9 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" @onclick="ViewModel.CloseServicesModal">Close</button>
                 <button type="button"
-                        class="btn @(ViewModel.DeviceModalData?.Device.IsRoomSensor() == false ? "btn-danger" : "btn-success")"
+                        class="btn @(ViewModel.SelectedDevice?.IsRoomSensor() == false ? "btn-danger" : "btn-success")"
                         @onclick="ViewModel.ConnectDevice"
-                        disabled="@((!ViewModel.DeviceModalData?.Device.IsRoomSensor() ?? false) || (ViewModel.DeviceModalData?.Device.IsConnected ?? false) || ViewModel.IsConnecting)">
+                        disabled="@((!ViewModel.SelectedDevice?.IsRoomSensor() ?? false) || (ViewModel.SelectedDevice?.IsConnected ?? false) || ViewModel.IsConnecting)">
                     Connect
                 </button>
             </div>
