@@ -39,7 +39,8 @@ BLEUnsignedShortCharacteristic humidityCharacteristic = BLEUnsignedShortCharacte
 BLEService currentTimeService = BLEService("0000180500001000800000805F9B34FB");
 
 // The time characteristic
-BLEUnsignedShortCharacteristic currentTimeCharacteristic = BLEUnsignedShortCharacteristic("00002A2B00001000800000805F9B34FB", BLERead | BLEWrite);
+unsigned char valueSize = 12;
+BLECharacteristic currentTimeCharacteristic = BLECharacteristic("00002A2B00001000800000805F9B34FB", BLERead | BLEWrite, valueSize);
 
 
 DHT dht(DHT22_PIN, DHT22); 
@@ -54,12 +55,8 @@ void printDigits(int digits) {
 }
 
 void initializeTime(){
-    
-
     delay(1000);
 }
-
-
 
 boolean significantChange(float val1, float val2, float threshold) {
     return (abs(val1 - val2) >= threshold);
@@ -100,6 +97,14 @@ void setHumidityCharacteristicValue(float reading) {
     }
 }
 
+void setTimeCharacateristicValue() {
+
+    // TODO: encode the bytes, just like decode, but the other way :)
+
+    // currentTimeCharacteristic.setValue();
+    
+}
+
 void setup()
 {
     Serial.begin(9600);
@@ -132,29 +137,39 @@ void setup()
     Serial.println(F("BLE LED Peripheral"));
 }
 
+void set_current_time() {
+    auto raw_time_value = currentTimeCharacteristic.value();
+    // TODO: make the 12 a define/constant
+    unsigned char values[12];
+
+    memcpy(values, raw_time_value, 12 * sizeof(unsigned char));
+
+    Serial.print("Parsed Date and Time: 0x");
+    for (int i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
+        Serial.print(values[i], HEX);
+        Serial.print(" ");
+    }
+    Serial.println();
+
+    auto year_hi = values[0];
+    auto year_lo = values[1];
+    uint16_t year = ((uint16_t)year_lo << 8) | year_hi;
+    auto month = values[2];
+    auto day = values[3];
+    auto hours = values[4];
+    auto minutes = values[5];
+    auto seconds = values[6];
+    auto day_of_week = values[7];
+    auto fractions_265 = values[8];
+    auto adjust_reasons = values[9];
+
+    setTime(hours, minutes, seconds, day, month + 1, year);
+}
+
 void loop()
 {
     blePeripheral.poll();
     initializeTime();
-
-    time_t t = now(); // store the current time in time variable t
-    hour(t);          // returns the hour for the given time t
-    minute(t);        // returns the minute for the given time t
-    second(t);        // returns the second for the given time t
-    day(t);           // the day for the given time t
-    month(t);         // the month for the given time t
-    year(t);          // the year for the given time
-
-    Serial.print("Year ");
-    Serial.println(year(t));
-
-
-    Serial.print("Month ");
-    Serial.println(month(t));
-
-
-    Serial.print("Day ");
-    Serial.println(day(t));
 
     // if(readFromSensor) {
     //     auto temperature_reading = dht.readTemperature();
@@ -170,5 +185,29 @@ void loop()
     //     readFromSensor = false;
     // }
 
+    if (currentTimeCharacteristic.written()) {
+        set_current_time();
+
+        time_t t = now(); // store the current time in time variable t
+
+        Serial.print("Year ");
+        Serial.println(year(t));
+
+        Serial.print("Month ");
+        Serial.println(month(t));
+
+        Serial.print("Day ");
+        Serial.println(day(t));
+        Serial.print("Hours ");
+        Serial.println(hour(t));
+        Serial.print("Minutes ");
+        Serial.println(minute(t));
+        Serial.print("Seconds ");
+        Serial.println(second(t));
+    }
+
+    setTimeCharacateristicValue();
+
     timer.tick();
 }
+
