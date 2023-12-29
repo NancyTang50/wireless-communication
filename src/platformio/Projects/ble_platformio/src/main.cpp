@@ -8,7 +8,7 @@
 // Import libraries (BLEPeripheral depends on SPI)
 #include <SPI.h>
 #include <BLEPeripheral.h>
-// #include <DHT.h>
+#include <DHT.h>
 #include <Adafruit_Sensor.h>
 #include <arduino-timer.h>
 
@@ -18,7 +18,7 @@
 
 Timer<> timer = timer_create_default();
 
-volatile bool readFromSensor = false;
+volatile bool readFromSensor = true;
 volatile bool updateTime = false;
 
 // NRF52_ISR_Timer SensorReadTimer;
@@ -52,10 +52,6 @@ void printDigits(int digits) {
   if (digits < 10)
     Serial.print('0');
   Serial.print(digits);
-}
-
-void initializeTime(){
-    delay(1000);
 }
 
 boolean significantChange(float val1, float val2, float threshold) {
@@ -129,39 +125,6 @@ void setTimeCharacteristicValue() {
     currentTimeCharacteristic.setValue(current_time_value, CURRENT_TIME_CHARACTERISTIC_VALUE_SIZE);
 }
 
-void setup()
-{
-    Serial.begin(9600);
-#if defined(__AVR_ATmega32U4__)
-    delay(5000); // 5 seconds delay for enabling to see the start up comments on the serial board
-#endif
-
-    dht.begin();
-
-    blePeripheral.setLocalName("SOME_NAME_NORDIC");
-    blePeripheral.setAdvertisedServiceUuid(environmentalService.uuid());
-    blePeripheral.setAdvertisedServiceUuid(currentTimeService.uuid());
-
-    // add service and characteristic
-    blePeripheral.addAttribute(environmentalService);
-    blePeripheral.addAttribute(temperatureCharacteristic);
-    blePeripheral.addAttribute(humidityCharacteristic);
-
-    blePeripheral.addAttribute(currentTimeService);
-    blePeripheral.addAttribute(currentTimeCharacteristic);
-
-    blePeripheral.setEventHandler(BLEConnected, blePeripheralConnectHandler);
-    blePeripheral.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
-
-    // begin initialization
-    blePeripheral.begin();
-
-    timer.every(3000, updateReadSensor);
-    timer.every(500, updateTimeValue);
-
-    Serial.println(F("BLE LED Peripheral"));
-}
-
 void set_current_time() {
     auto raw_time_value = currentTimeCharacteristic.value();
     unsigned char values[CURRENT_TIME_CHARACTERISTIC_VALUE_SIZE];
@@ -190,22 +153,50 @@ void set_current_time() {
     setTime(hours, minutes, seconds, day, month, year);
 }
 
+void setup()
+{
+    Serial.begin(9600);
+#if defined(__AVR_ATmega32U4__)
+    delay(5000); // 5 seconds delay for enabling to see the start up comments on the serial board
+#endif
+
+    dht.begin();
+
+    blePeripheral.setLocalName("SOME_NAME_NORDIC");
+    blePeripheral.setAdvertisedServiceUuid(environmentalService.uuid());
+    blePeripheral.setAdvertisedServiceUuid(currentTimeService.uuid());
+
+    // add service and characteristic
+    blePeripheral.addAttribute(environmentalService);
+    blePeripheral.addAttribute(temperatureCharacteristic);
+    blePeripheral.addAttribute(humidityCharacteristic);
+
+    blePeripheral.addAttribute(currentTimeService);
+    blePeripheral.addAttribute(currentTimeCharacteristic);
+
+    blePeripheral.setEventHandler(BLEConnected, blePeripheralConnectHandler);
+    blePeripheral.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
+
+    // begin initialization
+    blePeripheral.begin();
+
+    timer.every(1000 * 60, updateReadSensor);
+    timer.every(500, updateTimeValue);
+
+    Serial.println(F("BLE LED Peripheral"));
+}
+
 void loop()
 {
     blePeripheral.poll();
-    initializeTime();
-
-    if(readFromSensor && dht.read()) {
+    
+    if(readFromSensor) {
         auto temperature_reading = dht.readTemperature();
         auto humidity_reading = dht.readHumidity();
         Serial.println("Read the dht");
-
-        if(!isnan(temperature_reading) && !isnan(humidity_reading)) {
-            setTempCharacteristicValue(temperature_reading);
-            setHumidityCharacteristicValue(humidity_reading);
-        } else {
-            Serial.println(F("Failed to read from DHT sensor!"));
-        }
+        
+        setTempCharacteristicValue(temperature_reading);
+        setHumidityCharacteristicValue(humidity_reading);
 
         readFromSensor = false;
     }
