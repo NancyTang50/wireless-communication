@@ -18,7 +18,7 @@ public interface IBleService
     /// <summary>
     ///     Delegate for the <see cref="OnDevicesChangedEvent" /> event.
     /// </summary>
-    public delegate Task? OnDevicesChanged(object source, IReadOnlyList<BasicBleDevice> bleDevices);
+    public delegate Task? OnDevicesChanged(object source, IEnumerable<BasicBleDevice> bleDevices);
 
     /// <summary>
     ///     Event that is triggered when the Bluetooth state changes.
@@ -70,7 +70,7 @@ public interface IBleService
     ///     A task that represents the asynchronous read operation.
     ///     The Result will contain a list of all available <see cref="BasicBleService" />s.
     /// </returns>
-    Task<IReadOnlyList<BasicBleService>> GetServicesAsync(Guid deviceId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<BasicBleService>> GetServicesAsync(Guid deviceId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Connects to the device with the given <paramref name="deviceId" />.

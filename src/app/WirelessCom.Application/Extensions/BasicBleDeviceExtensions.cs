@@ -6,7 +6,7 @@ namespace WirelessCom.Application.Extensions;
 public static class BasicBleDeviceExtensions
 {
     // Todo: This is pure garbage, but it works for now. We need to have a better way of filtering. For example a better device name "RoomSensor-<4 random chars>"
-    public static IReadOnlyList<BasicBleDevice> FilterByServiceId(this IEnumerable<BasicBleDevice> devices, params int[] serviceIdPrefixes)
+    public static IEnumerable<BasicBleDevice> FilterByServiceId(this IEnumerable<BasicBleDevice> devices, params int[] serviceIdPrefixes)
     {
         return serviceIdPrefixes.Aggregate(
             devices.ToList(),

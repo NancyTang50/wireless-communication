@@ -37,7 +37,7 @@ public class LockedBleService : IBleService
 
     public List<BasicBleDevice> GetAllBasicBleDevices() => _bleService.GetAllBasicBleDevices();
 
-    public Task<IReadOnlyList<BasicBleService>> GetServicesAsync(Guid deviceId, CancellationToken cancellationToken = default) =>
+    public Task<IEnumerable<BasicBleService>> GetServicesAsync(Guid deviceId, CancellationToken cancellationToken = default) =>
         ExecuteWithDeviceLock(() => _bleService.GetServicesAsync(deviceId, cancellationToken), deviceId);
 
     public Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default) =>
