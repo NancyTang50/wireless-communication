@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <TimeLib.h>
+
 #include "characteristics/temperature_characteristic.h"
 #include "characteristics/humidity_characteristic.h"
 #include "characteristics/current_time_characteristic.h"
@@ -14,60 +15,46 @@
 #include <Adafruit_Sensor.h>
 #include <arduino-timer.h>
 
-
 // DHT22 sensor pin
 #define DHT22_PIN A5
 #define CURRENT_TIME_CHARACTERISTIC_VALUE_SIZE  12
 
 Timer<> timer = timer_create_default();
 
-volatile bool readFromSensor = true;
-volatile bool updateTime = false;
-
-// NRF52_ISR_Timer SensorReadTimer;
+volatile bool read_from_sensor = true;
+volatile bool update_time = false;
 
 // custom boards may override default pin definitions with BLEPeripheral(PIN_REQ, PIN_RDY, PIN_RST)
-BLEPeripheral blePeripheral = BLEPeripheral();
+BLEPeripheral ble_peripheral = BLEPeripheral();
 
 // The environmental sense service
-BLEService environmentalService = BLEService("0000181A00001000800000805F9B34FB");
+BLEService environmental_service = BLEService("0000181A00001000800000805F9B34FB");
+TemperatureCharacteristic temperature_characteristic = TemperatureCharacteristic();
+HumidityCharacteristic humidity_characteristic = HumidityCharacteristic();
 
-TemperatureCharacteristic temperatureCharacteristic = TemperatureCharacteristic();
-HumidityCharacteristic humidityCharacteristic = HumidityCharacteristic();
 // The time service
-BLEService currentTimeService = BLEService("0000180500001000800000805F9B34FB");
-CurrentTimeCharacteristic currentTimeCharacteristic = CurrentTimeCharacteristic();
-
-// The time characteristic
-// unsigned char valueSize = CURRENT_TIME_CHARACTERISTIC_VALUE_SIZE;
-// BLECharacteristic currentTimeCharacteristic = BLECharacteristic("00002A2B00001000800000805F9B34FB", BLERead | BLEWrite, valueSize);
+BLEService current_time_service = BLEService("0000180500001000800000805F9B34FB");
+CurrentTimeCharacteristic current_time_characteristic = CurrentTimeCharacteristic();
 
 DHT dht(DHT22_PIN, DHT22); 
 
-void printDigits(int digits) {
-  // Add a leading zero if the value is less than 10
-  if (digits < 10)
-    Serial.print('0');
-  Serial.print(digits);
-}
-
-void blePeripheralConnectHandler(BLECentral& central) {
-    Serial.print(F("Connected event, central: "));
+void ble_peripheral_connect_handler(BLECentral& central) {
+    Serial.print("Connected event, central: ");
     Serial.println(central.address());
 }
 
-void blePeripheralDisconnectHandler(BLECentral& central) {
-    Serial.print(F("Disconnected event, central: "));
+void ble_peripheral_disconnect_handler(BLECentral& central) {
+    Serial.print("Disconnected event, central: ");
     Serial.println(central.address());
 }
 
-bool updateReadSensor(void *) {
-    readFromSensor = true;
+bool update_read_sensor(void *) {
+    read_from_sensor = true;
     return true; // NOTE: this is to repeat the timer
 }
 
-bool updateTimeValue(void *) {
-    updateTime = true;
+bool update_time_value(void *) {
+    update_time = true;
     return true; // NOTE: this is to repeat the timer
 }
 
@@ -80,51 +67,51 @@ void setup()
 
     dht.begin();
 
-    blePeripheral.setLocalName("SOME_NAME_NORDIC");
-    blePeripheral.setAdvertisedServiceUuid(environmentalService.uuid());
-    blePeripheral.setAdvertisedServiceUuid(currentTimeService.uuid());
+    ble_peripheral.setLocalName("SOME_NAME_NORDIC");
+    ble_peripheral.setAdvertisedServiceUuid(environmental_service.uuid());
+    ble_peripheral.setAdvertisedServiceUuid(current_time_service.uuid());
 
     // add service and characteristic
-    blePeripheral.addAttribute(environmentalService);
+    ble_peripheral.addAttribute(environmental_service);
 
-    blePeripheral.addAttribute(temperatureCharacteristic.get_characteristic());
-    blePeripheral.addAttribute(humidityCharacteristic.get_characteristic());
+    ble_peripheral.addAttribute(temperature_characteristic.get_characteristic());
+    ble_peripheral.addAttribute(humidity_characteristic.get_characteristic());
 
-    blePeripheral.addAttribute(currentTimeService);
-    blePeripheral.addAttribute(currentTimeCharacteristic.get_characteristic());
+    ble_peripheral.addAttribute(current_time_service);
+    ble_peripheral.addAttribute(current_time_characteristic.get_characteristic());
 
-    blePeripheral.setEventHandler(BLEConnected, blePeripheralConnectHandler);
-    blePeripheral.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
+    ble_peripheral.setEventHandler(BLEConnected, ble_peripheral_connect_handler);
+    ble_peripheral.setEventHandler(BLEDisconnected, ble_peripheral_disconnect_handler);
 
     // begin initialization
-    blePeripheral.begin();
+    ble_peripheral.begin();
 
-    timer.every(5000, updateReadSensor);
-    timer.every(500, updateTimeValue);
+    timer.every(5000, update_read_sensor);
+    timer.every(500, update_time_value);
 
     Serial.println(F("BLE LED Peripheral"));
 }
 
 void loop()
 {
-    blePeripheral.poll();
+    ble_peripheral.poll();
     
-    if(readFromSensor) {
+    if(read_from_sensor) {
         auto temperature_reading = dht.readTemperature();
         auto humidity_reading = dht.readHumidity();
         Serial.println("Read the dht");
         
-        temperatureCharacteristic.set_value(temperature_reading);
-        humidityCharacteristic.set_value(humidity_reading);
+        temperature_characteristic.set_value(temperature_reading);
+        humidity_characteristic.set_value(humidity_reading);
 
-        readFromSensor = false;
+        read_from_sensor = false;
     }
 
-    currentTimeCharacteristic.update_current_time_when_written();
+    current_time_characteristic.update_current_time_when_written();
 
-    if(updateTime) {
-        currentTimeCharacteristic.set_value(now());
-        updateTime = false;
+    if(update_time) {
+        current_time_characteristic.set_value(now());
+        update_time = false;
     }
 
     timer.tick();

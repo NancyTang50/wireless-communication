@@ -21,9 +21,9 @@ void CurrentTimeCharacteristic::set_value(time_t new_value) {
     current_time_value[4] = current_hour;
     current_time_value[5] = current_minutes;
     current_time_value[6] = current_seconds;
-    current_time_value[7] = 0; // Day of the week
-    current_time_value[8] = 0; // Fractions
-    current_time_value[9] = 0; // TODO: Adjust reasons
+    current_time_value[7] = 0; // NOTE: unknown day of the week
+    current_time_value[8] = 0; // NOTE: unknown fractions
+    current_time_value[9] = 0x08; // NOTE: the update reason is Manual Update 
 
     m_characteristic.setValue(current_time_value, CURRENT_TIME_CHARACTERISTIC_VALUE_SIZE);
     m_characteristic.value();
@@ -41,7 +41,7 @@ void CurrentTimeCharacteristic::change_system_time(const unsigned char* ble_byte
     memcpy(values, ble_bytes, CURRENT_TIME_CHARACTERISTIC_VALUE_SIZE * sizeof(unsigned char));
 
     Serial.print("Parsed Date and Time: 0x");
-    for (int i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
+    for (u_int8_t i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
         Serial.print(values[i], HEX);
         Serial.print(" ");
     }
@@ -55,9 +55,9 @@ void CurrentTimeCharacteristic::change_system_time(const unsigned char* ble_byte
     auto hours = values[4];
     auto minutes = values[5];
     auto seconds = values[6];
-    auto day_of_week = values[7];
-    auto fractions_265 = values[8];
-    auto adjust_reasons = values[9];
+    [[maybe_unused]]auto day_of_week = values[7];
+    [[maybe_unused]]auto fractions_265 = values[8];
+    [[maybe_unused]]auto adjust_reasons = values[9];
 
     setTime(hours, minutes, seconds, day, month, year);
 }

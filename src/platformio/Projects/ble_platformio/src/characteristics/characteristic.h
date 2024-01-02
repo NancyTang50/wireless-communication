@@ -10,6 +10,7 @@ protected:
     [[nodiscard]] const bool significant_change(float val1, float val2, float threshold) {
         return abs(val1 - val2) >= threshold;
     }
+    
 public:
     Characteristic(BLECharacteristicType characteristic) : m_characteristic(characteristic) 
     {
