@@ -1,4 +1,4 @@
-use std::{os::linux, time::SystemTime};
+use std::time::SystemTime;
 
 use bluster::{
     gatt::{
@@ -74,12 +74,8 @@ impl GattEventHandler for CurrentTimeCharacteristic {
                 let current_date_time: DateTime<chrono::Utc> = system_time.into();
 
                 debug!("Current time is {:?}", current_date_time);
-                
-                // TODO: does a CTS need to send something back on a write request.
-                // write_request
-                //     .response
-                //     .send(Response::Success(vec![0x13])) // A successfull write?
-                //     .unwrap();
+
+                // NOTE: could not find the correct response of a CTS write, if there is any.
             }
             bluster::gatt::event::Event::NotifySubscribe(_)
             | bluster::gatt::event::Event::NotifyUnsubscribe => {}
