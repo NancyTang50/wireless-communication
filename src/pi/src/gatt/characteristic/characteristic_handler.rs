@@ -1,10 +1,7 @@
 use bluster::gatt::event::Event;
 use futures::{channel::mpsc::Receiver, StreamExt};
 
-use super::{
-    GattEventHandler,
-    SensorDataHandler,
-};
+use super::{GattEventHandler, SensorDataHandler};
 
 pub struct CharacteristicHandler<T>
 where
@@ -17,12 +14,8 @@ impl<T> CharacteristicHandler<T>
 where
     T: GattEventHandler,
 {
-    pub fn new(
-        characteristic: T,
-    ) -> Self {
-        Self {
-            characteristic,
-        }
+    pub fn new(characteristic: T) -> Self {
+        Self { characteristic }
     }
 }
 

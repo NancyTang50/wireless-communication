@@ -1,9 +1,9 @@
 use std::time::SystemTime;
 
-use time::Month;
-use chrono::{DateTime, TimeZone, Utc, Datelike, Timelike};
-use tracing::debug;
 use crate::ble_encode::{BleDecode, BleEncode};
+use chrono::{DateTime, Datelike, TimeZone, Timelike, Utc};
+use time::Month;
+use tracing::debug;
 
 pub struct BleDateTime {
     year: u16,
@@ -17,9 +17,17 @@ pub struct BleDateTime {
 }
 
 impl BleDateTime {
-    
-    #[warn(clippy::too_many_arguments)]    
-    fn new(year: u16, month: Month, day: u8, hours: u8, minutes: u8, seconds: u8, day_of_week: Weekday, fractions256: u8) -> Self {
+    #[warn(clippy::too_many_arguments)]
+    fn new(
+        year: u16,
+        month: Month,
+        day: u8,
+        hours: u8,
+        minutes: u8,
+        seconds: u8,
+        day_of_week: Weekday,
+        fractions256: u8,
+    ) -> Self {
         debug_assert!(year >= 1582);
         debug_assert!(year <= 9999);
         debug_assert!(day >= 1);
@@ -46,13 +54,13 @@ impl BleDateTime {
         let month = current_date_time.month() as u8;
         let month = Month::try_from(month).unwrap_or(Month::January);
         let day_of_week = Weekday::from(current_date_time.weekday());
-        
+
         Self::new(
-            current_date_time.year() as u16, 
-            month, 
-            current_date_time.day() as u8, 
-            current_date_time.hour() as u8, 
-            current_date_time.minute() as u8, 
+            current_date_time.year() as u16,
+            month,
+            current_date_time.day() as u8,
+            current_date_time.hour() as u8,
+            current_date_time.minute() as u8,
             current_date_time.second() as u8,
             day_of_week,
             (current_date_time.timestamp_subsec_millis() / 256) as u8,
@@ -61,7 +69,16 @@ impl BleDateTime {
 
     pub fn to_epoch_seconds(&self) -> i64 {
         let month = self.month as u8;
-        let date_time = Utc.with_ymd_and_hms(self.year.into(), month.into(), self.day.into(), self.hours.into(), self.minutes.into(), self.seconds.into()).unwrap();
+        let date_time = Utc
+            .with_ymd_and_hms(
+                self.year.into(),
+                month.into(),
+                self.day.into(),
+                self.hours.into(),
+                self.minutes.into(),
+                self.seconds.into(),
+            )
+            .unwrap();
         debug!("To epoch is {:?}", date_time);
         date_time.timestamp()
     }
@@ -105,7 +122,8 @@ impl BleDecode for BleDateTime {
         let hours = ble_bytes.next().unwrap_or(0);
         let minutes = ble_bytes.next().unwrap_or(0);
         let seconds = ble_bytes.next().unwrap_or(0);
-        let day_of_week = Weekday::try_from(ble_bytes.next().unwrap_or(0)).unwrap_or(Weekday::Unknown);
+        let day_of_week =
+            Weekday::try_from(ble_bytes.next().unwrap_or(0)).unwrap_or(Weekday::Unknown);
         let fractions256 = ble_bytes.next().unwrap_or(0);
 
         Self {
@@ -151,7 +169,7 @@ impl TryFrom<u8> for Weekday {
             5 => Weekday::Friday,
             6 => Weekday::Saturday,
             7 => Weekday::Sunday,
-            _ => unreachable!()
+            _ => unreachable!(),
         })
     }
 }
@@ -177,8 +195,10 @@ mod tests {
 
     #[test]
     fn test_conversion_of_ble_date_time() {
-        let ble_date_time = BleDateTime::new(2023, Month::December, 8, 12, 10, 11, Weekday::Unknown, 0);
-        let expected_encoded_datetime: [u8; 10] = [0xE7, 0x07, 0x0C, 0x08, 0x0C, 0x0A, 0x0B, 0x00, 0x00, 0x08];
+        let ble_date_time =
+            BleDateTime::new(2023, Month::December, 8, 12, 10, 11, Weekday::Unknown, 0);
+        let expected_encoded_datetime: [u8; 10] =
+            [0xE7, 0x07, 0x0C, 0x08, 0x0C, 0x0A, 0x0B, 0x00, 0x00, 0x08];
 
         assert_eq!(ble_date_time.to_ble_bytes(), expected_encoded_datetime);
     }
@@ -215,7 +235,8 @@ mod tests {
 
     #[test]
     fn test_encoding_and_decoding_the_same() {
-        let ble_date_time = BleDateTime::new(2023, Month::December, 8, 12, 10, 11, Weekday::Unknown, 0);
+        let ble_date_time =
+            BleDateTime::new(2023, Month::December, 8, 12, 10, 11, Weekday::Unknown, 0);
         let ble_date_time_bytes = ble_date_time.to_ble_bytes();
         let ble_date_time = BleDateTime::from_ble_byte(ble_date_time_bytes);
 
@@ -228,4 +249,3 @@ mod tests {
         assert_eq!(ble_date_time.day_of_week, Weekday::Unknown);
     }
 }
-

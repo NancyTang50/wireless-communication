@@ -13,7 +13,7 @@ use uuid::Uuid;
 
 use crate::{
     ble_encode::BleEncode,
-    gatt::characteristic::{GattEventHandler, SensorDataHandler, CharacteristicHandler},
+    gatt::characteristic::{CharacteristicHandler, GattEventHandler, SensorDataHandler},
     TEMPERATURE_CHARACTERISTIC_UUID,
 };
 

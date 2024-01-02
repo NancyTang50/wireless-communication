@@ -1,5 +1,5 @@
-use std::time::SystemTime;
 use std::collections::HashSet;
+use std::time::SystemTime;
 
 use bluster::{
     gatt::{
@@ -14,9 +14,10 @@ use tracing::{debug, info};
 use uuid::Uuid;
 
 use crate::{
-    ble_encode::{BleEncode, BleDecode},
-    gatt::characteristic::{GattEventHandler, CharacteristicHandler},
-    CURRENT_TIME_CHARACTERISTIC_UUID, ble_date_time::BleDateTime,
+    ble_date_time::BleDateTime,
+    ble_encode::{BleDecode, BleEncode},
+    gatt::characteristic::{CharacteristicHandler, GattEventHandler},
+    CURRENT_TIME_CHARACTERISTIC_UUID,
 };
 
 pub struct CurrentTimeCharacteristic;
@@ -58,7 +59,10 @@ impl GattEventHandler for CurrentTimeCharacteristic {
             bluster::gatt::event::Event::ReadRequest(read_request) => {
                 let bytes = BleDateTime::from_system_time().to_ble_bytes();
                 debug!("Sending time as {:?}", bytes);
-                read_request.response.send(Response::Success(bytes)).unwrap();
+                read_request
+                    .response
+                    .send(Response::Success(bytes))
+                    .unwrap();
             }
             bluster::gatt::event::Event::WriteRequest(write_request) => {
                 debug!("Got time as {:?}", &write_request.data);
