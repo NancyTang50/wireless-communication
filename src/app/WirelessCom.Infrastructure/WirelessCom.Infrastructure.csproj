@@ -21,11 +21,12 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)"/>
+        <PackageReference Include="Plugin.BLE" Version="3.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\WirelessCom.Application\WirelessCom.Application.csproj" />
-      <ProjectReference Include="..\WirelessCom.Infrastructure.Persistence\WirelessCom.Infrastructure.Persistence.csproj" />
+        <ProjectReference Include="..\WirelessCom.Application\WirelessCom.Application.csproj"/>
+        <ProjectReference Include="..\WirelessCom.Infrastructure.Persistence\WirelessCom.Infrastructure.Persistence.csproj"/>
     </ItemGroup>
 
 </Project>

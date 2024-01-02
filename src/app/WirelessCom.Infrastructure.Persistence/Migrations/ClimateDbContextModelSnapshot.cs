@@ -17,46 +17,27 @@ namespace WirelessCom.Infrastructure.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("WirelessCom.Domain.Entities.Humidity", b =>
+            modelBuilder.Entity("WirelessCom.Domain.Models.Entities.RoomClimateReading", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("DateTime")
+                    b.Property<Guid>("DeviceId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PeripheralName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("Value")
+                    b.Property<double>("Humidity")
                         .HasColumnType("REAL");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Humidities");
-                });
-
-            modelBuilder.Entity("WirelessCom.Domain.Entities.Temperature", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("Kelvin")
+                    b.Property<double>("Temperature")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("PeripheralName")
-                        .IsRequired()
+                    b.Property<DateTime>("Timestamp")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Temperatures");
+                    b.ToTable("RoomClimateReadings");
                 });
 #pragma warning restore 612, 618
         }

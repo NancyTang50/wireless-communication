@@ -1,0 +1,140 @@
+﻿@using ChartJs.Blazor.Common.Time
+@using System.Drawing
+@using ChartJs.Blazor.Common.Enums
+@using WirelessCom.Domain.Models
+
+<Chart Config="_config" @ref="_chart" Height="Height"/>
+
+@code
+{
+    private static readonly Dictionary<ValueTuple<Guid, string>, Color> DeviceColors = new();
+    private LineConfig? _config;
+    private Chart? _chart;
+
+    [Parameter]
+    [EditorRequired]
+    public required string Title { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public required string ValueTitle { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public required List<LineChartData> Data { get; set; }
+    
+    [Parameter]
+    [EditorRequired]
+    public required int Height { get; set; }
+
+    protected override void OnInitialized()
+    {
+        InitializeChartConfig();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _config?.Data.Datasets.Clear();
+
+        foreach (var chartData in Data)
+        {
+            var humidityDataset = new LineDataset<TimePoint>
+            {
+                Label = $"Humidity {chartData.DeviceId}",
+                BackgroundColor = ColorUtil.FromDrawingColor(Color.White),
+                BorderColor = ColorUtil.FromDrawingColor(GetDeviceColor(chartData, "Humidity")),
+                Fill = FillingMode.Disabled
+            };
+
+            var tempDataset = new LineDataset<TimePoint>
+            {
+                Label = $"Temperature {chartData.DeviceId}",
+                BackgroundColor = ColorUtil.FromDrawingColor(Color.White),
+                BorderColor = ColorUtil.FromDrawingColor(GetDeviceColor(chartData, "Temperature")),
+                Fill = FillingMode.Disabled
+            };
+
+            tempDataset.AddRange(chartData.Readings.Select(x => new TimePoint(x.Timestamp, x.Temperature)));
+            _config?.Data.Datasets.Add(tempDataset);
+
+            humidityDataset.AddRange(chartData.Readings.Select(x => new TimePoint(x.Timestamp, x.Humidity)));
+            _config?.Data.Datasets.Add(humidityDataset);
+        }
+
+        _chart?.Update();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private static Color GetDeviceColor(LineChartData chartData, string label)
+    {
+        if (DeviceColors.TryGetValue((chartData.DeviceId, label), out var deviceColor))
+        {
+            return deviceColor;
+        }
+
+        var rnd = new Random();
+        var color = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
+        DeviceColors.TryAdd((chartData.DeviceId, label), color);
+
+        return color;
+    }
+
+    private void InitializeChartConfig()
+    {
+        _config = new LineConfig
+        {
+            Options = new LineOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = Title
+                },
+                Tooltips = new Tooltips
+                {
+                    Mode = InteractionMode.Nearest,
+                    Intersect = true
+                },
+                Hover = new Hover
+                {
+                    Mode = InteractionMode.Nearest,
+                    Intersect = true
+                },
+                Scales = new Scales
+                {
+                    XAxes = new List<CartesianAxis>
+                    {
+                        new TimeAxis
+                        {
+                            ScaleLabel = new ScaleLabel
+                            {
+                                LabelString = "Time"
+                            },
+                            Time = new TimeOptions
+                            {
+                                TooltipFormat = "HH:mm",
+                                StepSize = 1,
+                                Round = TimeMeasurement.Minute,
+                                MinUnit = TimeMeasurement.Minute,
+                                Min = DateTime.Now.AddMinutes(-30),
+                                IsoWeek = true
+                            }
+                        }
+                    },
+                    YAxes = new List<CartesianAxis>
+                    {
+                        new LinearCartesianAxis
+                        {
+                            ScaleLabel = new ScaleLabel
+                            {
+                                LabelString = ValueTitle,
+                                Display = true
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
+}

@@ -1,0 +1,161 @@
+﻿@page "/Connectivity"
+@using WirelessCom.Application.ViewModels
+@using WirelessCom.Application.Extensions
+@using System.ComponentModel
+@inject ConnectivityViewModel ViewModel
+@implements IDisposable
+
+<h1>Connectivity</h1>
+<div class="mb-2">
+    <button class="btn btn-primary" @onclick="ViewModel.ScanForDevices" disabled="@(ViewModel.IsScanning)">Scan</button>
+</div>
+
+<h3>Status</h3>
+<hr/>
+<ul class="list-group list-group-flush">
+    <li class="list-group-item">Bluetooth status: @ViewModel.BluetoothStateMessage</li>
+    <li class="list-group-item">Is scanning: @ViewModel.IsScanning</li>
+    <li class="list-group-item">Devices found: @ViewModel.BleDevices.Count</li>
+</ul>
+
+<h3>Devices</h3>
+<hr/>
+<div>
+    <input type="checkbox" @bind-value="@ViewModel.FilterIsChecked" @bind-value:after="ViewModel.FilterChanged"/> Room temperature sensors only
+</div>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">ID</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (ViewModel.BleDevices.Count == 0)
+    {
+        <p>
+            <em>No devices found</em>
+        </p>
+    }
+    else
+    {
+        @foreach (var device in ViewModel.BleDevices)
+        {
+            <tr scope="row" class="@(device.IsConnected ? "text-success" : string.Empty)" @onclick="() => ViewModel.OpenServicesModal(device.Id)">
+                <td>@(string.IsNullOrWhiteSpace(device.Name) ? "Unknown" : device.Name)</td>
+                <td>@device.Id.ToString()</td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+
+<!-- Advertisements Modal -->
+<div class="modal @(ViewModel.ServiceModalIsActive ? "show" : "")" tabindex="-1" role="dialog" style="display:@(ViewModel.ServiceModalIsActive ? "block" : "none"); overflow-y: auto;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Device info</h5>
+                <button type="button" class="btn-close" aria-label="Close" @onclick="ViewModel.CloseServicesModal"></button>
+            </div>
+            <div class="modal-body">
+                <h3>Devices stats</h3>
+                <ul>
+                    <li>Name: @(ViewModel.SelectedDevice?.Name ?? "Unknown")</li>
+                    <li>RSSI: @ViewModel.SelectedDevice?.Rssi</li>
+                    <li>Is connected: @ViewModel.SelectedDevice?.IsConnected</li>
+                    <li>Is room sensor: @ViewModel.SelectedDevice?.IsRoomSensor()</li>
+                </ul>
+
+                @if (ViewModel.SelectedDevice?.Services?.Count > 0)
+                {
+                    <hr/>
+                    <h3>Services</h3>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">ID</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var service in ViewModel.SelectedDevice!.Services)
+                        {
+                            <tr scope="row">
+                                <td>@service.Name</td>
+                                <td>@service.Id</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+
+                <hr/>
+                <h3>Advertisements</h3>
+                @if (ViewModel.SelectedDevice?.Advertisements == null || ViewModel.SelectedDevice?.Advertisements.Count == 0)
+                {
+                    <p>
+                        <em>No advertisements found</em>
+                    </p>
+                }
+                else
+                {
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Type</th>
+                            <th scope="col">Raw data</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var advertisement in ViewModel.SelectedDevice!.Advertisements)
+                        {
+                            <tr scope="row">
+                                <td>@advertisement.Type.ToString()</td>
+                                <td>@BitConverter.ToString(advertisement.Data)</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="ViewModel.CloseServicesModal">Close</button>
+                <button type="button"
+                        class="btn @(ViewModel.SelectedDevice?.IsRoomSensor() == false ? "btn-danger" : "btn-success")"
+                        @onclick="ViewModel.ConnectDevice"
+                        disabled="@((!ViewModel.SelectedDevice?.IsRoomSensor() ?? false) || (ViewModel.SelectedDevice?.IsConnected ?? false) || ViewModel.IsConnecting)">
+                    Connect
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewModel.ServiceModalIsActive)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        ViewModel.PropertyChanged += HandlePropertyChanged;
+
+        await ViewModel.ScanForDevices();
+    }
+
+    public void Dispose()
+    {
+        ViewModel.PropertyChanged -= HandlePropertyChanged;
+        ViewModel?.Dispose();
+    }
+
+    private async void HandlePropertyChanged(object? sender, PropertyChangedEventArgs propertyChangedEventArgs)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+}
