@@ -4,7 +4,7 @@ use std::time::Duration;
 use tracing::{debug, error};
 
 const DHT_22_GPIO_PIN: u8 = 4;
-const SENSOR_READ_TIMOUT_IN_MS: u64 = 1000;
+const SENSOR_READ_TIMOUT_IN_MS: u64 = 2500;
 const TEMPERATURE_THRESHOLD: f32 = 0.2;
 const HUMIDITY_THRESHOLD: f32 = 1.5;
 
