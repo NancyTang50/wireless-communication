@@ -7,8 +7,9 @@ use tracing::{debug, info, Level};
 use tracing_subscriber::fmt::time::OffsetTime;
 use uuid::Uuid;
 
-use crate::gatt::create_evironmental_service;
+use crate::gatt::{create_current_time_service, create_evironmental_service};
 
+mod ble_date_time;
 mod ble_encode;
 mod gatt;
 mod sensor_data;
@@ -16,7 +17,9 @@ mod sensor_data;
 // NOTE: https://www.bluetooth.com/wp-content/uploads/Files/Specification/Assigned_Numbers.pdf
 pub const TEMPERATURE_CHARACTERISTIC_UUID: u16 = 0x2A6E;
 pub const HUMIDITY_CHARACTERISTIC_UUID: u16 = 0x2A6F;
-pub const SERVICE_UUID: u16 = 0x181A;
+pub const ENVIRONMENTAL_SENSING_SERVICE_UUID: u16 = 0x181A;
+pub const CURRENT_TIME_SERVICE_UUID: u16 = 0x1805;
+pub const CURRENT_TIME_CHARACTERISTIC_UUID: u16 = 0x2A2B;
 const ADVERTISE_NAME: &str = "SOME_NAME";
 
 /// The max level of logging in debug mode
@@ -34,14 +37,14 @@ async fn main() -> Result<()> {
         .with_max_level(TRACING_LEVEL)
         .init();
 
-    let (service_uuid, peripheral) = make_peripheral().await.unwrap();
+    let (services, peripheral) = make_peripheral().await.unwrap();
 
     info!("Powering on peripheral");
 
     while !peripheral.is_powered().await.unwrap() {}
 
     peripheral
-        .start_advertising(ADVERTISE_NAME, &[service_uuid])
+        .start_advertising(ADVERTISE_NAME, &services)
         .await
         .context("Failed to advertise")
         .unwrap();
@@ -56,14 +59,18 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn make_peripheral() -> Result<(Uuid, Peripheral)> {
+async fn make_peripheral() -> Result<(Vec<Uuid>, Peripheral)> {
     debug!("Starting to make peripheral");
     let peripheral = Peripheral::new()
         .await
         .context("Could not make peripheral")?;
 
     debug!("Adding service");
-    let (service_uuid, service) = create_evironmental_service().await;
+    let (environmental_service_uuid, service) = create_evironmental_service().await;
+    peripheral
+        .add_service(&service)
+        .context("Could not add service to peripheral")?;
+    let (current_time_service_uuid, service) = create_current_time_service().await;
     peripheral
         .add_service(&service)
         .context("Could not add service to peripheral")?;
@@ -77,7 +84,10 @@ async fn make_peripheral() -> Result<(Uuid, Peripheral)> {
         .await
         .context("Failed to register gatt service")?;
 
-    Ok((service_uuid, peripheral))
+    Ok((
+        vec![environmental_service_uuid, current_time_service_uuid],
+        peripheral,
+    ))
 }
 
 fn time_formatter() -> OffsetTime<&'static [time::format_description::FormatItem<'static>]> {
