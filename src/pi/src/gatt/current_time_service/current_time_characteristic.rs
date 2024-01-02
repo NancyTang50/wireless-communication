@@ -1,4 +1,5 @@
 use std::time::SystemTime;
+use std::collections::HashSet;
 
 use bluster::{
     gatt::{
@@ -14,7 +15,7 @@ use uuid::Uuid;
 
 use crate::{
     ble_encode::{BleEncode, BleDecode},
-    gatt::characteristic::{setup_handler_and_descriptors, GattEventHandler},
+    gatt::characteristic::{GattEventHandler, CharacteristicHandler},
     CURRENT_TIME_CHARACTERISTIC_UUID, ble_date_time::BleDateTime,
 };
 
@@ -25,12 +26,10 @@ impl CurrentTimeCharacteristic {
         Self {}
     }
 
-    setup_handler_and_descriptors!(Self, "Current Time", 4, 1, 44327, 0, 0);
-
     pub fn create_characteristic() -> Characteristic {
         let (tx, mut rx) = channel::<Event>(1);
 
-        let (mut handler, descriptors) = Self::create_handler_and_get_descriptors(Self::new());
+        let mut handler = CharacteristicHandler::new(Self::new());
 
         tokio::spawn(async move {
             loop {
@@ -47,7 +46,7 @@ impl CurrentTimeCharacteristic {
                 None,
             ),
             Some(vec![]),
-            descriptors,
+            HashSet::new(),
         )
     }
 }

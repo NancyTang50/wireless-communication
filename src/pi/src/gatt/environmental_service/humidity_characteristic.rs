@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use bluster::{
     gatt::{
         characteristic::{Characteristic, Properties, Read, Secure},
@@ -11,7 +13,7 @@ use uuid::Uuid;
 
 use crate::{
     ble_encode::BleEncode,
-    gatt::characteristic::{setup_handler_and_descriptors, GattEventHandler, SensorDataHandler},
+    gatt::characteristic::{GattEventHandler, SensorDataHandler, CharacteristicHandler},
     HUMIDITY_CHARACTERISTIC_UUID,
 };
 
@@ -28,13 +30,10 @@ impl HumidityCharacteristic {
         }
     }
 
-    setup_handler_and_descriptors!(Self, "Humidity", 4, 1, 44327, 0, 0);
-
     pub fn create_characteristic(humidity_changed_receiver: Receiver<f32>) -> Characteristic {
         let (tx, mut rx) = channel(1);
 
-        let (mut handler, descriptors) =
-            Self::create_handler_and_get_descriptors(HumidityCharacteristic::new());
+        let mut handler = CharacteristicHandler::new(Self::new());
 
         tokio::spawn(async move {
             let mut sensor_rx = humidity_changed_receiver;
@@ -54,7 +53,7 @@ impl HumidityCharacteristic {
                 None,
             ),
             Some(vec![]),
-            descriptors,
+            HashSet::new(),
         )
     }
 }

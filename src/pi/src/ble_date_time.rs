@@ -3,9 +3,7 @@ use std::time::SystemTime;
 use time::Month;
 use chrono::{DateTime, TimeZone, Utc, Datelike, Timelike};
 use tracing::debug;
-
 use crate::ble_encode::{BleDecode, BleEncode};
-
 
 pub struct BleDateTime {
     year: u16,
@@ -19,6 +17,8 @@ pub struct BleDateTime {
 }
 
 impl BleDateTime {
+    
+    #[warn(clippy::too_many_arguments)]    
     fn new(year: u16, month: Month, day: u8, hours: u8, minutes: u8, seconds: u8, day_of_week: Weekday, fractions256: u8) -> Self {
         debug_assert!(year >= 1582);
         debug_assert!(year <= 9999);

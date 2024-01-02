@@ -8,9 +8,13 @@ Then set the necessary permission for the application:
 ```bash
 sudo setcap 'cap_sys_nice=eip' pi
 ```
+Then turn off the timesync service of the pi:
+```bash
+sudo systemctl stop systemd-timesyncd
+```
 After this the binary can be executing using:
 ```bash
-./pi
+sudo ./pi
 ```
 
 # Connecting the sensor
