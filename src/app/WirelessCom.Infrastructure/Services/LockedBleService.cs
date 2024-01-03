@@ -43,6 +43,8 @@ public class LockedBleService : IBleService
     public Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default) =>
         ExecuteWithDeviceLock(() => _bleService.ConnectDeviceByIdAsync(deviceId, cancellationToken), deviceId);
 
+    public Task DisconnectDeviceByIdAsync(Guid deviceId) => ExecuteWithDeviceLock(() => _bleService.DisconnectDeviceByIdAsync(deviceId), deviceId);
+
     public Task<BleCharacteristicReading> ReadCharacteristicAsync(
         Guid deviceId,
         Guid serviceId,
