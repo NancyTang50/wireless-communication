@@ -8,7 +8,20 @@
 
 <h1>Room sensors</h1>
 
-<LineChart Title="Temperature" ValueTitle="test value" Data="ViewModel.Data" Height="300" />
+@foreach (var sensorData in ViewModel.Data.GroupBy(x => x.DeviceId).Select(x => x.ToList()))
+{
+    <div class="card">
+        <div class="card-header">
+            @* TODO: Use custom name https://github.com/NancyTang50/wireless-communication/issues/8 *@
+            <h2>@sensorData.First().DeviceId</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <LineChart Title="Temperature" ValueTitle="test value" Data="sensorData" Height="300"/>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
 
