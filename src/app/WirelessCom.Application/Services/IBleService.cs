@@ -79,9 +79,20 @@ public interface IBleService
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>
     ///     A task that represents the asynchronous connect operation.
+    ///     Returns when the device is connected.
     /// </returns>
     Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    ///     Disconnects from the device with the given <paramref name="deviceId" />.
+    /// </summary>
+    /// <param name="deviceId">The id of the device.</param>
+    /// <returns>
+    ///     A task that represents the asynchronous disconnect operation.
+    ///     Returns when the device is disconnected.
+    /// </returns>
+    Task DisconnectDeviceByIdAsync(Guid deviceId);
+    
     /// <summary>
     ///     Returns a list of all <see cref="BasicBleDevice" />s.
     /// </summary>

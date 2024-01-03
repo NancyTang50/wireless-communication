@@ -86,6 +86,31 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
         }
     }
 
+    public async Task DisconnectDevice()
+    {
+        if (SelectedDevice is null)
+        {
+            return;
+        }
+
+        try
+        {
+            IsConnecting = true;
+            await _bleService.DisconnectDeviceByIdAsync(SelectedDevice.Id);
+
+            var device = BleDevices.First(x => x.Id == SelectedDevice.Id);
+            var index = BleDevices.IndexOf(device);
+
+            BleDevices[index] = device with { IsConnected = false };
+            SelectedDevice = BleDevices.First(x => x.Id == SelectedDevice.Id);
+            UpdateDeviceList();
+        }
+        finally
+        {
+            IsConnecting = false;
+        }
+    }
+
     public void FilterChanged()
     {
         UpdateDeviceList();
@@ -94,7 +119,7 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
     private void UpdateDeviceList(IEnumerable<BasicBleDevice>? devices = null)
     {
         var filteredDevices = GetFilteredDevices(devices?.ToList() ?? _bleService.GetAllBasicBleDevices());
-        
+
         // Keep the services of the devices that are already in the list. Because the library doesn't keep the services
         foreach (var existingDevice in BleDevices.Where(x => x.Services is not null))
         {
@@ -107,7 +132,7 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
                 };
             }
         }
-        
+
         BleDevices = filteredDevices;
     }
 
