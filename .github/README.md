@@ -35,11 +35,11 @@ The BLE peripherals are a Raspberry Pi and an Nordic nrf52840. The central is a 
 
 <!-- BUILT WITH -->
 ### Built With
-[DOTNET 8](https://dotnet.microsoft.com/download/dotnet/8.0)
-[MAUI](https://learn.microsoft.com/en-us/dotnet/maui/what-is-maui?view=net-maui-8.0)
-[dotnet-bluetooth-le](https://github.com/dotnet-bluetooth-le/dotnet-bluetooth-le)
-[Rust](https://www.rust-lang.org/)
-[PlatformIO](https://platformio.org/)
+- [DOTNET 8](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [MAUI](https://learn.microsoft.com/en-us/dotnet/maui/what-is-maui?view=net-maui-8.0)
+- [dotnet-bluetooth-le](https://github.com/dotnet-bluetooth-le/dotnet-bluetooth-le)
+- [Rust](https://www.rust-lang.org/)
+- [PlatformIO](https://platformio.org/)
 
 
 <!-- GETTING STARTED -->
