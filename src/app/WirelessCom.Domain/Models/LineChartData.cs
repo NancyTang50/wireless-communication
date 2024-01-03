@@ -4,5 +4,6 @@ namespace WirelessCom.Domain.Models;
 
 public record LineChartData(
     Guid DeviceId,
-    List<RoomClimateReading> Readings 
+    List<RoomClimateReading> Readings,
+    string? CustomName = null
 );
