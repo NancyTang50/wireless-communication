@@ -29,8 +29,8 @@
 The goal of this project is to create a wireless communication system between a central and multiple peripherals.
 We have decided to create an app to display environmental data from multiple sensors, for example temperature and humidity.
 
-We have created three different programs in during this project. Two of which are BLE peripherals and one is a BLE central.
-The BLE peripherals are a Raspberry Pi and an Nordic nrf52840. The central is a mobile phone running either Android. IOS should also work but has not been tested yet since we do not have an IOS device.
+We have created three different programs during this project. Two of which are BLE peripherals and one is a BLE central.
+The BLE peripherals are a Raspberry Pi and a Nordic nrf52840. The central is a mobile phone running either Android. IOS should also work but has not been tested yet since we do not have an IOS device.
 
 
 <!-- BUILT WITH -->
@@ -49,7 +49,7 @@ Each of the three programs have their own README.md file with instructions on ho
 
 <!-- APP PREVIEW SCREENSHOTS -->
 ## App preview
-All room sensor from the previous hour is displayed on the home screen.
+All room sensors from the previous hour are displayed on the home screen.
 The user can click on a sensor name to change the name of the sensor.
 Data will still be shown even when the device is not currently connected to the sensor.
 
@@ -59,7 +59,7 @@ All nearby sensors are displayed on the connectivity screen.
 
 <img src="../assets/connectivity.png" alt="App preview" width="500">
 
-The list of devices can be filtered be filtered to only show devices that work with the app.
+The list of devices can be filtered to only show devices that work with the app.
 
 <img src="../assets/connectivity_sensors_only.png" alt="App preview" width="500">
 
