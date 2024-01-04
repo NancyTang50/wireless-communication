@@ -79,6 +79,13 @@ public class BleService : IBleService
         var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
         await _adapter.ConnectToDeviceAsync(device, parameters, cancellationToken).ConfigureAwait(false);
     }
+    
+    /// <inheritdoc />
+    public async Task DisconnectDeviceByIdAsync(Guid deviceId)
+    {
+        var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
+        await _adapter.DisconnectDeviceAsync(device).ConfigureAwait(false);
+    }
 
     /// <inheritdoc />
     public List<BasicBleDevice> GetAllBasicBleDevices()

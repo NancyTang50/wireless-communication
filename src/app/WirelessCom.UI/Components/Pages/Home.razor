@@ -8,7 +8,57 @@
 
 <h1>Room sensors</h1>
 
-<LineChart Title="Temperature" ValueTitle="test value" Data="ViewModel.Data" Height="300" />
+@if (ViewModel.Data.Count == 0)
+{
+    <p>No data found from the past hour.</p>
+}
+else
+{
+    @foreach (var sensorData in ViewModel.Data.GroupBy(x => x.DeviceId).Select(x => x.ToList()))
+    {
+        <div class="card">
+            <div class="card-header" @onclick="() => ViewModel.OpenServicesModal(sensorData.First().DeviceId)">
+                <h2>@(sensorData.First().CustomName ?? sensorData.First().DeviceId.ToString())</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <LineChart Title="Temperature" ValueTitle="Measurements" Data="sensorData" Height="300"/>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<!-- Sensor naming Modal -->
+<div class="modal @(ViewModel.SensorNameModalIsActive ? "show" : "")" tabindex="-1" role="dialog" style="display:@(ViewModel.SensorNameModalIsActive ? "block" : "none"); overflow-y: auto;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Set sensor name</h5>
+                <button type="button" class="btn-close" aria-label="Close" @onclick="ViewModel.CloseServicesModal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">Name</span>
+                    <input type="text" class="form-control" placeholder="Sensor name" aria-label="Sensor name" aria-describedby="basic-addon1" @bind="ViewModel.NewSensorName"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-success"
+                        @onclick="ViewModel.SetSensorName">
+                    Save
+                </button>
+                <button type="button" class="btn btn-secondary" @onclick="ViewModel.CloseServicesModal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewModel.SensorNameModalIsActive)
+{
+    <div class="modal-backdrop fade show"></div>
+}
 
 @code {
 

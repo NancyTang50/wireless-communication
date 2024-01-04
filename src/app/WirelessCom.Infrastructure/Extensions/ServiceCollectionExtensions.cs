@@ -33,7 +33,9 @@ public static class ServiceCollectionExtensions
 
         serviceCollection.AddTransient<IUnitOfWork, UnitOfWork>();
         serviceCollection.AddTransient<IRoomClimateReadingRepository, RoomClimateReadingRepository>();
-        
+
+        serviceCollection.AddTransient<IBleRoomSensorNamingService, BleRoomSensorNamingService>();
+
         return serviceCollection;
     }
 }

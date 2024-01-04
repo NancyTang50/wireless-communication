@@ -11,7 +11,7 @@ namespace WirelessCom.Application.Services;
 // Todo: Manually read data from device after not receiving any data for 1 minute.
 public class BleRoomSensorService : IBleRoomSensorService
 {
-    private static readonly SemaphoreSlim RegisterNotifySemaphore = new(1, 1);
+    private static readonly SemaphoreSlim UpdateNotifySemaphore = new(1, 1);
     private readonly IBleService _bleService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly List<Guid> _roomSensorNotifying = new();
@@ -96,15 +96,21 @@ public class BleRoomSensorService : IBleRoomSensorService
 
         _roomSensors = roomSensors;
 
-        await RegisterNotifyForRoomSensors().ConfigureAwait(false);
+        await UpdateNotifyForRoomSensors().ConfigureAwait(false);
     }
 
-    private async Task RegisterNotifyForRoomSensors()
+    private async Task UpdateNotifyForRoomSensors()
     {
-        await RegisterNotifySemaphore.WaitAsync();
+        await UpdateNotifySemaphore.WaitAsync();
 
         try
         {
+            foreach (var roomSensor in _roomSensors.Where(x => _roomSensorNotifying.Contains(x.Id) && !x.IsConnected))
+            {
+                // Remove notify handlers for disconnected devices
+                _roomSensorNotifying.Remove(roomSensor.Id);
+            }
+
             foreach (var roomSensor in _roomSensors.Where(x => x.IsConnected && x.IsRoomSensor()))
             {
                 if (_roomSensorNotifying.Contains(roomSensor.Id))
@@ -132,7 +138,7 @@ public class BleRoomSensorService : IBleRoomSensorService
         }
         finally
         {
-            RegisterNotifySemaphore.Release();
+            UpdateNotifySemaphore.Release();
         }
     }
 

@@ -22,7 +22,7 @@
     [Parameter]
     [EditorRequired]
     public required List<LineChartData> Data { get; set; }
-    
+
     [Parameter]
     [EditorRequired]
     public required int Height { get; set; }
@@ -40,7 +40,7 @@
         {
             var humidityDataset = new LineDataset<TimePoint>
             {
-                Label = $"Humidity {chartData.DeviceId}",
+                Label = GetLabelName("Humidity", chartData),
                 BackgroundColor = ColorUtil.FromDrawingColor(Color.White),
                 BorderColor = ColorUtil.FromDrawingColor(GetDeviceColor(chartData, "Humidity")),
                 Fill = FillingMode.Disabled
@@ -48,7 +48,7 @@
 
             var tempDataset = new LineDataset<TimePoint>
             {
-                Label = $"Temperature {chartData.DeviceId}",
+                Label = GetLabelName("Temperature", chartData),
                 BackgroundColor = ColorUtil.FromDrawingColor(Color.White),
                 BorderColor = ColorUtil.FromDrawingColor(GetDeviceColor(chartData, "Temperature")),
                 Fill = FillingMode.Disabled
@@ -63,6 +63,11 @@
 
         _chart?.Update();
         await InvokeAsync(StateHasChanged);
+    }
+
+    private static string GetLabelName(string humidity, LineChartData chartData)
+    {
+        return $"{humidity} - {chartData.CustomName ?? chartData.DeviceId.ToString()}";
     }
 
     private static Color GetDeviceColor(LineChartData chartData, string label)
@@ -117,7 +122,7 @@
                                 StepSize = 1,
                                 Round = TimeMeasurement.Minute,
                                 MinUnit = TimeMeasurement.Minute,
-                                Min = DateTime.Now.AddMinutes(-30),
+                                Min = DateTime.Now.AddHours(-1),
                                 IsoWeek = true
                             }
                         }
