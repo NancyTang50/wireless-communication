@@ -8,18 +8,25 @@
 
 <h1>Room sensors</h1>
 
-@foreach (var sensorData in ViewModel.Data.GroupBy(x => x.DeviceId).Select(x => x.ToList()))
+@if (ViewModel.Data.Count == 0)
 {
-    <div class="card">
-        <div class="card-header" @onclick="() => ViewModel.OpenServicesModal(sensorData.First().DeviceId)">
-            <h2>@(sensorData.First().CustomName ?? sensorData.First().DeviceId.ToString())</h2>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <LineChart Title="Temperature" ValueTitle="test value" Data="sensorData" Height="300"/>
+    <p>No data found from the past hour.</p>
+}
+else
+{
+    @foreach (var sensorData in ViewModel.Data.GroupBy(x => x.DeviceId).Select(x => x.ToList()))
+    {
+        <div class="card">
+            <div class="card-header" @onclick="() => ViewModel.OpenServicesModal(sensorData.First().DeviceId)">
+                <h2>@(sensorData.First().CustomName ?? sensorData.First().DeviceId.ToString())</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <LineChart Title="Temperature" ValueTitle="test value" Data="sensorData" Height="300"/>
+                </div>
             </div>
         </div>
-    </div>
+    }
 }
 
 <!-- Sensor naming Modal -->
