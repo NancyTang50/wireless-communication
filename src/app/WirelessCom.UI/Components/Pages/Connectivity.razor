@@ -121,13 +121,22 @@
                 }
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" @onclick="ViewModel.CloseServicesModal">Close</button>
+                @if (ViewModel.SelectedDevice?.IsConnected ?? false)
+                {
+                    <button type="button"
+                            class="btn btn-danger"
+                            @onclick="ViewModel.DisconnectDevice"
+                            disabled="@(ViewModel.IsConnecting)">
+                        Disconnect
+                    </button>
+                }
                 <button type="button"
                         class="btn @(ViewModel.SelectedDevice?.IsRoomSensor() == false ? "btn-danger" : "btn-success")"
                         @onclick="ViewModel.ConnectDevice"
                         disabled="@((!ViewModel.SelectedDevice?.IsRoomSensor() ?? false) || (ViewModel.SelectedDevice?.IsConnected ?? false) || ViewModel.IsConnecting)">
                     Connect
                 </button>
+                <button type="button" class="btn btn-secondary" @onclick="ViewModel.CloseServicesModal">Close</button>
             </div>
         </div>
     </div>
