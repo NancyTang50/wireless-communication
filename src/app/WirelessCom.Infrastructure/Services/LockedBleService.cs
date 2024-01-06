@@ -39,12 +39,12 @@ public class LockedBleService : IBleService
     public List<BasicBleDevice> GetAllBasicBleDevices() => _bleService.GetAllBasicBleDevices();
 
     public Task<IEnumerable<BasicBleService>> GetServicesAsync(Guid deviceId, CancellationToken cancellationToken = default) =>
-        ExecuteWithDeviceLock(() => _bleService.GetServicesAsync(deviceId, cancellationToken), deviceId);
+        ExecuteWithDeviceLock(() => _bleService.GetServicesAsync(deviceId, cancellationToken), deviceId, 10);
 
     public Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default) =>
         ExecuteWithDeviceLock(() => _bleService.ConnectDeviceByIdAsync(deviceId, cancellationToken), deviceId);
 
-    public Task DisconnectDeviceByIdAsync(Guid deviceId) => ExecuteWithDeviceLock(() => _bleService.DisconnectDeviceByIdAsync(deviceId), deviceId);
+    public Task DisconnectDeviceByIdAsync(Guid deviceId) => ExecuteWithDeviceLock(() => _bleService.DisconnectDeviceByIdAsync(deviceId), deviceId, 5);
 
     public Task<BleCharacteristicReading> ReadCharacteristicAsync(
         Guid deviceId,
@@ -81,19 +81,22 @@ public class LockedBleService : IBleService
 
         try
         {
-            var resultTask = Task.Run(async () =>
-            {
-                await semaphore.WaitAsync().ConfigureAwait(false);
+            var resultTask = Task.Run(
+                async () =>
+                {
+                    await semaphore.WaitAsync().ConfigureAwait(false);
 
-                try
-                {
-                    return await task().ConfigureAwait(false);
-                }
-                finally
-                {
-                    semaphore.Release();
-                }
-            }, cts.Token);
+                    try
+                    {
+                        return await task().ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        semaphore.Release();
+                    }
+                },
+                cts.Token
+            );
 
             // Wait for either the task to complete or the timeout
             await resultTask.ConfigureAwait(false);
@@ -101,7 +104,7 @@ public class LockedBleService : IBleService
         }
         catch (OperationCanceledException ex)
         {
-            Console.WriteLine($"Task cancelled after 10 seconds: {ex.Message}");
+            Console.WriteLine($"Task cancelled after {timeout} seconds: {ex.Message}");
             throw; // Rethrow the exception or handle as needed
         }
     }
@@ -109,39 +112,42 @@ public class LockedBleService : IBleService
     private async Task ExecuteWithDeviceLock(Func<Task> task, Guid deviceId, int timeout = 20)
     {
         var semaphore = GetDeviceSemaphores(deviceId);
-        
+
         using var cts = new CancellationTokenSource();
         cts.CancelAfter(TimeSpan.FromSeconds(timeout));
 
         try
         {
-            var resultTask = Task.Run(async () =>
-            {
-                await semaphore.WaitAsync().ConfigureAwait(false);
+            var resultTask = Task.Run(
+                async () =>
+                {
+                    await semaphore.WaitAsync().ConfigureAwait(false);
 
-                try
-                {
-                    await task().ConfigureAwait(false);
-                }
-                finally
-                {
-                    semaphore.Release();
-                }
-            }, cts.Token);
+                    try
+                    {
+                        await task().ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        semaphore.Release();
+                    }
+                },
+                cts.Token
+            );
 
             // Wait for either the task to complete or the timeout
             await resultTask.ConfigureAwait(false);
         }
         catch (OperationCanceledException ex)
         {
-            Console.WriteLine($"Task cancelled after 10 seconds: {ex.Message}");
+            Console.WriteLine($"Task cancelled after {timeout} seconds: {ex.Message}");
             throw; // Rethrow the exception or handle as needed
         }
     }
 
     private SemaphoreSlim GetDeviceSemaphores(Guid deviceId)
     {
-        var semaphore = _deviceSemaphores.Get(deviceId);
+        var semaphore = _deviceSemaphores.GetAll().FirstOrDefault().Value;
         if (semaphore is not null)
         {
             return semaphore;
