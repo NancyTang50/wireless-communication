@@ -78,9 +78,10 @@ impl GattEventHandler for CurrentTimeCharacteristic {
 
                 debug!("Current time is {:?}", current_date_time);
 
-                write_request.response.send(Response::Success(vec![])).unwrap();
-
-                // NOTE: could not find the correct response of a CTS write, if there is any.
+                write_request
+                    .response
+                    .send(Response::Success(vec![]))
+                    .unwrap();
             }
             bluster::gatt::event::Event::NotifySubscribe(_)
             | bluster::gatt::event::Event::NotifyUnsubscribe => {}
