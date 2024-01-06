@@ -33,4 +33,4 @@ sudo ./pi
 
 To connect the DHT22 to the Raspberry PI see the wiring diagram:
 
-![Wiring diagram for the PI](./docs/RaspberryPiWiringDiagram.png)
+![Wiring diagram for the PI](../../assets/RaspberryPiWiringDiagram.png)
