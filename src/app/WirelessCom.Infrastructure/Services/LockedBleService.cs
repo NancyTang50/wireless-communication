@@ -83,7 +83,7 @@ public class LockedBleService : IBleService
         {
             var resultTask = Task.Run(async () =>
             {
-                await semaphore.WaitAsync(cts.Token).ConfigureAwait(false);
+                await semaphore.WaitAsync().ConfigureAwait(false);
 
                 try
                 {
@@ -117,7 +117,7 @@ public class LockedBleService : IBleService
         {
             var resultTask = Task.Run(async () =>
             {
-                await semaphore.WaitAsync(cts.Token).ConfigureAwait(false);
+                await semaphore.WaitAsync().ConfigureAwait(false);
 
                 try
                 {
