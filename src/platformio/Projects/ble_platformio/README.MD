@@ -1,6 +1,10 @@
+# PlatformIO installation guide
+To install the platformIO on Visual Studio code, please follow the quickstart guide of [platformIO](https://docs.platformio.org/en/latest/integration/ide/vscode.html#quick-start)
+
 # Test code
 
-To get the right encoding for the time, execute this js and send this via bluetooth
+To get the right encoding of the datetime, execute this Javascript below in the console of your browser. For example Google Chrome. After you receive the encoding, send the encoding with the NRF connect mobile app through the Bluetooth as BYTEARRAY.
+
 
 ```js
 function EncodeCurrentDate() {
