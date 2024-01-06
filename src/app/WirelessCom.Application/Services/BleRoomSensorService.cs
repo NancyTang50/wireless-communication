@@ -115,8 +115,8 @@ public class BleRoomSensorService : IBleRoomSensorService
                 var yearBytes = BitConverter.GetBytes((ushort)currentDate.Year);
                 var bleEncodedBytes = new[]
                 {
-                    (byte)(yearBytes[0] & 0xFF),
-                    (byte)((yearBytes[0] >> 8) & 0xFF),
+                    yearBytes[0],
+                    yearBytes[1],
                     (byte)currentDate.Month,
                     (byte)currentDate.Day,
                     (byte)currentDate.Hour,
