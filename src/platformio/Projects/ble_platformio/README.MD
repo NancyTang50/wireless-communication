@@ -1,10 +1,13 @@
 # PlatformIO installation guide
 To install the platformIO on Visual Studio code, please follow the quickstart guide of [platformIO](https://docs.platformio.org/en/latest/integration/ide/vscode.html#quick-start)
 
+# Wiring DHT-22 sensor to NRF-52840 Diagram
+Please wire the DHT-22 sensor exactly in the diagram
+![Wiring diagram](/assets/Wiring%20dht-22%20sensor%20to%20NRF-52840.png)
+
 # Test code
-
-To get the right encoding of the datetime, execute this Javascript below in the console of your browser. For example Google Chrome. After you receive the encoding, send the encoding with the NRF connect mobile app through the Bluetooth as BYTEARRAY.
-
+ This test code is used for debugging the encoding and decode the raw bytes to a readable datetime.
+ Execute this Javascript below in the console of your browser. For example Google Chrome. After you receive the encoding, send the encoding with the NRF connect mobile app through the Bluetooth as BYTEARRAY.
 
 ```js
 function EncodeCurrentDate() {
