@@ -82,13 +82,7 @@ public class BleRoomSensorService : IBleRoomSensorService
 
     private async Task BleServiceOnDevicesChangedEvent(object _, IEnumerable<BasicBleDevice> devices)
     {
-        var roomSensors = devices.FilterByServiceId(
-                BleServiceDefinitions.EnvironmentalService.ServiceIdPrefix,
-                BleServiceDefinitions.TimeService.ServiceIdPrefix
-            )
-            .ToList();
-
-        // TODO: Check if room sensors have changed
+        var roomSensors = devices.Where(x => x.IsRoomSensor()).ToList();
         if (roomSensors.SequenceEqual(_roomSensors))
         {
             return;

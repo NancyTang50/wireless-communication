@@ -138,14 +138,7 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
 
     private List<BasicBleDevice> GetFilteredDevices(List<BasicBleDevice> devices)
     {
-        if (FilterIsChecked)
-        {
-            return devices
-                .FilterByServiceId(BleServiceDefinitions.EnvironmentalService.ServiceIdPrefix, BleServiceDefinitions.TimeService.ServiceIdPrefix)
-                .ToList();
-        }
-
-        return devices;
+        return FilterIsChecked ? devices.Where(x => x.IsRoomSensor()).ToList() : devices;
     }
 
     private void OnBleStateChanged(object source, BluetoothState bluetoothState)

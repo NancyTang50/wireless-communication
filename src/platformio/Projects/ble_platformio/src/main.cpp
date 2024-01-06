@@ -67,7 +67,7 @@ void setup()
 
     dht.begin();
 
-    ble_peripheral.setLocalName("SOME_NAME_NORDIC");
+    ble_peripheral.setLocalName("RoomSensor-NORDIC");
     ble_peripheral.setAdvertisedServiceUuid(environmental_service.uuid());
     ble_peripheral.setAdvertisedServiceUuid(current_time_service.uuid());
 
