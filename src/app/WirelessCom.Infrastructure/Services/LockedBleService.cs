@@ -72,16 +72,24 @@ public class LockedBleService : IBleService
     ) =>
         ExecuteWithDeviceLock(() => _bleService.WriteCharacteristicAsync(deviceId, serviceId, characteristicId, data, cancellationToken), deviceId);
 
-    private async Task<T> ExecuteWithDeviceLock<T>(Func<Task<T>> task, Guid deviceId)
+    private async Task<T> ExecuteWithDeviceLock<T>(Func<Task<T>> task, Guid deviceId, int timeout = 20)
     {
         var semaphore = GetDeviceSemaphores(deviceId);
         await semaphore.WaitAsync().ConfigureAwait(false);
 
         try
         {
-            var result = await task().ConfigureAwait(false);
+            var combinedTask = Task.WhenAny(task(), Task.Delay(TimeSpan.FromSeconds(timeout)));
+            await combinedTask.ConfigureAwait(false);
 
-            return result;
+            // Check if the original task completed successfully
+            if (combinedTask.Result == task())
+            {
+                return await task().ConfigureAwait(false);
+            }
+
+            // Handle timeout (e.g., throw an exception or return a default value)
+            throw new TimeoutException("The operation timed out.");
         }
         finally
         {
@@ -89,14 +97,24 @@ public class LockedBleService : IBleService
         }
     }
 
-    private async Task ExecuteWithDeviceLock(Func<Task> task, Guid deviceId)
+    private async Task ExecuteWithDeviceLock(Func<Task> task, Guid deviceId, int timeout = 20)
     {
         var semaphore = GetDeviceSemaphores(deviceId);
         await semaphore.WaitAsync().ConfigureAwait(false);
 
         try
         {
-            await task().ConfigureAwait(false);
+            var combinedTask = Task.WhenAny(task(), Task.Delay(TimeSpan.FromSeconds(timeout)));
+            await combinedTask.ConfigureAwait(false);
+
+            // Check if the original task completed successfully
+            if (combinedTask.Result == task())
+            {
+                await task().ConfigureAwait(false);
+            }
+
+            // Handle timeout (e.g., throw an exception or return a default value)
+            throw new TimeoutException("The operation timed out.");
         }
         finally
         {
