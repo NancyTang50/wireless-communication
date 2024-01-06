@@ -1,6 +1,6 @@
 # PI Peripheral
 
-To develop the code for the PI, please follow the install guide for [docker](https://www.docker.com/get-started/). This will ensure that the Rust language is correctly install with the cross compilation for the Raspberry PIs architecture.
+To develop the code for the PI, please follow the install guide for [docker](https://www.docker.com/get-started/). Then you need to install [Visual Studio Code](https://code.visualstudio.com/download) and install the [Dev Container](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension. The usage of the dev container will ensure that the Rust language is correctly install with the cross compilation for the Raspberry PIs architecture.
 
 To compile the code in debug mode run the following command:
 ```bash
