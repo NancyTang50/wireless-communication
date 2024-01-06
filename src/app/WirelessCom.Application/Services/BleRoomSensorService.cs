@@ -11,10 +11,11 @@ namespace WirelessCom.Application.Services;
 // Todo: Manually read data from device after not receiving any data for 1 minute.
 public class BleRoomSensorService : IBleRoomSensorService
 {
-    private static readonly SemaphoreSlim UpdateNotifySemaphore = new(1, 1);
+    private static readonly SemaphoreSlim UpdateNotifySemaphore = new(1, 1), UpdateTimeSemaphore = new(1, 1);
     private readonly IBleService _bleService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly List<Guid> _roomSensorNotifying = new();
+    private readonly List<Guid> _roomSensorTimeUpdated = new();
     private IReadOnlyList<BasicBleDevice> _roomSensors = new List<BasicBleDevice>();
     private readonly GenericConcurrentDictionary<Guid, RoomClimateReading> _previousRoomClimateReadings = new();
 
@@ -91,6 +92,52 @@ public class BleRoomSensorService : IBleRoomSensorService
         _roomSensors = roomSensors;
 
         await UpdateNotifyForRoomSensors().ConfigureAwait(false);
+        await UpdateLocalTime().ConfigureAwait(false);
+    }
+
+    private async Task UpdateLocalTime()
+    {
+        await UpdateTimeSemaphore.WaitAsync();
+
+        try
+        {
+            foreach (var roomSensor in _roomSensors.Where(x => x.IsConnected && x.IsRoomSensor()))
+            {
+                if (_roomSensorTimeUpdated.Contains(roomSensor.Id))
+                {
+                    // Already notifying
+                    continue;
+                }
+
+                _roomSensorTimeUpdated.Add(roomSensor.Id);
+
+                var currentDate = DateTime.Now;
+                var yearBytes = BitConverter.GetBytes((ushort)currentDate.Year);
+                var bleEncodedBytes = new[]
+                {
+                    (byte)(yearBytes[0] & 0xFF),
+                    (byte)((yearBytes[0] >> 8) & 0xFF),
+                    (byte)currentDate.Month,
+                    (byte)currentDate.Day,
+                    (byte)currentDate.Hour,
+                    (byte)currentDate.Minute,
+                    (byte)currentDate.Second,
+                    // The week starts on monday on the rust application
+                    currentDate.DayOfWeek == DayOfWeek.Sunday ? (byte)7 : (byte)currentDate.DayOfWeek
+                };
+
+                await _bleService.WriteCharacteristicAsync(
+                    roomSensor.Id,
+                    BleServiceDefinitions.TimeService.ServiceGuid,
+                    BleServiceDefinitions.TimeService.CurrentTimeCharacteristicGuid,
+                    bleEncodedBytes
+                );
+            }
+        }
+        finally
+        {
+            UpdateTimeSemaphore.Release();
+        }
     }
 
     private async Task UpdateNotifyForRoomSensors()

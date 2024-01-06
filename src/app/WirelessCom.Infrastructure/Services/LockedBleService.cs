@@ -6,7 +6,8 @@ using BluetoothState = WirelessCom.Domain.Models.Enums.BluetoothState;
 
 namespace WirelessCom.Infrastructure.Services;
 
-// Yes this incredibly weird to do. However, the BLE plugin is not thread safe and will throw randomly get stuck if you try to do multiple things at once.
+// Yes this incredibly weird to do.
+// However, the BLE plugin is not thread safe and will throw randomly and will get stuck if you try to do multiple things at once.
 public class LockedBleService : IBleService
 {
     private readonly BleService _bleService;
@@ -61,6 +62,15 @@ public class LockedBleService : IBleService
         CancellationToken cancellationToken = default
     ) =>
         ExecuteWithDeviceLock(() => _bleService.RegisterNotifyHandler(deviceId, serviceId, characteristicId, handler, cancellationToken), deviceId);
+
+    public Task<int> WriteCharacteristicAsync(
+        Guid deviceId,
+        Guid serviceId,
+        Guid characteristicId,
+        byte[] data,
+        CancellationToken cancellationToken = default
+    ) =>
+        ExecuteWithDeviceLock(() => _bleService.WriteCharacteristicAsync(deviceId, serviceId, characteristicId, data, cancellationToken), deviceId);
 
     private async Task<T> ExecuteWithDeviceLock<T>(Func<Task<T>> task, Guid deviceId)
     {
