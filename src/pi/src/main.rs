@@ -20,7 +20,7 @@ pub const HUMIDITY_CHARACTERISTIC_UUID: u16 = 0x2A6F;
 pub const ENVIRONMENTAL_SENSING_SERVICE_UUID: u16 = 0x181A;
 pub const CURRENT_TIME_SERVICE_UUID: u16 = 0x1805;
 pub const CURRENT_TIME_CHARACTERISTIC_UUID: u16 = 0x2A2B;
-const ADVERTISE_NAME: &str = "SOME_NAME";
+const ADVERTISE_NAME: &str = "RoomSensor-PI";
 
 /// The max level of logging in debug mode
 #[cfg(debug_assertions)]
