@@ -75,51 +75,67 @@ public class LockedBleService : IBleService
     private async Task<T> ExecuteWithDeviceLock<T>(Func<Task<T>> task, Guid deviceId, int timeout = 20)
     {
         var semaphore = GetDeviceSemaphores(deviceId);
-        await semaphore.WaitAsync().ConfigureAwait(false);
+
+        using var cts = new CancellationTokenSource();
+        cts.CancelAfter(TimeSpan.FromSeconds(timeout));
 
         try
         {
-            var combinedTask = Task.WhenAny(task(), Task.Delay(TimeSpan.FromSeconds(timeout)));
-            await combinedTask.ConfigureAwait(false);
-
-            // Check if the original task completed successfully
-            if (combinedTask.Result == task())
+            var resultTask = Task.Run(async () =>
             {
-                return await task().ConfigureAwait(false);
-            }
+                await semaphore.WaitAsync(cts.Token).ConfigureAwait(false);
 
-            // Handle timeout (e.g., throw an exception or return a default value)
-            throw new TimeoutException("The operation timed out.");
+                try
+                {
+                    return await task().ConfigureAwait(false);
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            }, cts.Token);
+
+            // Wait for either the task to complete or the timeout
+            await resultTask.ConfigureAwait(false);
+            return resultTask.Result;
         }
-        finally
+        catch (OperationCanceledException ex)
         {
-            semaphore.Release();
+            Console.WriteLine($"Task cancelled after 10 seconds: {ex.Message}");
+            throw; // Rethrow the exception or handle as needed
         }
     }
 
     private async Task ExecuteWithDeviceLock(Func<Task> task, Guid deviceId, int timeout = 20)
     {
         var semaphore = GetDeviceSemaphores(deviceId);
-        await semaphore.WaitAsync().ConfigureAwait(false);
+        
+        using var cts = new CancellationTokenSource();
+        cts.CancelAfter(TimeSpan.FromSeconds(timeout));
 
         try
         {
-            var combinedTask = Task.WhenAny(task(), Task.Delay(TimeSpan.FromSeconds(timeout)));
-            await combinedTask.ConfigureAwait(false);
-
-            // Check if the original task completed successfully
-            if (combinedTask.Result == task())
+            var resultTask = Task.Run(async () =>
             {
-                await task().ConfigureAwait(false);
-                return;
-            }
+                await semaphore.WaitAsync(cts.Token).ConfigureAwait(false);
 
-            // Handle timeout (e.g., throw an exception or return a default value)
-            throw new TimeoutException("The operation timed out.");
+                try
+                {
+                    await task().ConfigureAwait(false);
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            }, cts.Token);
+
+            // Wait for either the task to complete or the timeout
+            await resultTask.ConfigureAwait(false);
         }
-        finally
+        catch (OperationCanceledException ex)
         {
-            semaphore.Release();
+            Console.WriteLine($"Task cancelled after 10 seconds: {ex.Message}");
+            throw; // Rethrow the exception or handle as needed
         }
     }
 
