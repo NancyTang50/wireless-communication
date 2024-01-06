@@ -6,6 +6,6 @@ public static class BasicBleDeviceExtensions
 {
     public static bool IsRoomSensor(this BasicBleDevice device)
     {
-        return device.Name.Contains("RoomSensor", StringComparison.InvariantCultureIgnoreCase);
+        return !string.IsNullOrWhiteSpace(device.Name) && device.Name.Contains("RoomSensor", StringComparison.InvariantCultureIgnoreCase);
     }
 }
