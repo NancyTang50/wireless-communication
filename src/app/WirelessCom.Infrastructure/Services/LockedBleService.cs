@@ -111,6 +111,7 @@ public class LockedBleService : IBleService
             if (combinedTask.Result == task())
             {
                 await task().ConfigureAwait(false);
+                return;
             }
 
             // Handle timeout (e.g., throw an exception or return a default value)
