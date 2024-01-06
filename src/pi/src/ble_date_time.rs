@@ -126,7 +126,7 @@ impl BleDecode for BleDateTime {
             Weekday::try_from(ble_bytes.next().unwrap_or(0)).unwrap_or(Weekday::Unknown);
         let fractions256 = ble_bytes.next().unwrap_or(0);
 
-        Self {
+        BleDateTime::new(
             year,
             month,
             day,
@@ -135,7 +135,7 @@ impl BleDecode for BleDateTime {
             seconds,
             day_of_week,
             fractions256,
-        }
+        )
     }
 }
 
