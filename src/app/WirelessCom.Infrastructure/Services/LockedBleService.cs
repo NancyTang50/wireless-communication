@@ -147,7 +147,7 @@ public class LockedBleService : IBleService
 
     private SemaphoreSlim GetDeviceSemaphores(Guid deviceId)
     {
-        var semaphore = _deviceSemaphores.GetAll().FirstOrDefault().Value;
+        var semaphore = _deviceSemaphores.Get(deviceId);
         if (semaphore is not null)
         {
             return semaphore;
