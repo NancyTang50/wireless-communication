@@ -86,7 +86,7 @@ void setup()
     // begin initialization
     ble_peripheral.begin();
 
-    timer.every(5000, update_read_sensor);
+    timer.every(60000, update_read_sensor);
     timer.every(500, update_time_value);
 
     Serial.println(F("BLE LED Peripheral"));
