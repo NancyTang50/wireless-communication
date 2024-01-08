@@ -1,7 +1,7 @@
-# APP BLE Central
+# App BLE Central
 
 ## About
-The APP has been writen in C# using the .NET MAUI framework. The APP is a BLE central that connects to the Room sensors. We are using the [Plugin-BLE](https://github.com/dotnet-bluetooth-le/dotnet-bluetooth-le) nuget package for the BLE communication.
+The app has been writen in C# using the .NET MAUI framework. The APP is a BLE central that connects to the Room sensors. We are using the [Plugin-BLE](https://github.com/dotnet-bluetooth-le/dotnet-bluetooth-le) nuget package for the BLE communication.
 
 ## Prerequisites
 You will need the following tools and dependencies installed on your machine to run the app:
