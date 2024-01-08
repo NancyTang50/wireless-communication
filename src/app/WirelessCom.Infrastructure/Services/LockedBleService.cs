@@ -6,7 +6,8 @@ using BluetoothState = WirelessCom.Domain.Models.Enums.BluetoothState;
 
 namespace WirelessCom.Infrastructure.Services;
 
-// Yes this incredibly weird to do. However, the BLE plugin is not thread safe and will throw randomly get stuck if you try to do multiple things at once.
+// Yes this incredibly weird to do.
+// However, the BLE plugin is not thread safe and will throw randomly and will get stuck if you try to do multiple things at once.
 public class LockedBleService : IBleService
 {
     private readonly BleService _bleService;
@@ -38,12 +39,12 @@ public class LockedBleService : IBleService
     public List<BasicBleDevice> GetAllBasicBleDevices() => _bleService.GetAllBasicBleDevices();
 
     public Task<IEnumerable<BasicBleService>> GetServicesAsync(Guid deviceId, CancellationToken cancellationToken = default) =>
-        ExecuteWithDeviceLock(() => _bleService.GetServicesAsync(deviceId, cancellationToken), deviceId);
+        ExecuteWithDeviceLock(() => _bleService.GetServicesAsync(deviceId, cancellationToken), deviceId, 10);
 
     public Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default) =>
         ExecuteWithDeviceLock(() => _bleService.ConnectDeviceByIdAsync(deviceId, cancellationToken), deviceId);
 
-    public Task DisconnectDeviceByIdAsync(Guid deviceId) => ExecuteWithDeviceLock(() => _bleService.DisconnectDeviceByIdAsync(deviceId), deviceId);
+    public Task DisconnectDeviceByIdAsync(Guid deviceId) => ExecuteWithDeviceLock(() => _bleService.DisconnectDeviceByIdAsync(deviceId), deviceId, 5);
 
     public Task<BleCharacteristicReading> ReadCharacteristicAsync(
         Guid deviceId,
@@ -62,35 +63,85 @@ public class LockedBleService : IBleService
     ) =>
         ExecuteWithDeviceLock(() => _bleService.RegisterNotifyHandler(deviceId, serviceId, characteristicId, handler, cancellationToken), deviceId);
 
-    private async Task<T> ExecuteWithDeviceLock<T>(Func<Task<T>> task, Guid deviceId)
+    public Task<int> WriteCharacteristicAsync(
+        Guid deviceId,
+        Guid serviceId,
+        Guid characteristicId,
+        byte[] data,
+        CancellationToken cancellationToken = default
+    ) =>
+        ExecuteWithDeviceLock(() => _bleService.WriteCharacteristicAsync(deviceId, serviceId, characteristicId, data, cancellationToken), deviceId);
+
+    private async Task<T> ExecuteWithDeviceLock<T>(Func<Task<T>> task, Guid deviceId, int timeout = 20)
     {
         var semaphore = GetDeviceSemaphores(deviceId);
-        await semaphore.WaitAsync().ConfigureAwait(false);
+
+        using var cts = new CancellationTokenSource();
+        cts.CancelAfter(TimeSpan.FromSeconds(timeout));
 
         try
         {
-            var result = await task().ConfigureAwait(false);
+            var resultTask = Task.Run(
+                async () =>
+                {
+                    await semaphore.WaitAsync().ConfigureAwait(false);
 
-            return result;
+                    try
+                    {
+                        return await task().ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        semaphore.Release();
+                    }
+                },
+                cts.Token
+            );
+
+            // Wait for either the task to complete or the timeout
+            await resultTask.ConfigureAwait(false);
+            return resultTask.Result;
         }
-        finally
+        catch (OperationCanceledException ex)
         {
-            semaphore.Release();
+            Console.WriteLine($"Task cancelled after {timeout} seconds: {ex.Message}");
+            throw; // Rethrow the exception or handle as needed
         }
     }
 
-    private async Task ExecuteWithDeviceLock(Func<Task> task, Guid deviceId)
+    private async Task ExecuteWithDeviceLock(Func<Task> task, Guid deviceId, int timeout = 20)
     {
         var semaphore = GetDeviceSemaphores(deviceId);
-        await semaphore.WaitAsync().ConfigureAwait(false);
+
+        using var cts = new CancellationTokenSource();
+        cts.CancelAfter(TimeSpan.FromSeconds(timeout));
 
         try
         {
-            await task().ConfigureAwait(false);
+            var resultTask = Task.Run(
+                async () =>
+                {
+                    await semaphore.WaitAsync().ConfigureAwait(false);
+
+                    try
+                    {
+                        await task().ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        semaphore.Release();
+                    }
+                },
+                cts.Token
+            );
+
+            // Wait for either the task to complete or the timeout
+            await resultTask.ConfigureAwait(false);
         }
-        finally
+        catch (OperationCanceledException ex)
         {
-            semaphore.Release();
+            Console.WriteLine($"Task cancelled after {timeout} seconds: {ex.Message}");
+            throw; // Rethrow the exception or handle as needed
         }
     }
 
