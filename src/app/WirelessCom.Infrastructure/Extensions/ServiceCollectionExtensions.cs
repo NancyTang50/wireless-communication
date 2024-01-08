@@ -35,6 +35,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddTransient<IRoomClimateReadingRepository, RoomClimateReadingRepository>();
 
         serviceCollection.AddTransient<IBleRoomSensorNamingService, BleRoomSensorNamingService>();
+        serviceCollection.AddTransient<IToastService, ToastService>();
 
         return serviceCollection;
     }

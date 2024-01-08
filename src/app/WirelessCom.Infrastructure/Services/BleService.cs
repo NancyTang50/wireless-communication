@@ -12,13 +12,15 @@ namespace WirelessCom.Infrastructure.Services;
 public class BleService : IBleService
 {
     private readonly IAdapter _adapter;
+    private readonly IToastService _toastService;
     private readonly IBluetoothLE _bluetoothLe;
     private readonly GenericConcurrentDictionary<Guid, IDevice> _devices = new();
 
-    public BleService(IBluetoothLE bluetoothLe, IAdapter adapter)
+    public BleService(IBluetoothLE bluetoothLe, IAdapter adapter, IToastService toastService)
     {
         _bluetoothLe = bluetoothLe;
         _adapter = adapter;
+        _toastService = toastService;
 
         InitOnBleStateChanged();
         InitOnDevicesChangedEvent();
@@ -59,7 +61,10 @@ public class BleService : IBleService
         }
 
         _adapter.ScanMode = ScanMode.LowLatency;
+
+        await _toastService.ShowToastAsync("Scanning...", cancellationToken: cancellationToken).ConfigureAwait(false);
         await _adapter.StartScanningForDevicesAsync(scanFilterOptions, cancellationToken: cancellationToken).ConfigureAwait(false);
+        await _toastService.ShowToastAsync("Scanning completed!", cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -77,14 +82,20 @@ public class BleService : IBleService
     {
         var parameters = new ConnectParameters(forceBleTransport: true);
         var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
+
+        await _toastService.ShowToastAsync("Connecting to device...", cancellationToken: cancellationToken).ConfigureAwait(false);
         await _adapter.ConnectToDeviceAsync(device, parameters, cancellationToken).ConfigureAwait(false);
+        await _toastService.ShowToastAsync("Device connected!", cancellationToken: cancellationToken).ConfigureAwait(false);
     }
-    
+
     /// <inheritdoc />
     public async Task DisconnectDeviceByIdAsync(Guid deviceId)
     {
         var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
+
+        await _toastService.ShowToastAsync("Disconnecting from device...").ConfigureAwait(false);
         await _adapter.DisconnectDeviceAsync(device).ConfigureAwait(false);
+        await _toastService.ShowToastAsync("Device disconnected!").ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -144,6 +155,23 @@ public class BleService : IBleService
 
         await characteristic.StartUpdatesAsync(cancellationToken).ConfigureAwait(false);
         characteristic.ValueUpdated += (_, args) => handler(new BleCharacteristicReading(deviceId, args.Characteristic.Value));
+    }
+
+    /// <inheritdoc />
+    public async Task<int> WriteCharacteristicAsync(
+        Guid deviceId,
+        Guid serviceId,
+        Guid characteristicId,
+        byte[] data,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
+        ValidateBleConnected(deviceId, device);
+
+        var service = await device.GetServiceAsync(serviceId, cancellationToken).ConfigureAwait(false);
+        var characteristic = await service.GetCharacteristicAsync(characteristicId).ConfigureAwait(false);
+        return await characteristic.WriteAsync(data, cancellationToken).ConfigureAwait(false);
     }
 
     private void ValidateBleConnected(Guid deviceId, IDevice device)

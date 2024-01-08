@@ -67,7 +67,7 @@ void setup()
 
     dht.begin();
 
-    ble_peripheral.setLocalName("SOME_NAME_NORDIC");
+    ble_peripheral.setLocalName("RoomSensor-NORDIC");
     ble_peripheral.setAdvertisedServiceUuid(environmental_service.uuid());
     ble_peripheral.setAdvertisedServiceUuid(current_time_service.uuid());
 
@@ -86,7 +86,7 @@ void setup()
     // begin initialization
     ble_peripheral.begin();
 
-    timer.every(5000, update_read_sensor);
+    timer.every(60000, update_read_sensor);
     timer.every(500, update_time_value);
 
     Serial.println(F("BLE LED Peripheral"));

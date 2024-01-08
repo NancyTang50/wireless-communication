@@ -3,6 +3,10 @@ using WirelessCom.Domain.Models.Enums;
 
 namespace WirelessCom.Application.Services;
 
+/// <summary>
+///     The Bluetooth Low Energy service.
+///     Contains all the methods to interact with Bluetooth Low Energy devices.
+/// </summary>
 public interface IBleService
 {
     /// <summary>
@@ -138,6 +142,26 @@ public interface IBleService
         Guid serviceId,
         Guid characteristicId,
         NotifyCharacteristicUpdated handler,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
+    ///     Writes data to a characteristic.
+    /// </summary>
+    /// <param name="deviceId">The id of the device where to data should be written to.</param>
+    /// <param name="serviceId">The id of the service where the characteristic is located.</param>
+    /// <param name="characteristicId">The id of the characteristic to write to.</param>
+    /// <param name="data">The data to write.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     A task that represents the asynchronous write operation.
+    ///     The result will contain the status code of the write operation. (0 = successful)
+    /// </returns>
+    Task<int> WriteCharacteristicAsync(
+        Guid deviceId,
+        Guid serviceId,
+        Guid characteristicId,
+        byte[] data,
         CancellationToken cancellationToken = default
     );
 }
