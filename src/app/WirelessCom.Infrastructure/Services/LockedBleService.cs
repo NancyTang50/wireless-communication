@@ -30,29 +30,50 @@ public class LockedBleService : IBleService
         remove => _bleService.OnDevicesChangedEvent -= value;
     }
 
-    public Task<bool> HasCorrectPermissions() => _bleService.HasCorrectPermissions();
+    public Task<bool> HasCorrectPermissions()
+    {
+        return _bleService.HasCorrectPermissions();
+    }
 
-    public BluetoothState GetBluetoothState() => _bleService.GetBluetoothState();
+    public BluetoothState GetBluetoothState()
+    {
+        return _bleService.GetBluetoothState();
+    }
 
-    public Task ScanForDevices(Guid[]? guids = null, CancellationToken cancellationToken = default) => _bleService.ScanForDevices(guids, cancellationToken);
+    public Task ScanForDevices(Guid[]? guids = null, CancellationToken cancellationToken = default)
+    {
+        return _bleService.ScanForDevices(guids, cancellationToken);
+    }
 
-    public List<BasicBleDevice> GetAllBasicBleDevices() => _bleService.GetAllBasicBleDevices();
+    public List<BasicBleDevice> GetAllBasicBleDevices()
+    {
+        return _bleService.GetAllBasicBleDevices();
+    }
 
-    public Task<IEnumerable<BasicBleService>> GetServicesAsync(Guid deviceId, CancellationToken cancellationToken = default) =>
-        ExecuteWithDeviceLock(() => _bleService.GetServicesAsync(deviceId, cancellationToken), deviceId, 10);
+    public Task<IEnumerable<BasicBleService>> GetServicesAsync(Guid deviceId, CancellationToken cancellationToken = default)
+    {
+        return ExecuteWithDeviceLock(() => _bleService.GetServicesAsync(deviceId, cancellationToken), deviceId, 10);
+    }
 
-    public Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default) =>
-        ExecuteWithDeviceLock(() => _bleService.ConnectDeviceByIdAsync(deviceId, cancellationToken), deviceId);
+    public Task ConnectDeviceByIdAsync(Guid deviceId, CancellationToken cancellationToken = default)
+    {
+        return ExecuteWithDeviceLock(() => _bleService.ConnectDeviceByIdAsync(deviceId, cancellationToken), deviceId);
+    }
 
-    public Task DisconnectDeviceByIdAsync(Guid deviceId) => ExecuteWithDeviceLock(() => _bleService.DisconnectDeviceByIdAsync(deviceId), deviceId, 5);
+    public Task DisconnectDeviceByIdAsync(Guid deviceId)
+    {
+        return ExecuteWithDeviceLock(() => _bleService.DisconnectDeviceByIdAsync(deviceId), deviceId, 5);
+    }
 
     public Task<BleCharacteristicReading> ReadCharacteristicAsync(
         Guid deviceId,
         Guid serviceId,
         Guid characteristicId,
         CancellationToken cancellationToken = default
-    ) =>
-        ExecuteWithDeviceLock(() => _bleService.ReadCharacteristicAsync(deviceId, serviceId, characteristicId, cancellationToken), deviceId);
+    )
+    {
+        return ExecuteWithDeviceLock(() => _bleService.ReadCharacteristicAsync(deviceId, serviceId, characteristicId, cancellationToken), deviceId);
+    }
 
     public Task RegisterNotifyHandler(
         Guid deviceId,
@@ -60,8 +81,10 @@ public class LockedBleService : IBleService
         Guid characteristicId,
         IBleService.NotifyCharacteristicUpdated handler,
         CancellationToken cancellationToken = default
-    ) =>
-        ExecuteWithDeviceLock(() => _bleService.RegisterNotifyHandler(deviceId, serviceId, characteristicId, handler, cancellationToken), deviceId);
+    )
+    {
+        return ExecuteWithDeviceLock(() => _bleService.RegisterNotifyHandler(deviceId, serviceId, characteristicId, handler, cancellationToken), deviceId);
+    }
 
     public Task<int> WriteCharacteristicAsync(
         Guid deviceId,
@@ -69,8 +92,10 @@ public class LockedBleService : IBleService
         Guid characteristicId,
         byte[] data,
         CancellationToken cancellationToken = default
-    ) =>
-        ExecuteWithDeviceLock(() => _bleService.WriteCharacteristicAsync(deviceId, serviceId, characteristicId, data, cancellationToken), deviceId);
+    )
+    {
+        return ExecuteWithDeviceLock(() => _bleService.WriteCharacteristicAsync(deviceId, serviceId, characteristicId, data, cancellationToken), deviceId);
+    }
 
     private async Task<T> ExecuteWithDeviceLock<T>(Func<Task<T>> task, Guid deviceId, int timeout = 20)
     {

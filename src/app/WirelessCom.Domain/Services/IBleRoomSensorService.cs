@@ -13,7 +13,7 @@ public interface IBleRoomSensorService
     ///     Event that is raised when a new reading is received.
     /// </summary>
     public event OnNewReadingReceived OnNewReadingReceivedEvent;
-    
+
     /// <summary>
     ///     Scans for room sensors.
     /// </summary>
@@ -23,7 +23,7 @@ public interface IBleRoomSensorService
     ///     Return after the scan is complete.
     /// </returns>
     Task ScanForRoomSensors(CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     ///     Reads the room climate of the specified device.
     /// </summary>

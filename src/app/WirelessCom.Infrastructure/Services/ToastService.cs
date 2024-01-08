@@ -17,7 +17,7 @@ public class ToastService : IToastService
             await MainThread.InvokeOnMainThreadAsync(LocalShowToastAsync).ConfigureAwait(false);
             return;
         }
-        
+
         await dispatcher.DispatchAsync(LocalShowToastAsync).ConfigureAwait(false);
         return;
 

@@ -12,9 +12,9 @@ namespace WirelessCom.Infrastructure.Services;
 public class BleService : IBleService
 {
     private readonly IAdapter _adapter;
-    private readonly IToastService _toastService;
     private readonly IBluetoothLE _bluetoothLe;
     private readonly GenericConcurrentDictionary<Guid, IDevice> _devices = new();
+    private readonly IToastService _toastService;
 
     public BleService(IBluetoothLE bluetoothLe, IAdapter adapter, IToastService toastService)
     {
@@ -125,7 +125,7 @@ public class BleService : IBleService
     {
         var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
         ValidateBleConnected(deviceId, device);
-        
+
         var service = await device.GetServiceAsync(serviceId, cancellationToken).ConfigureAwait(false);
         var characteristic = await service.GetCharacteristicAsync(characteristicId).ConfigureAwait(false);
         var result = await characteristic.ReadAsync(cancellationToken).ConfigureAwait(false);

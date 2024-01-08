@@ -9,21 +9,22 @@ namespace WirelessCom.Application.ViewModels;
 
 public partial class HomeViewModel : BaseViewModel, IDisposable
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IBleRoomSensorService _roomSensorService;
     private readonly IBleRoomSensorNamingService _bleRoomSensorNamingService;
+    private readonly IBleRoomSensorService _roomSensorService;
+    private readonly IUnitOfWork _unitOfWork;
 
     [ObservableProperty]
     private List<LineChartData> _data = [];
 
-    [ObservableProperty]
-    private bool _sensorNameModalIsActive;
+    private bool _disposed;
 
     [ObservableProperty]
     private string _newSensorName = string.Empty;
 
     private Guid _selectedDeviceGuid;
-    private bool _disposed;
+
+    [ObservableProperty]
+    private bool _sensorNameModalIsActive;
 
     public HomeViewModel(IUnitOfWork unitOfWork, IBleRoomSensorService roomSensorService, IBleRoomSensorNamingService bleRoomSensorNamingService)
     {
@@ -32,6 +33,14 @@ public partial class HomeViewModel : BaseViewModel, IDisposable
         _bleRoomSensorNamingService = bleRoomSensorNamingService;
 
         _roomSensorService.OnNewReadingReceivedEvent += OnNewReadingReceived;
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+
+        // Suppress finalization.
+        GC.SuppressFinalize(this);
     }
 
     public async Task OnInitializedAsync()
@@ -86,14 +95,6 @@ public partial class HomeViewModel : BaseViewModel, IDisposable
     private LineChartData GetLineChartData(Guid id, List<RoomClimateReading> readings)
     {
         return new LineChartData(id, readings, _bleRoomSensorNamingService.GetName(id));
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-
-        // Suppress finalization.
-        GC.SuppressFinalize(this);
     }
 
     protected virtual void Dispose(bool disposing)

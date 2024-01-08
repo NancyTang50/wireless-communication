@@ -9,10 +9,10 @@ namespace WirelessCom.Application.ViewModels;
 
 public partial class ConnectivityViewModel : BaseViewModel, IDisposable
 {
-    private readonly IBleService _bleService;
-
     [ObservableProperty]
     private static List<BasicBleDevice> _bleDevices = new();
+
+    private readonly IBleService _bleService;
 
     [ObservableProperty]
     private string _bluetoothStateMessage = string.Empty;
@@ -34,6 +34,14 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
 
         _bleService.OnBleStateChangedEvent += OnBleStateChanged;
         _bleService.OnDevicesChangedEvent += BleServiceOnDevicesChangedEvent;
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+
+        // Suppress finalization.
+        GC.SuppressFinalize(this);
     }
 
     public async Task ScanForDevices()
@@ -150,14 +158,6 @@ public partial class ConnectivityViewModel : BaseViewModel, IDisposable
     {
         UpdateDeviceList(devices);
         return Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-
-        // Suppress finalization.
-        GC.SuppressFinalize(this);
     }
 
     protected virtual void Dispose(bool disposing)

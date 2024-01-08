@@ -13,11 +13,11 @@ public class BleRoomSensorService : IBleRoomSensorService
 {
     private static readonly SemaphoreSlim UpdateNotifySemaphore = new(1, 1), UpdateTimeSemaphore = new(1, 1);
     private readonly IBleService _bleService;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly GenericConcurrentDictionary<Guid, RoomClimateReading> _previousRoomClimateReadings = new();
     private readonly List<Guid> _roomSensorNotifying = new();
     private readonly List<Guid> _roomSensorTimeUpdated = new();
+    private readonly IUnitOfWork _unitOfWork;
     private IReadOnlyList<BasicBleDevice> _roomSensors = new List<BasicBleDevice>();
-    private readonly GenericConcurrentDictionary<Guid, RoomClimateReading> _previousRoomClimateReadings = new();
 
     public BleRoomSensorService(IBleService bleService, IUnitOfWork unitOfWork)
     {

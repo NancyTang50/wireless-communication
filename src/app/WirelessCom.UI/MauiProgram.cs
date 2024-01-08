@@ -35,7 +35,7 @@ public static class MauiProgram
 
         // Required to initialize the notify event handlers on room sensor connection events.
         _ = scope.ServiceProvider.GetRequiredService<IBleRoomSensorService>();
-        
+
         return app;
     }
 }
