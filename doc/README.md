@@ -52,7 +52,7 @@ The environmental sensing service supports multiple optional sensors. Our implem
 
 #### Encoding of the bytes
 
-The temperature and the humidty are both floating point values, because of this they both have the same encoding. First the value needs to be multiplied by 100, then this value needs to be converted into a signed 16 bit number. Then this number can be send in little endian format. The psuedo code of this can be found below:
+The temperature and the humidity are both floating point values, because of this they both have the same encoding. First the value needs to be multiplied by 100, then this value needs to be converted into a signed 16 bit number. Then this number can be send in little endian format. The pseudo code of this can be found below:
 
 ```python
 some_float_value = 22.5
@@ -64,11 +64,11 @@ high_byte = (signed_16_bits >> 8) & 0xFF
 
 #### Temperature Characteristic
 
-In our system, the temperature characteristic supports reading and notifiying the current Celsius temperature of the DHT22 sensor.
+In our system, the temperature characteristic supports reading and notifying the current Celsius temperature of the DHT22 sensor.
 
 #### Humidity Characteristic
 
-In our system, the humidity characteristic supports reading and notifiying the current humidity percentage of the DHT22 sensor.
+In our system, the humidity characteristic supports reading and notifying the current humidity percentage of the DHT22 sensor.
 
 ### Current time service
 
@@ -78,11 +78,62 @@ The current time service displays the current time of the peripheral device. The
 
 The current time is encoding using in the following way:
 
-|byte|1|2|3|4|5|6|7|8|9|10|
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-|**Description**|year low bytes|year high bytes | month | day | hours | minutes | seconds | day of the week | fractions 256 | adjustment reason |
+| byte            |       1        |        2        |   3   |  4  |   5   |    6    |    7    |        8        |       9       |        10         |
+|-----------------|:--------------:|:---------------:|:-----:|:---:|:-----:|:-------:|:-------:|:---------------:|:-------------:|:-----------------:|
+| **Description** | year low bytes | year high bytes | month | day | hours | minutes | seconds | day of the week | fractions 256 | adjustment reason |
 
 All values are 1 bytes, except for the year. The year needs to be little endian encoded.
+
+We wrote some example code to encode the current datetime and decode the current date time.
+
+This test code is used for debugging the encoding and decode the raw bytes to a readable datetime.
+Execute this Javascript below in the console of your browser. For example Google Chrome. After you receive the encoding, send the encoding with the NRF connect mobile app through the Bluetooth as BYTEARRAY.
+
+```js
+function EncodeCurrentDate() {
+    const date = new Date();
+    const yearBytes = new Uint16Array([date.getFullYear()]);
+
+    const bleEncodedBytes = [];
+    bleEncodedBytes.push(yearBytes[0] & 0xFF);
+    bleEncodedBytes.push((yearBytes[0] >> 8) & 0xFF);
+    bleEncodedBytes.push(date.getMonth() + 1);
+    bleEncodedBytes.push(date.getDate());
+    bleEncodedBytes.push(date.getHours());
+    bleEncodedBytes.push(date.getMinutes());
+    bleEncodedBytes.push(date.getSeconds());
+
+    const hexNumber = Array.from(bleEncodedBytes, byte => byte.toString(16).padStart(2, '0')).join('');
+    console.log(`Value is ${hexNumber}`);
+    return hexNumber;
+}
+```
+
+```js
+function DecodeBLEBytes(inputBytes) {
+    const bleEncodedBytes = Array.from(inputBytes.match(/.{1,2}/g).map(x => parseInt(x, 16)));
+    const year = (bleEncodedBytes[1] << 8 ) | bleEncodedBytes[0];
+    const month = bleEncodedBytes[2];
+    const day = bleEncodedBytes[3];
+    const hours = bleEncodedBytes[4];
+    const minutes = bleEncodedBytes[5];
+    const seconds = bleEncodedBytes[6];
+    const day_of_week = bleEncodedBytes[7];
+    const fractions = bleEncodedBytes[8];
+    const adjust_reason = bleEncodedBytes[9];
+
+    console.log('Converted time is',
+    `year: ${year} 
+    month: ${month} 
+    day: ${day} 
+    hours: ${hours} 
+    minutes: ${minutes} 
+    seconds: ${seconds}
+    day of week: ${day_of_week} 
+    fractions: ${fractions} 
+    adjust reason: ${adjust_reason}`);
+}
+```
 
 #### Current time characteristic
 
@@ -102,7 +153,7 @@ The wiring of the DHT22 sensor depends on the platform. The wiring of the Raspbe
 
 The Raspberry Pi's program is written in the language Rust. A Rust binary project always contains a main.rs file, where a main function can be found. The main function is the starting point of a Rust project. The main function initializes the peripheral with the services. 
 
-To create a BLE peripheral program for the Raspberry Pi the package [Bluster](https://docs.rs/bluster/0.2.0/bluster/index.html) is used. The Bluser package uses the official Bluetooth program of Linux called [BlueZ](https://www.bluez.org/)
+To create a BLE peripheral program for the Raspberry Pi the package [Bluster](https://docs.rs/bluster/0.2.0/bluster/index.html) is used. The Bluster package uses the official Bluetooth program of Linux called [BlueZ](https://www.bluez.org/)
 
 The services are defined in the gatt folder. The gatt folder contains a characteristic folder that contains generic characteristic code. The other folders are the services that are supported by the Raspberry Pi. The services are defined in the mod.rs file, there are create the service methods. These methods create the characteristics for the service.
 
@@ -121,14 +172,14 @@ The services are defined in the main.cpp.
 
 ## Problems we encountered
 
-This chapter explains the problems and difficulties we encounterd during this project.
+This chapter explains the problems and difficulties we encounter during this project.
 
 - Nordic mbed did not work, platform io
 - Nordic DHT library timing issue
 
 ### Finding examples of the Raspberry Pi
 
-Initialy we had alot of difficulty finding an example of BLE peripheral implemetation in Rust. This was due to the constraint that we did not want to use embedded Rust, because we never used embedded Rust. After some research we found the package [Bluster](https://docs.rs/bluster/0.2.0/bluster/index.html), but the documentation of this package is empty. After searching in the GIT repository we found the [it_advertises_gatt](https://github.com/dfrankland/bluster/blob/e928dd6491d4cc3c42164b6594a4d584b240c8e1/tests/peripheral.rs#L26C19-L26C19) test, where a basic application is created. Later we found an issue that asked the maintainer for documentation/examples, where the maintainer linked to a complete application called [bleboard](https://github.com/dfrankland/bleboard/tree/master).
+Initially we had a lot of difficulty finding an example of BLE peripheral implementation in Rust. This was due to the constraint that we did not want to use embedded Rust, because we never used embedded Rust. After some research we found the package [Bluster](https://docs.rs/bluster/0.2.0/bluster/index.html), but the documentation of this package is empty. After searching in the GIT repository we found the [it_advertises_gatt](https://github.com/dfrankland/bluster/blob/e928dd6491d4cc3c42164b6594a4d584b240c8e1/tests/peripheral.rs#L26C19-L26C19) test, where a basic application is created. Later we found an issue that asked the maintainer for documentation/examples, where the maintainer linked to a complete application called [bleboard](https://github.com/dfrankland/bleboard/tree/master).
 
 - BLE library app
 
