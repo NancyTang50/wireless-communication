@@ -16,7 +16,7 @@ else
 {
     @foreach (var sensorData in ViewModel.Data.GroupBy(x => x.DeviceId).Select(x => x.ToList()))
     {
-        <div class="card">
+        <div class="card mb-2">
             <div class="card-header" @onclick="() => ViewModel.OpenServicesModal(sensorData.First().DeviceId)">
                 <h2>@(sensorData.First().CustomName ?? sensorData.First().DeviceId.ToString())</h2>
             </div>
