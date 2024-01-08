@@ -125,7 +125,7 @@ public class BleService : IBleService
     {
         var device = _devices.Get(deviceId) ?? throw new BleDeviceNotFoundException(deviceId);
         ValidateBleConnected(deviceId, device);
-
+        
         var service = await device.GetServiceAsync(serviceId, cancellationToken).ConfigureAwait(false);
         var characteristic = await service.GetCharacteristicAsync(characteristicId).ConfigureAwait(false);
         var result = await characteristic.ReadAsync(cancellationToken).ConfigureAwait(false);

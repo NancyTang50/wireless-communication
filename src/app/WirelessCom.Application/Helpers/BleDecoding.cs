@@ -14,9 +14,9 @@ public static class BleDecoding
 
     public static DateTime BleBytesToDateTime(byte[] readingBytes)
     {
-        if (readingBytes.Length != 10)
+        if (readingBytes.Length < 6)
         {
-            throw new ArgumentException("Byte array must be of length 10", nameof(readingBytes));
+            throw new ArgumentException("Byte array must a greater length of 6", nameof(readingBytes));
         }
 
         var year = BitConverter.ToUInt16(readingBytes, 0);
