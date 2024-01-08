@@ -13,9 +13,9 @@ public class LockedBleService : IBleService
     private readonly BleService _bleService;
     private readonly GenericConcurrentDictionary<Guid, SemaphoreSlim> _deviceSemaphores = new();
 
-    public LockedBleService(IBluetoothLE bluetoothLe, IAdapter adapter)
+    public LockedBleService(IBluetoothLE bluetoothLe, IAdapter adapter, IToastService toastService)
     {
-        _bleService = new BleService(bluetoothLe, adapter);
+        _bleService = new BleService(bluetoothLe, adapter, toastService);
     }
 
     public event IBleService.OnBleStateChanged? OnBleStateChangedEvent
