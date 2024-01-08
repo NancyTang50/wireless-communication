@@ -13,11 +13,11 @@ public class BleRoomSensorService : IBleRoomSensorService
 {
     private static readonly SemaphoreSlim UpdateNotifySemaphore = new(1, 1), UpdateTimeSemaphore = new(1, 1);
     private readonly IBleService _bleService;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly GenericConcurrentDictionary<Guid, RoomClimateReading> _previousRoomClimateReadings = new();
     private readonly List<Guid> _roomSensorNotifying = new();
     private readonly List<Guid> _roomSensorTimeUpdated = new();
+    private readonly IUnitOfWork _unitOfWork;
     private IReadOnlyList<BasicBleDevice> _roomSensors = new List<BasicBleDevice>();
-    private readonly GenericConcurrentDictionary<Guid, RoomClimateReading> _previousRoomClimateReadings = new();
 
     public BleRoomSensorService(IBleService bleService, IUnitOfWork unitOfWork)
     {
@@ -33,7 +33,7 @@ public class BleRoomSensorService : IBleRoomSensorService
     public async Task ScanForRoomSensors(CancellationToken cancellationToken = default)
     {
         await _bleService.ScanForDevices(
-                new[] { BleServiceDefinitions.EnvironmentalService.ServiceGuid, BleServiceDefinitions.TimeService.ServiceGuid },
+                [BleServiceDefinitions.EnvironmentalService.ServiceGuid, BleServiceDefinitions.TimeService.ServiceGuid],
                 cancellationToken
             )
             .ConfigureAwait(false);
@@ -44,15 +44,27 @@ public class BleRoomSensorService : IBleRoomSensorService
     {
         var temperature = await GetTemperature(deviceId, cancellationToken).ConfigureAwait(false);
         var humidity = await GetHumidity(deviceId, cancellationToken).ConfigureAwait(false);
-
-        // TODO: Get timestamp from device
-        var timestamp = DateTime.Now;
+        var timestamp = await ReadSensorDateTime(deviceId, cancellationToken).ConfigureAwait(false);
 
         var reading = new RoomClimateReading(deviceId, timestamp, Math.Round(temperature, 1), Math.Round(humidity, 1));
         await _unitOfWork.RoomClimateReading.AddAsync(reading);
         await _unitOfWork.SaveChangesAsync();
 
         return reading;
+    }
+
+    /// <inheritdoc />
+    public async Task<DateTime> ReadSensorDateTime(Guid deviceId, CancellationToken cancellationToken = default)
+    {
+        var reading = await _bleService.ReadCharacteristicAsync(
+                deviceId,
+                BleServiceDefinitions.TimeService.ServiceGuid,
+                BleServiceDefinitions.TimeService.CurrentTimeCharacteristicGuid,
+                cancellationToken
+            )
+            .ConfigureAwait(false);
+
+        return BleDecoding.BleBytesToDateTime(reading.Bytes);
     }
 
     private async Task<double> GetTemperature(Guid deviceId, CancellationToken cancellationToken = default)
@@ -200,9 +212,7 @@ public class BleRoomSensorService : IBleRoomSensorService
         var previousReading = _previousRoomClimateReadings.Get(deviceId);
         temperature ??= previousReading?.Temperature ?? await GetTemperature(deviceId).ConfigureAwait(false);
         humidity ??= previousReading?.Humidity ?? await GetHumidity(deviceId).ConfigureAwait(false);
-
-        // TODO: Get timestamp from device
-        var timestamp = DateTime.Now;
+        var timestamp = await ReadSensorDateTime(deviceId).ConfigureAwait(false);
 
         var reading = new RoomClimateReading(deviceId, timestamp, Math.Round(temperature.Value, 1), Math.Round(humidity.Value, 1));
         await _unitOfWork.RoomClimateReading.AddAsync(reading);

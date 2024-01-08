@@ -11,4 +11,29 @@ public static class BleDecoding
 
         return BitConverter.ToInt16(bytes, 0) / 100.0;
     }
+
+    public static DateTime BleBytesToDateTime(byte[] readingBytes)
+    {
+        if (readingBytes.Length < 6)
+        {
+            throw new ArgumentException("Byte array must a greater length of 6", nameof(readingBytes));
+        }
+
+        var year = BitConverter.ToUInt16(readingBytes, 0);
+        var month = readingBytes[2];
+        var day = readingBytes[3];
+        var hour = readingBytes[4];
+        var minute = readingBytes[5];
+        var second = readingBytes[6];
+
+        return new DateTime(
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second,
+            DateTimeKind.Utc
+        ).ToLocalTime();
+    }
 }

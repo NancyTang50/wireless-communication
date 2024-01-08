@@ -96,7 +96,7 @@ public interface IBleService
     ///     Returns when the device is disconnected.
     /// </returns>
     Task DisconnectDeviceByIdAsync(Guid deviceId);
-    
+
     /// <summary>
     ///     Returns a list of all <see cref="BasicBleDevice" />s.
     /// </summary>

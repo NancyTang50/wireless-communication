@@ -12,9 +12,9 @@ namespace WirelessCom.Infrastructure.Services;
 public class BleService : IBleService
 {
     private readonly IAdapter _adapter;
-    private readonly IToastService _toastService;
     private readonly IBluetoothLE _bluetoothLe;
     private readonly GenericConcurrentDictionary<Guid, IDevice> _devices = new();
+    private readonly IToastService _toastService;
 
     public BleService(IBluetoothLE bluetoothLe, IAdapter adapter, IToastService toastService)
     {

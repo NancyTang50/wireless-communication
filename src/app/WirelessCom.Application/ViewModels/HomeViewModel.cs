@@ -9,21 +9,22 @@ namespace WirelessCom.Application.ViewModels;
 
 public partial class HomeViewModel : BaseViewModel, IDisposable
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IBleRoomSensorService _roomSensorService;
     private readonly IBleRoomSensorNamingService _bleRoomSensorNamingService;
+    private readonly IBleRoomSensorService _roomSensorService;
+    private readonly IUnitOfWork _unitOfWork;
 
     [ObservableProperty]
     private List<LineChartData> _data = [];
 
-    [ObservableProperty]
-    private bool _sensorNameModalIsActive;
+    private bool _disposed;
 
     [ObservableProperty]
     private string _newSensorName = string.Empty;
 
     private Guid _selectedDeviceGuid;
-    private bool _disposed;
+
+    [ObservableProperty]
+    private bool _sensorNameModalIsActive;
 
     public HomeViewModel(IUnitOfWork unitOfWork, IBleRoomSensorService roomSensorService, IBleRoomSensorNamingService bleRoomSensorNamingService)
     {
@@ -34,36 +35,17 @@ public partial class HomeViewModel : BaseViewModel, IDisposable
         _roomSensorService.OnNewReadingReceivedEvent += OnNewReadingReceived;
     }
 
+    public void Dispose()
+    {
+        Dispose(true);
+
+        // Suppress finalization.
+        GC.SuppressFinalize(this);
+    }
+
     public async Task OnInitializedAsync()
     {
         await UpdateRoomSensorReadingsAsync();
-    }
-
-    private async Task UpdateRoomSensorReadingsAsync()
-    {
-        var tempData = await _unitOfWork.RoomClimateReading.WhereAsync(x => x.Timestamp > DateTime.Now.AddHours(-1));
-        Data = tempData.GroupBy(x => x.DeviceId).Select(x => GetLineChartData(x.Key, x.OrderBy(z => z.Timestamp).ToList())).ToList();
-    }
-
-    private Task OnNewReadingReceived(object source, RoomClimateReading reading)
-    {
-        var lineChartData = Data.FirstOrDefault(x => x.DeviceId == reading.DeviceId);
-
-        if (lineChartData is null)
-        {
-            lineChartData = GetLineChartData(reading.DeviceId, []);
-            Data.Add(lineChartData);
-        }
-
-        lineChartData.Readings.Add(reading);
-
-        Data = Data.ToList();
-        return Task.CompletedTask;
-    }
-
-    private LineChartData GetLineChartData(Guid id, List<RoomClimateReading> readings)
-    {
-        return new LineChartData(id, readings, _bleRoomSensorNamingService.GetName(id));
     }
 
     public void CloseServicesModal()
@@ -85,12 +67,34 @@ public partial class HomeViewModel : BaseViewModel, IDisposable
         CloseServicesModal();
     }
 
-    public void Dispose()
+    private async Task UpdateRoomSensorReadingsAsync()
     {
-        Dispose(true);
+        var tempData = await _unitOfWork.RoomClimateReading.WhereAsync(x => x.Timestamp > DateTime.Now.AddHours(-1));
+        Data = tempData
+            .GroupBy(x => x.DeviceId)
+            .Select(x => GetLineChartData(x.Key, x.OrderBy(z => z.Timestamp).ToList()))
+            .ToList();
+    }
 
-        // Suppress finalization.
-        GC.SuppressFinalize(this);
+    private Task OnNewReadingReceived(object source, RoomClimateReading reading)
+    {
+        var lineChartData = Data.FirstOrDefault(x => x.DeviceId == reading.DeviceId);
+
+        if (lineChartData is null)
+        {
+            lineChartData = GetLineChartData(reading.DeviceId, []);
+            Data.Add(lineChartData);
+        }
+
+        lineChartData.Readings.Add(reading);
+
+        Data = Data.ToList();
+        return Task.CompletedTask;
+    }
+
+    private LineChartData GetLineChartData(Guid id, List<RoomClimateReading> readings)
+    {
+        return new LineChartData(id, readings, _bleRoomSensorNamingService.GetName(id));
     }
 
     protected virtual void Dispose(bool disposing)

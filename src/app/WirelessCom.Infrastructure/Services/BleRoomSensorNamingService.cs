@@ -14,5 +14,8 @@ public class BleRoomSensorNamingService : IBleRoomSensorNamingService
         return Preferences.Get(GetDeviceNameKey(deviceId), null);
     }
 
-    private static string GetDeviceNameKey(Guid deviceId) => $"DeviceName_{deviceId}";
+    private static string GetDeviceNameKey(Guid deviceId)
+    {
+        return $"DeviceName_{deviceId}";
+    }
 }
