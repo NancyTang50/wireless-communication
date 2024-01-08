@@ -39,10 +39,32 @@ public partial class HomeViewModel : BaseViewModel, IDisposable
         await UpdateRoomSensorReadingsAsync();
     }
 
+    public void CloseServicesModal()
+    {
+        SensorNameModalIsActive = false;
+    }
+
+    public void OpenServicesModal(Guid deviceId)
+    {
+        _selectedDeviceGuid = deviceId;
+        SensorNameModalIsActive = true;
+    }
+
+    public async Task SetSensorName()
+    {
+        _bleRoomSensorNamingService.SetName(_selectedDeviceGuid, NewSensorName);
+        SensorNameModalIsActive = false;
+        await UpdateRoomSensorReadingsAsync();
+        CloseServicesModal();
+    }
+
     private async Task UpdateRoomSensorReadingsAsync()
     {
         var tempData = await _unitOfWork.RoomClimateReading.WhereAsync(x => x.Timestamp > DateTime.Now.AddHours(-1));
-        Data = tempData.GroupBy(x => x.DeviceId).Select(x => GetLineChartData(x.Key, x.OrderBy(z => z.Timestamp).ToList())).ToList();
+        Data = tempData
+            .GroupBy(x => x.DeviceId)
+            .Select(x => GetLineChartData(x.Key, x.OrderBy(z => z.Timestamp).ToList()))
+            .ToList();
     }
 
     private Task OnNewReadingReceived(object source, RoomClimateReading reading)
@@ -64,25 +86,6 @@ public partial class HomeViewModel : BaseViewModel, IDisposable
     private LineChartData GetLineChartData(Guid id, List<RoomClimateReading> readings)
     {
         return new LineChartData(id, readings, _bleRoomSensorNamingService.GetName(id));
-    }
-
-    public void CloseServicesModal()
-    {
-        SensorNameModalIsActive = false;
-    }
-
-    public void OpenServicesModal(Guid deviceId)
-    {
-        _selectedDeviceGuid = deviceId;
-        SensorNameModalIsActive = true;
-    }
-
-    public async Task SetSensorName()
-    {
-        _bleRoomSensorNamingService.SetName(_selectedDeviceGuid, NewSensorName);
-        SensorNameModalIsActive = false;
-        await UpdateRoomSensorReadingsAsync();
-        CloseServicesModal();
     }
 
     public void Dispose()

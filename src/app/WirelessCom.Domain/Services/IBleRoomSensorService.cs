@@ -34,4 +34,15 @@ public interface IBleRoomSensorService
     ///     The task result contains the room climate reading.
     /// </returns>
     Task<RoomClimateReading> ReadRoomClimate(Guid deviceId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Reads the date time of the specified device.
+    /// </summary>
+    /// <param name="deviceId">The device identifier of the room sensor.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     The task result contains the date time of the room sensor.
+    /// </returns>
+    Task<DateTime> ReadSensorDateTime(Guid deviceId, CancellationToken cancellationToken = default);
 }

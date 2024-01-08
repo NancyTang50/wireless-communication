@@ -22,6 +22,10 @@ else
             </div>
             <div class="card-body">
                 <div class="row">
+                    Last updated: @sensorData.SelectMany(x => x.Readings).Max(x => x.Timestamp).ToString("yyyy-MM-dd HH:mm:ss")
+                    <hr/>
+                </div>
+                <div class="row">
                     <LineChart Title="Temperature" ValueTitle="Measurements" Data="sensorData" Height="300"/>
                 </div>
             </div>
