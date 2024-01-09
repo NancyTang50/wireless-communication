@@ -24,3 +24,4 @@ The app can not run locally on a windows PC inside of an Android emulator. The r
 When using Rider IDE, you can simply connect your Android device, after installing the [`Rider Xamarin Android Support`](https://plugins.jetbrains.com/plugin/12056-rider-xamarin-android-support) plugin, to your PC and run the app. Rider will automatically detect the device and run the app on it. If it does not, you can select the device in the top right corner of the IDE.
 
 *Note: Please make sure your device is in developer mode and USB debugging is enabled.*
+
