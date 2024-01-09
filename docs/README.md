@@ -32,11 +32,11 @@
 
 ## Introduction
 
-For this project we developed a cross-platform app to show the temperature and the humidity of the locations where the sensors are. This is interesting for detecting variations in temperature and humidity across different places. To achieve this, we are using the DHT-22 sensor to measure the temperature and humidity for the Nordic-nRF52 board and Raspberry Pi and we will show the  current time of these two peripherals.
+For this project we developed a cross-platform app to show the temperature and the humidity of the locations where the sensors are. This is interesting for detecting variations in temperature and humidity across different places. To achieve this, we are using the DHT22 sensor to measure the temperature and humidity for the Nordic-nRF52 board and Raspberry Pi and we will show the  current time of these two peripherals.
 
 ## The goal of the system
 
-The goal of our system is to create and implement two different BLE peripherals that will read the temperature and humidity of a location with a DHT 22 sensor. The peripherals will send the data to a central device, which in our case will be an Android phone. The Android phone will show the current and past readings in a graph.
+The goal of our system is to create and implement two different BLE peripherals that will read the temperature and humidity of a location with a DHT22 sensor. The peripherals will send the data to a central device, which in our case will be an Android phone. The Android phone will show the current and past readings in a graph.
 
 ## The roles of the different devices
 
