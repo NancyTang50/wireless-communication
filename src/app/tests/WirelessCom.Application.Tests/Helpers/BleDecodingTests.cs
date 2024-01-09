@@ -20,4 +20,33 @@ public class BleDecodingTests
     {
         Assert.That(BleDecoding.BleBytesToDouble(bytes), Is.EqualTo(expected));
     }
+
+    [Test]
+    public void BleDecoding_BleBytesToDateTime_ThrowsArgumentException_WhenByteArrayLengthIsLessThanSix()
+    {
+        var bytes = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00 };
+        var exception = Assert.Throws<ArgumentException>(() => BleDecoding.BleBytesToDateTime(bytes));
+
+        Assert.That(exception!.Message, Is.EqualTo("Byte array must a greater length of 6 (Parameter 'readingBytes')"));
+    }
+
+    [Test]
+    public void BleDecoding_BleBytesToDateTime_ReturnsCorrectValue()
+    {
+        var bytes = new byte[]
+        {
+            232, 7, 1, 6, 17, 5, 57
+        };
+
+        var expected = new DateTime(
+            2024,
+            1,
+            6,
+            18,
+            5,
+            57
+        );
+
+        Assert.That(BleDecoding.BleBytesToDateTime(bytes), Is.EqualTo(expected));
+    }
 }
