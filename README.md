@@ -19,9 +19,11 @@
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents <!-- omit in toc -->
 - [About The Project](#about-the-project)
+  - [Feature](#feature)
   - [Built With](#built-with)
 - [Getting Started](#getting-started)
 - [App preview](#app-preview)
+- [License](#license)
 
 
 <!-- ABOUT THE PROJECT -->
@@ -32,6 +34,12 @@ We have decided to create an app to display environmental data from multiple sen
 We have created three different programs during this project. Two of which are BLE peripherals and one is a BLE central.
 The BLE peripherals are a Raspberry Pi and a Nordic nrf52840. The central is a mobile phone running either Android. IOS should also work but has not been tested yet since we do not have an IOS device.
 
+### Feature
+- [x] Show generic information about all nearby BLE peripherals.
+- [x] Connect to our own BLE room sensor peripherals.
+- [x] Display temperature and humidity data from multiple DHT22 sensors.
+- [x] Sync the time across all devices.
+- [x] Store all readings in a local database.
 
 <!-- BUILT WITH -->
 ### Built With
@@ -71,3 +79,8 @@ After clicking on the connect button the app will also show all the available se
 All the characteristic values for the temperature and humidity are handled in the background via a notify event from the peripherals.
 
 <img src="../assets/device_info_connected.png" alt="App preview" width="500">
+
+<!-- LICENSE -->
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
