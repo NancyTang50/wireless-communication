@@ -8,7 +8,6 @@ using WirelessCom.Domain.Services;
 
 namespace WirelessCom.Application.Services;
 
-// Todo: Manually read data from device after not receiving any data for 1 minute.
 public class BleRoomSensorService : IBleRoomSensorService
 {
     private static readonly SemaphoreSlim UpdateNotifySemaphore = new(1, 1), UpdateTimeSemaphore = new(1, 1);
