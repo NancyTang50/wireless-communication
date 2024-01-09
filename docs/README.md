@@ -17,16 +17,15 @@
 - [How to use the system](#how-to-use-the-system)
   - [Prerequisites](#prerequisites)
 - [Coding explanation](#coding-explanation)
-  - [Mobile APP](#mobile-app)
+  - [Mobile App](#mobile-app)
     - [BLE](#ble)
     - [Persistence](#persistence)
   - [Raspberry Pi](#raspberry-pi)
   - [Nordic-nrF-52840](#nordic-nrf-52840)
 - [Testing](#testing)
 - [Problems we encountered](#problems-we-encountered)
-  - [Nordic problems](#nordic-problems)
-    - [Nordic Mbed OS](#nordic-mbed-os)
-    - [Nordic DHT library timing issue](#nordic-dht-library-timing-issue)
+  - [Nordic Mbed OS](#nordic-mbed-os)
+  - [Nordic DHT library timing issue](#nordic-dht-library-timing-issue)
   - [Finding examples of the Raspberry Pi](#finding-examples-of-the-raspberry-pi)
   - [BLE library app](#ble-library-app)
 
@@ -48,11 +47,11 @@ Raspberry Pi and the Nordic-nrF-52840 are both using the DHT22 sensors, because 
 
 ### Client - Android phone
 
-The Android phone will act as a BLE central. The .NET MAUI cross-platform app will be developed to manage the receiving data of the connected BLE devices. The received data will be stored in a local SQL lite database and shown in a couple charts. The app supports multiple peripherals at once.
+The Android phone will act as a BLE central. The .NET (C#) MAUI cross-platform app will be developed to manage the receiving data of the connected BLE devices. The received data will be stored in a local SQL lite database and shown in a couple charts. The app supports multiple peripherals at once.
 
 ## Services & characteristic
 
-The Nordic-nrF52 and Raspberry Pi act as peripherals. These peripherals supports two services. These two services are environmental sensing service, and the current time service.
+The Nordic-nrF52 and Raspberry Pi act as peripherals. These peripherals supports two services. These two services are [environmental sensing service](https://www.bluetooth.com/specifications/specs/environmental-sensing-service-1-0/), and the [current time service](https://www.bluetooth.com/specifications/specs/current-time-service-1-1/).
 
 ### Services details
 
@@ -102,9 +101,7 @@ The current time is encoding using in the following way:
 
 All values are 1 bytes, except for the year. The year needs to be little endian encoded.
 
-We wrote some example code to encode the current datetime and decode the current date time.
-
-This test code is used for debugging the encoding and decode the raw bytes to a readable datetime.
+The following test code is used for encoding and decoding the raw bytes to a readable datetime.
 Execute this Javascript below in the console of your browser. For example Google Chrome. After you receive the encoding, send the encoding with the NRF connect mobile app through the Bluetooth as BYTEARRAY.
 
 ```js
@@ -168,11 +165,11 @@ Here you can press the scan button to see all the bluetooth devices near you. If
 
 ![Connectivity page with only room sensors](../assets/connectivity_sensors_only.png)
 
-To connect to the peripheral, just click on the name. Then a dialog will open allowing the user to see more information about the device and a connect button below. This is shown in below:
+Click on the name to open a detail dialog of the peripheral. A dialog will open allowing the user to see more information about the device and a connect button below. This is shown in below:
 
 ![Device stats](../assets/device_info.png)
 
-After connecting to the device the disconnect button will become visible.
+After connecting to the device the disconnect button will become visible and the connect button will be disabled.
 
 ![Device connected](../assets/device_info_connected.png).
 
@@ -189,7 +186,7 @@ After setting up the peripherals you need to install the app using the installat
 ## Coding explanation
 In this chapter we will explain the program structures in the subchapters below.
 
-### Mobile APP
+### Mobile App
 
 We are following the Clean Architecture pattern together with MVVM. Meaning, the app is layered in four layers: Domain, Application, Infrastructure, and presentation (UI). The keen eye will notice that we have an extra project for the persistance. This project was required because EF-Core fails to run migrations on MAUI class projects.
 
@@ -204,11 +201,11 @@ The main rule of Clean Architecture is that code dependencies can only come from
 
 #### BLE
 
-We have created an `BleService` communicate with BLE devices. This service is a generic implementation to talk with all different kinds of BLE device. After this we have created an `BleRoomSensorService` that uses the `BleService` to communicate with our custom room sensors.
+We have created an `BleService` to communicate with BLE devices. This service is a generic implementation to talk with all different kinds of BLE device. After this we have created an `BleRoomSensorService` that uses the `BleService` to communicate with our custom room sensors.
 
 #### Persistence
 
-We are using the `UnitOfWork` pattern for  all the persistence classes. This means that each table has its own repository. The repository interfaces are defined in a generic way to allow for changes in the future. The `UnitOfWork` contains all the repositories and is responsible for saving the changes to the database. Each repository implementation implements a generic repository implementation. This contains all basic queries that can be used in most scenarios. 
+We are using the `UnitOfWork` pattern for all the persistence classes. This means that each table has its own repository. The repository interfaces are defined in a generic way to allow for changes in the future. The `UnitOfWork` contains all the repositories and is responsible for saving the changes to the database. Each repository implementation implements a generic repository implementation. This contains all basic queries that can be used in most scenarios. 
 
 ### Raspberry Pi
 
@@ -222,27 +219,23 @@ The characteristics all contain a create characteristic function. The create cha
 
 ### Nordic-nrF-52840
 
-The Nordic-nrF-52840's program is written in the language C with PlatformIO using the Arduino library. This resulted that the project always have a main.cpp containing two standard functions called setup() and loop(). The setup function is the starting point of a PlatformIO project. The setup function initialize the services and add the characteristics to the Peripheral. 
+The Nordic-nrF-52840's program is written in the language C++ with PlatformIO using the Arduino library. This resulted that the project always have a main.cpp containing two standard functions called setup() and loop(). The setup function is the starting point of a PlatformIO project. The setup function initialize the services and add the characteristics to the Peripheral. 
 
 To create a BLE peripheral program for the Nordic-nrF52840 the package [BLEPeripheral](https://registry.platformio.org/libraries/sandeepmistry/BLEPeripheral) is used. 
 
-
-The characteristics folder contains all the characteristics that are being used and a generic characteristic interface where all the characteristics will be extending from. The services are initialized and defined in the main.cpp. To create a new characteristic. You need to create two files in the characteristic folder with the extension .cpp and .h file. After you create these two files. You need to include the characteristic.h and BLEPeripheral.h in your created .h file. Then you need to create a class in the created .h file and extend the characteristic interface.
+The characteristics folder contains all the characteristics that are being used and a generic characteristic interface where all the characteristics will be extending from. The services are initialized and defined in the `main.cpp`. To create a new characteristic, you need to create two files in the characteristic folder with the extension `.cpp` and `.h` file. After you create these two files. You need to include the `characteristic.h` and `BLEPeripheral.h` in your created `.h` file. Then you need to create a class in the created `.h` file and extend the characteristic interface.
 
 ## Testing
 
 The main testing method of the peripherals was using the [nRF Connect for Mobile](https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp&hl=nl&gl=US) app. Using this app we could test if the UUID's were correct, because the nRF Connect for Mobile app parses them to show the correct name. With the nRF Connect for Mobile app we could also test the response, the response also gets parsed by the app. Using this we could see if our response were the correct responses for the characteristics we provide. 
 
-Next to the testing with the nRF Connect for Mobile app are unit tests for the Maui App and the Raspberry Pi. The Maui App has tests for decoding the floating point values and tests to decode and encode the current time to BLE bytes. The Raspberry Pi has unit tests to test the encoding of the floating point values, and decoding and encoding the current time to BLE bytes.
+Next to the testing with the nRF Connect app are unit tests for the Maui App and the Raspberry Pi. The Maui App has tests for decoding the floating point values and tests to decode and encode the current time to BLE bytes. The Raspberry Pi has unit tests to test the encoding of the floating point values, and decoding and encoding the current time to BLE bytes.
  
 ## Problems we encountered
 
 This chapter explains the problems and difficulties we encounter during this project.
 
-
-### Nordic problems 
-
-#### Nordic Mbed OS
+### Nordic Mbed OS
 
 At the beginning of this project, it was required to use Mbed OS to develop the Bluetooth program for the Nordic-nRF52840. However, when I attempted to flash the program, it refused to do so because it got stuck during the 'building' process. In an attempt to resolve this issue, I tried flashing the Nordic-nRF52840 using the default template for the Blinky program in Mbed OS but encountered the same problem as before.
 
@@ -250,7 +243,7 @@ After searching for a solution online without success, I asked the teacher if he
 
 Then I asked a classmate what kind of program he uses for developing on the Nordic-nRF52840, and he use PlatformIO to create the BLE program for his nRF52 board. So I tried to use PlatformIO as well and tried to run a BLE example program of PlatformIO. The BLE example program flashed finally on the Nordic-nRF52840 after countering issues with my windows map structure.
 
-#### Nordic DHT library timing issue
+### Nordic DHT library timing issue
 
 To read the temperature and humidity values from the DHT22 sensor, I use an Arduino library called the DHT sensor library created by Adafruit. However, every time I received new humidity and temperature values, there was a chance that the Nordic-nRF52840 would crash and restart the program. I attempted to use another DHT22 library, but it resulted the same problem that has been described above. But adjusting the duration for reading new values to 60 seconds made the Nordic-nRF52840 more stable; however, it still occasionally crashed and restarted the program.
 

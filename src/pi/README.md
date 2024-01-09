@@ -1,5 +1,5 @@
 # Raspberry Pi installation guide
-The Raspberry Pi image needs to be 64 bits, because it needs to have the aarch64 architecture. How to install the raspberry pi image, please follow the Image installation guide of the [Raspberry Pi](https://www.raspberrypi.com/documentation/computers/getting-started.html#install-using-imager).
+The Raspberry Pi image needs to be 64 bits, because it needs to have the aarch64 architecture. How to install the Raspberry Pi image, please follow the Image installation guide of the [Raspberry Pi](https://www.raspberrypi.com/documentation/computers/getting-started.html#install-using-imager).
 
 To develop the code for the Raspberry Pi, please follow the install guide for [Docker](https://www.docker.com/get-started/). Then you need to install [Visual Studio Code](https://code.visualstudio.com/download) and install the [Dev Container](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension. The usage of the dev container will ensure that the Rust language is correctly installed with the cross compilation for the architecture of the Raspberry Pi.
 
