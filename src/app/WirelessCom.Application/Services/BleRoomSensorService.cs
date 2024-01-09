@@ -123,26 +123,11 @@ public class BleRoomSensorService : IBleRoomSensorService
 
                 _roomSensorTimeUpdated.Add(roomSensor.Id);
 
-                var currentDate = DateTime.Now;
-                var yearBytes = BitConverter.GetBytes((ushort)currentDate.Year);
-                var bleEncodedBytes = new[]
-                {
-                    yearBytes[0],
-                    yearBytes[1],
-                    (byte)currentDate.Month,
-                    (byte)currentDate.Day,
-                    (byte)currentDate.Hour,
-                    (byte)currentDate.Minute,
-                    (byte)currentDate.Second,
-                    // The week starts on monday on the rust application
-                    currentDate.DayOfWeek == DayOfWeek.Sunday ? (byte)7 : (byte)currentDate.DayOfWeek
-                };
-
                 await _bleService.WriteCharacteristicAsync(
                     roomSensor.Id,
                     BleServiceDefinitions.TimeService.ServiceGuid,
                     BleServiceDefinitions.TimeService.CurrentTimeCharacteristicGuid,
-                    bleEncodedBytes
+                    BleEncoding.GetCurrentDateTimeBleBytes()
                 );
             }
         }
