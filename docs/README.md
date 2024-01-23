@@ -1,5 +1,7 @@
 # Wireless Communication Report <!-- omit in toc -->
 
+<!-- TABLE OF CONTENTS -->
+## Table of Contents <!-- omit in toc -->
 - [Introduction](#introduction)
 - [The goal of the system](#the-goal-of-the-system)
 - [The roles of the different devices](#the-roles-of-the-different-devices)
@@ -44,6 +46,8 @@ In this chapter we will explain the roles of the different devices in the chapte
 ### Server - Nordic-nRF52 & Raspberry Pi
 
 Raspberry Pi and the Nordic-nrF-52840 are both using the DHT22 sensors, because these two devices will act as peripherals. To read the temperature and humidity values from the DHT22 sensors, two separate applications will be developed. One application will be developed in Rust for the Raspberry Pi. And another application will be developed in C++ with PlatformIO.
+
+<img src="../assets/device-setup.png" alt="App preview" width="750">
 
 ### Client - Android phone
 
@@ -156,26 +160,28 @@ In our system, the current time characteristic supports reading and writing the 
 
 ## How to use the system
 
-First follow the [Prerequisites](#prerequisites), then the app on your phone can be started.
-To connect to peripherals, go to the connectivity page
+Watch the [Bluetooth Demo video - 499782 494033 494032](https://f000.backblazeb2.com/file/brammys-files/saxion/wireless-communication/Bluetooth%20Demo%20video%20-%20499782%20494033%20494032.mp4) video for a complete overview of the whole mobile app. Use the following URL when the link does not work: https://f000.backblazeb2.com/file/brammys-files/saxion/wireless-communication/Bluetooth%20Demo%20video%20-%20499782%20494033%20494032.mp4.
 
-![Connectivity page](../assets/connectivity.png)
+First follow the [Prerequisites](#prerequisites), then the app on your phone can be started.
+To connect to peripherals, go to the connectivity page.
+
+<img src="../assets/connectivity.png" alt="App preview" width="400">
 
 Here you can press the scan button to see all the bluetooth devices near you. If you want to see only the intended peripherals, you need to enable the filtering by clicking on the checkbox Room temperature sensors only. This is shown below:
 
-![Connectivity page with only room sensors](../assets/connectivity_sensors_only.png)
+<img src="../assets/connectivity_sensors_only.png" alt="App preview" width="400">
 
 Click on the name to open a detail dialog of the peripheral. A dialog will open allowing the user to see more information about the device and a connect button below. This is shown in below:
 
-![Device stats](../assets/device_info.png)
+<img src="../assets/device_info.png" alt="App preview" width="400">
 
 After connecting to the device the disconnect button will become visible and the connect button will be disabled.
 
-![Device connected](../assets/device_info_connected.png).
+<img src="../assets/device_info_connected.png" alt="App preview" width="400">
 
 The new data will be shown on the home page of the app, when the peripheral sends data to the mobile phone. There you can see a graph per connected device. The name of the devices can be change by tapping on the name, then the user can enter a new name for the device.
 
-![Home page](../assets/index.png)
+<img src="../assets/index.png" alt="App preview" width="400">
 
 ### Prerequisites
 
@@ -184,6 +190,7 @@ The wiring of the DHT22 sensor depends on the platform. The wiring of the Raspbe
 After setting up the peripherals you need to install the app using the installation [guide](https://github.com/NancyTang50/wireless-communication/blob/master/src/app/README.md).
 
 ## Coding explanation
+
 In this chapter we will explain the program structures in the subchapters below.
 
 ### Mobile App
@@ -246,7 +253,6 @@ Then I asked a classmate what kind of program he uses for developing on the Nord
 ### Nordic DHT library timing issue
 
 To read the temperature and humidity values from the DHT22 sensor, I use an Arduino library called the DHT sensor library created by Adafruit. However, every time I received new humidity and temperature values, there was a chance that the Nordic-nRF52840 would crash and restart the program. I attempted to use another DHT22 library, but it resulted the same problem that has been described above. But adjusting the duration for reading new values to 60 seconds made the Nordic-nRF52840 more stable; however, it still occasionally crashed and restarted the program.
-
 
 ### Finding examples of the Raspberry Pi
 
