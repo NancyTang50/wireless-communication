@@ -3,4 +3,5 @@ To install PlatformIO on Visual Studio code, please follow the quick start guide
 
 # Wiring DHT-22 sensor to Nordic-nrF-52840 Diagram
 Please wire the DHT-22 sensor exactly in the Wiring Diagram below:
-![Wiring diagram](/assets/Wiring%20dht-22%20sensor%20to%20NRF-52840.png)
+
+![Wiring diagram](../../assets/Wiring%20dht-22%20sensor%20to%20NRF-52840.png)
