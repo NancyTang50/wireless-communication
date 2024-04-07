@@ -10,7 +10,7 @@
   <p align="center">
     Project repo for the Saxion Internet of Things wireless-communication class for 2023-2024 Q1 & Q2.
     <br />
-    <a href="https://github.com/NancyTang50/wireless-communication/tree/main/docs"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/NancyTang50/wireless-communication/tree/master/docs"><strong>Explore the docs »</strong></a>
     <br />
   </p>
 </div>
